@@ -1,0 +1,771 @@
+---
+// Bedienbare Shell-Simulation
+---
+
+<div class="term-huelle" data-term-huelle>
+<div class="term" data-term>
+  <!-- Die Ampel ist echt: schliessen, einklappen, Vollbild -->
+  <div class="term-leiste">
+    <button type="button" class="term-punkt term-rot" data-term-schliessen aria-label="Terminal schließen"></button>
+    <button type="button" class="term-punkt term-gelb" data-term-klappen aria-label="Terminal einklappen" aria-expanded="true"></button>
+    <button type="button" class="term-punkt term-gruen" data-term-gross aria-label="Terminal auf Vollbild" aria-pressed="false"></button>
+    <span class="term-titel">nico@nicoegerer — bash</span>
+  </div>
+
+  <div class="term-koerper" data-term-klick>
+    <pre class="term-inhalt" aria-hidden="true"></pre>
+    <div class="term-zeile" aria-hidden="true">
+      <span class="term-prompt">nico@web</span>:<span class="term-pfad">~</span>$&nbsp;
+      <span class="term-eingabe" data-term-eingabe></span><span class="term-cursor">&nbsp;</span>
+    </div>
+    <!-- Unsichtbares Feld darueber: Tastatur und Zwischenablage ohne Sonderbehandlung -->
+    <input
+      class="term-feld"
+      data-term-feld
+      type="text"
+      autocomplete="off"
+      autocapitalize="off"
+      spellcheck="false"
+      aria-label="Terminal-Eingabe. Tippe help für eine Übersicht."
+    />
+    <div class="sr-only" role="status" data-term-sr></div>
+  </div>
+
+  <!-- Groessenzieher unten rechts -->
+  <span class="term-griff" data-term-griff role="separator"
+        aria-label="Terminal-Größe ändern" tabindex="0"></span>
+</div>
+</div>
+
+<style>
+  /* --term-b und --term-h stehen am :root, die Breite traegt die Huelle */
+  /* Nicht auf dem Telefon: eine Shell lebt von Tastatur und Verlauf */
+  @media (max-width: 900px) {
+    .term-huelle { display: none; }
+  }
+
+  .term-huelle {
+    /* Gegen 100vw begrenzen, nicht gegen 100% */
+    width: 100%;
+    max-width: min(var(--term-b), calc(100vw - 2.6rem));
+  }
+
+  .term {
+    background: #16140f;
+    border: 1px solid rgba(255,255,255,0.09);
+    border-radius: var(--r-s);
+    overflow: hidden;
+    box-shadow: 0 18px 50px rgba(0,0,0,0.35);
+    font-family: ui-monospace, 'SF Mono', 'Cascadia Mono', Menlo, Consolas, monospace;
+    width: 100%;
+    position: relative;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  }
+  .term.zieht { transition: none; user-select: none; }
+  .term:focus-within {
+    border-color: rgba(111,208,140,0.4);
+    box-shadow: 0 18px 50px rgba(0,0,0,0.4), 0 0 0 3px rgba(111,208,140,0.12);
+  }
+
+  .term-leiste {
+    display: flex; align-items: center; gap: 0.45rem;
+    padding: 0.6rem 0.9rem;
+    background: rgba(255,255,255,0.04);
+    border-bottom: 1px solid rgba(255,255,255,0.07);
+  }
+  .term-punkt {
+    width: 11px; height: 11px; border-radius: 50%; flex-shrink: 0;
+    border: none; padding: 0; cursor: pointer;
+    position: relative;
+    transition: transform 0.18s cubic-bezier(0.34, 1.4, 0.64, 1), filter 0.18s ease;
+  }
+  .term-leiste:hover .term-punkt { filter: brightness(1.15); }
+  .term-punkt:hover { transform: scale(1.25); }
+  .term-punkt:active { transform: scale(0.9); }
+  .term-punkt:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+  /* Das Zeichen erscheint erst beim Ueberfahren der Leiste — wie im Vorbild */
+  .term-punkt::after {
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 8px; font-weight: 700; line-height: 1;
+    color: rgba(0,0,0,0.55);
+    opacity: 0; transition: opacity 0.18s ease;
+  }
+  .term-leiste:hover .term-punkt::after { opacity: 1; }
+  .term-rot   { --ampel: #ec6a5e; background: var(--ampel); }
+  .term-gelb  { --ampel: #f4bf4f; background: var(--ampel); }
+  .term-gruen { --ampel: #61c554; background: var(--ampel); }
+  .term-rot::after   { content: '✕'; }
+  .term-gelb::after  { content: '–'; }
+  .term-gruen::after { content: '⤢'; font-size: 7px; }
+
+  /* Ampel mit dem Finger Ein 11px-Punkt ist mit dem Daumen nicht zu treffen */
+  @media (pointer: coarse) {
+    .term-punkt {
+      width: 36px; height: 44px;
+      background: transparent;
+      border-radius: 8px;
+    }
+    .term-punkt::before {
+      content: '';
+      position: absolute;
+      top: 50%; left: 50%;
+      width: 12px; height: 12px;
+      margin: -6px 0 0 -6px;
+      border-radius: 50%;
+      background: var(--ampel);
+    }
+    /* Ohne Hover stehen die Zeichen dauerhaft */
+    .term-punkt::after { opacity: 1; font-size: 7px; }
+    .term-leiste { gap: 0.15rem; padding: 0.35rem 0.5rem; }
+    .term-titel { margin-left: 0.4rem; }
+  }
+  .term-titel { margin-left: 0.6rem; font-size: 0.72rem; color: rgba(255,255,255,0.4); }
+
+  .term-koerper { padding: 1rem 1.1rem 1.2rem; position: relative; cursor: text; }
+  .term-inhalt, .term-zeile {
+    margin: 0; font: inherit; font-size: 0.82rem; line-height: 1.75;
+    color: rgba(255,255,255,0.82); white-space: pre-wrap; word-break: break-word;
+  }
+  /* overscroll-behavior: sonst scrollt die Seite weiter, sobald das Terminal unten */
+  .term-inhalt {
+    max-height: var(--term-h);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255,255,255,0.22) transparent;
+  }
+  .term-inhalt::-webkit-scrollbar { width: 8px; }
+  .term-inhalt::-webkit-scrollbar-track { background: transparent; }
+  .term-inhalt::-webkit-scrollbar-thumb {
+    background: rgba(255,255,255,0.18); border-radius: 4px;
+  }
+  .term-inhalt::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.32); }
+
+  /* Eingeklappt: nur die Leiste bleibt */
+  .term.eingeklappt .term-koerper,
+  .term.eingeklappt .term-griff { display: none; }
+
+  /* Vollbild */
+  .term.gross {
+    position: fixed;
+    inset: 3vh 3vw;
+    width: auto;
+    z-index: 500;
+    box-shadow: 0 30px 90px rgba(0,0,0,0.6);
+    display: flex; flex-direction: column;
+  }
+  .term.gross .term-koerper { flex: 1; overflow: hidden; display: flex; flex-direction: column; }
+  /* Im Vollbild bestimmt die Fensterhoehe die Ausgabe, nicht --term-h. */
+  .term.gross .term-inhalt { max-height: none; flex: 1; }
+  .term.gross .term-griff { display: none; }
+  .term-abdunkler {
+    position: fixed; inset: 0; z-index: 499;
+    background: rgba(0,0,0,0.6);
+    backdrop-filter: blur(3px);
+  }
+
+  /* Groessenzieher */
+  .term-griff {
+    position: absolute;
+    right: 0; bottom: 0;
+    width: 18px; height: 18px;
+    cursor: nwse-resize;
+    display: none;
+    /* Zwei Striche wie an einer Fenstergriffecke */
+    background:
+      linear-gradient(135deg, transparent 46%, rgba(255,255,255,0.28) 46%, rgba(255,255,255,0.28) 54%, transparent 54%),
+      linear-gradient(135deg, transparent 66%, rgba(255,255,255,0.28) 66%, rgba(255,255,255,0.28) 74%, transparent 74%);
+    touch-action: none;
+  }
+  @media (hover: hover) and (pointer: fine) { .term-griff { display: block; } }
+  .term-griff:hover, .term-griff:focus-visible { background-color: rgba(255,255,255,0.06); outline: none; }
+
+  /* Beendet: gedimmt, Klick ins Fenster startet neu */
+  .term.beendet { opacity: 0.55; }
+  .term.beendet .term-koerper { cursor: pointer; }
+  .term.beendet .term-cursor { display: none; }
+  .term.beendet .term-zeile { opacity: 0.35; }
+  .term-zeile { display: block; }
+  /* Groesser als am Rechner, sonst wird die Konsole unlesbar */
+  @media (max-width: 600px) {
+    .term-inhalt, .term-zeile { font-size: 0.82rem; line-height: 1.65; }
+    .term-koerper { padding: 0.85rem 0.9rem 1rem; }
+    .term-titel { font-size: 0.78rem; }
+    /* Weniger Zeilen im Blick, dafuer scrollbar — ein hohes Fenster schiebt auf dem Telefon */
+    .term-inhalt { max-height: min(var(--term-h), 46vh); }
+  }
+
+  .term-prompt { color: #6fd08c; }
+  .term-pfad { color: #6fa8d0; }
+  .term-inhalt :global(.term-prompt) { color: #6fd08c; }
+  .term-inhalt :global(.term-pfad) { color: #6fa8d0; }
+  .term-inhalt :global(.term-aus) { color: rgba(255,255,255,0.58); }
+  .term-inhalt :global(.term-warn) { color: #f4bf4f; }
+  .term-inhalt :global(.term-fehler) { color: #ec8b7e; }
+  .term-inhalt :global(.term-hell) { color: #fff; }
+
+  .term-cursor {
+    display: inline-block; width: 0.55em; background: #6fd08c;
+    animation: term-blinken 1.05s steps(1) infinite; vertical-align: baseline;
+  }
+  .term:focus-within .term-cursor { background: #8ee9a8; }
+  @keyframes term-blinken { 50% { opacity: 0; } }
+
+  /* Unsichtbar, aber fokussierbar — traegt die eigentliche Eingabe */
+  .term-feld {
+    position: absolute; inset: 0; width: 100%; height: 100%;
+    opacity: 0; border: none; background: none; color: transparent;
+    font: inherit; padding: 0; margin: 0; cursor: text;
+    pointer-events: none;
+  }
+  .term-feld:focus { outline: none; }
+
+  @media (prefers-reduced-motion: reduce) { .term-cursor { animation: none; } }
+</style>
+
+<script>
+  (() => {
+    // Auf schmalen Schirmen ist das Fenster ausgeblendet (siehe Stil oben)
+    if (window.matchMedia('(max-width: 900px)').matches) return;
+
+    const sanft = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    const SCHUTZ = (s: string) =>
+      s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    const PROMPT = '<span class="term-prompt">nico@web</span>:<span class="term-pfad">~</span>$ ';
+
+    // Inhalte (aus dem Lebenslauf)
+    const DATEIEN: Record<string, string[]> = {
+      'ausbildung.txt': [
+        'Fachinformatiker Anwendungsentwicklung',
+        'Reiser Simulation and Training GmbH, Berg',
+        'seit 09/2024 · Berufsschule Fürstenfeldbruck',
+      ],
+      'sprachen.txt': [
+        'C++            ████████░░  Hauptsprache, Spiele & Tools',
+        'Python         ███████░░░  Raspberry Pi, Automatisierung',
+        'PowerShell     ██████░░░░  Administration',
+        'Java           █████░░░░░  Grundlagen',
+        'Bash           █████░░░░░  Skripte, WebAssembly-Build',
+        'HTML/CSS/JS    ███████░░░  diese Website',
+      ],
+      'sport.txt': [
+        'Triathlon · Rennrad · Laufen · Schwimmen',
+        'Klettern & Bergsteigen in den Alpen',
+        'Snowboard, Wakeboard',
+        '',
+        'Warum: Ausdauer ist dasselbe wie Debugging.',
+        'Man hoert nicht auf, wenn es unbequem wird.',
+      ],
+      'kontakt.txt': [
+        'mail@nicoegerer.de',
+        'github.com/nicoegerer',
+        'linkedin.com/in/nico-egerer',
+      ],
+    };
+
+    const HILFE = [
+      'Verfügbare Befehle:',
+      '',
+      '  help          diese Übersicht',
+      '  whoami        wer hier tippt',
+      '  ls            Dateien auflisten',
+      '  cat <datei>   Datei anzeigen',
+      '  skills        Sprachen mit Balken',
+      '  projects      was ich gebaut habe',
+      '  sport         das Leben neben dem Code',
+      '  neofetch      Systeminfo',
+      '  date          Datum und Uhrzeit',
+      '  clear         Bildschirm leeren',
+      '',
+      '  goto <seite>  zu einer Seite springen',
+      '  theme         hell/dunkel umschalten',
+      '  zeiger        Ring am Mauszeiger an/aus',
+      '  raten         Zahlenraten — ich denke mir eine aus',
+      '  tree          Verzeichnisbaum',
+      '  history       was du getippt hast',
+      '',
+      'Tipp: Tab vervollständigt, ↑/↓ blättert durch den Verlauf.',
+      'Und ein paar Befehle stehen absichtlich nicht hier.',
+    ];
+
+    /** tippen: Zeilen laufen nacheinander ein statt auf einen Schlag. */
+    type Antwort = { zeilen: string[]; klasse?: string; tippen?: boolean };
+
+    const BEFEHLE: Record<string, (arg: string) => Antwort> = {
+      help:    () => ({ zeilen: HILFE }),
+      whoami:  () => ({ zeilen: ['nico egerer'], klasse: 'term-hell' }),
+      ls:      () => ({ zeilen: [Object.keys(DATEIEN).join('  ')] }),
+      cat: (arg) => {
+        if (!arg) return { zeilen: ['cat: fehlender Dateiname'], klasse: 'term-fehler' };
+        const d = DATEIEN[arg] || DATEIEN[arg + '.txt'];
+        return d
+          ? { zeilen: d }
+          : { zeilen: [`cat: ${arg}: Datei nicht gefunden`], klasse: 'term-fehler' };
+      },
+      skills:  () => ({ zeilen: DATEIEN['sprachen.txt'] }),
+      sport:   () => ({ zeilen: DATEIEN['sport.txt'] }),
+      kontakt: () => ({ zeilen: DATEIEN['kontakt.txt'] }),
+      projects: () => ({ zeilen: [
+        'JumpJump          C++ · WebAssembly · im Browser spielbar',
+        'Raspberry Pi      Python · MQTT · Node-RED',
+        'Garmin Tool       eigene Auswertung meiner Trainingsdaten',
+        'diese Website     Astro · handgeschriebenes CSS',
+        '',
+        'Alles unter /projects.',
+      ]}),
+      neofetch: () => ({ zeilen: [
+        '       .--.        nico@nicoegerer',
+        '      |o_o |       ---------------',
+        '      |:_/ |       Rolle:    Azubi Fachinformatiker AE',
+        '     //   \\ \\      Betrieb:  Reiser Simulation and Training',
+        '    (|     | )     Schule:   BS Fürstenfeldbruck',
+        "   /'\\_   _/`\\     Seit:     09/2024",
+        '   \\___)=(___/     Sprachen: C++, Python, Bash, JS',
+        '                   Neben dem Code: Triathlon, Alpen',
+      ]}),
+      date: () => ({ zeilen: [new Date().toLocaleString('de-DE', {
+        weekday: 'long', day: '2-digit', month: 'long', year: 'numeric',
+        hour: '2-digit', minute: '2-digit',
+      })]}),
+      // Versteckte Befehle
+      sudo: (arg) => ({
+        zeilen: [`nico ist nicht in der sudoers-Datei. Dieser Vorfall wird gemeldet.${arg ? '' : ''}`],
+        klasse: 'term-warn',
+      }),
+      vim:  () => ({ zeilen: ['Viel Erfolg beim Rauskommen. (Tipp: :q!)'], klasse: 'term-warn' }),
+      exit: () => ({ zeilen: ['Nett, dass du bleibst.'], klasse: 'term-warn' }),
+      uname: () => ({ zeilen: ['Nico 19 x86_64 Voralpenland'] }),
+      pwd:  () => ({ zeilen: ['/home/nico'] }),
+      echo: (arg) => ({ zeilen: [arg || ''] }),
+      coffee: () => ({ zeilen: ['418 — I\'m a teapot ☕ … also: Kaffee, immer.'], klasse: 'term-warn' }),
+
+      // Befehle, die in die Seite eingreifen
+      theme: () => {
+        const w = document.documentElement;
+        const neu = w.dataset.modus === 'sw' ? 'hell' : 'sw';
+        // Ueber den Knopf schalten, damit der Kreisuebergang mitlaeuft
+        const knopf = document.getElementById('modus-knopf');
+        if (knopf) knopf.click();
+        else { w.dataset.modus = neu; try { localStorage.setItem('modus', neu); } catch {} }
+        return { zeilen: [`Modus: ${neu === 'sw' ? 'schwarz/weiß' : 'hell'}`], klasse: 'term-hell' };
+      },
+      zeiger: () => {
+        const s = document.getElementById('zeigerring-schalter');
+        if (s) { s.click(); return { zeilen: ['Ring am Mauszeiger: ' + (s.getAttribute('aria-checked') === 'true' ? 'an' : 'aus')], klasse: 'term-hell' }; }
+        return { zeilen: ['Hier gibt es keinen Mauszeiger zu schalten.'], klasse: 'term-warn' };
+      },
+      goto: (arg) => {
+        const ziele: Record<string, string> = {
+          start: '/', home: '/', about: '/about', ueber: '/about',
+          projekte: '/projects', projects: '/projects',
+          erfahrung: '/work', work: '/work',
+          kontakt: '/contact', contact: '/contact',
+          cv: '/lebenslauf-nico-egerer.pdf', lebenslauf: '/lebenslauf-nico-egerer.pdf',
+        };
+        const ziel = ziele[(arg || '').toLowerCase().trim()];
+        if (!ziel) {
+          return { zeilen: ['goto: ' + (arg || '—') + ' unbekannt.',
+                            'Möglich: ' + [...new Set(Object.keys(ziele))].join(', ')], klasse: 'term-fehler' };
+        }
+        setTimeout(() => { window.location.href = ziel; }, 520);
+        return { zeilen: ['Unterwegs nach ' + ziel + ' …'], klasse: 'term-hell' };
+      },
+
+      tree: () => ({ tippen: true, zeilen: [
+        '/home/nico',
+        '├── code',
+        '│   ├── jumpjump/        C++ · WebAssembly',
+        '│   ├── raspberry-pi/    Python · MQTT',
+        '│   └── garmin-tool/     Auswertung eigener Daten',
+        '├── berge',
+        '│   ├── zugspitze.gpx',
+        '│   └── watzmann.gpx',
+        '└── notizen.md',
+        '',
+        '3 Verzeichnisse, mehr als genug Dateien.',
+      ]}),
+
+      uptime: () => {
+        const start = new Date(2006, 8, 1).getTime();
+        const jahre = (Date.now() - start) / (365.25 * 24 * 3600 * 1000);
+        return { zeilen: [`up ${jahre.toFixed(1)} Jahre, 1 Nutzer, load average: gesund`] };
+      },
+
+      fortune: () => {
+        const s = [
+          'Ein Bug, den du verstehst, ist kein Bug mehr — nur noch Arbeit.',
+          'Der Berg fragt nicht, ob du Lust hast.',
+          'Code, den du in drei Monaten nicht mehr liest, hast du schlecht geschrieben.',
+          'Die letzten fünf Kilometer entscheiden. Immer.',
+          'Es gibt keinen schlechten Tag zum Trainieren, nur schlechte Ausreden.',
+        ];
+        return { zeilen: [s[Math.floor(Math.random() * s.length)]], klasse: 'term-warn' };
+      },
+
+      sl: () => ({ tippen: true, zeilen: [
+        '    ====        ________                ',
+        '  _D _|  |_______/        \\__I_I_____===__',
+        '   |(_)---  |   H\\________/ |   |        ',
+        '   /     |  |   H  |  |     |   |        ',
+        '',
+        'Du wolltest ls. Zu spät.',
+      ], klasse: 'term-warn' }),
+
+      ping: (arg) => ({ zeilen: [
+        `PING ${arg || 'nicoegerer.de'}: 56 Datenbytes`,
+        '64 bytes: icmp_seq=0 time=0.03 ms',
+        '64 bytes: icmp_seq=1 time=0.02 ms',
+        '',
+        '2 Pakete gesendet, 2 empfangen, 0% Verlust — läuft.',
+      ]}),
+    };
+
+    /* Zahlenraten */
+    const spiel = { laeuft: false, zahl: 0, versuche: 0 };
+
+    function ratenZug(eingabe: string): Antwort | null {
+      if (!spiel.laeuft) return null;
+      if (/^(stop|exit|q|abbruch)$/i.test(eingabe)) {
+        spiel.laeuft = false;
+        return { zeilen: [`Abgebrochen. Es war die ${spiel.zahl}.`], klasse: 'term-warn' };
+      }
+      const n = parseInt(eingabe, 10);
+      if (Number.isNaN(n)) return { zeilen: ['Eine Zahl zwischen 1 und 100. Oder "stop".'], klasse: 'term-fehler' };
+      spiel.versuche++;
+      if (n === spiel.zahl) {
+        spiel.laeuft = false;
+        return { zeilen: [`Treffer — die ${n}. ${spiel.versuche} Versuche.`,
+                          spiel.versuche <= 5 ? 'Das war stark.' : 'Geht schneller.'], klasse: 'term-hell' };
+      }
+      return { zeilen: [n < spiel.zahl ? 'Größer.' : 'Kleiner.'], klasse: 'term-warn' };
+    }
+
+    const ALIAS: Record<string, string> = {
+      cls: 'clear', dir: 'ls', '?': 'help', man: 'help',
+      cd: 'goto', open: 'goto', dark: 'theme', hell: 'theme', modus: 'theme',
+      game: 'raten', spiel: 'raten', cursor: 'zeiger', maus: 'zeiger',
+    };
+    const NAMEN = [...Object.keys(BEFEHLE), 'clear', 'raten', 'history'].sort();
+
+    document.querySelectorAll<HTMLElement>('[data-term]').forEach(kasten => {
+      const ausgabe = kasten.querySelector<HTMLElement>('.term-inhalt');
+      const spiegel = kasten.querySelector<HTMLElement>('[data-term-eingabe]');
+      const feld    = kasten.querySelector<HTMLInputElement>('[data-term-feld]');
+      const sr      = kasten.querySelector<HTMLElement>('[data-term-sr]');
+      const koerper = kasten.querySelector<HTMLElement>('[data-term-klick]');
+      if (!ausgabe || !spiegel || !feld || !koerper) return;
+
+      let puffer = '';
+      const verlauf: string[] = [];
+      let verlaufPos = -1;
+      let beschaeftigt = true; // waehrend der Vorfuehrung gesperrt
+
+      const anhaengen = (html: string) => {
+        // Nur nachfuehren, wenn man ohnehin unten steht
+        const untenDran = ausgabe.scrollHeight - ausgabe.scrollTop - ausgabe.clientHeight < 24;
+        puffer += html;
+        ausgabe.innerHTML = puffer;
+        if (untenDran) ausgabe.scrollTop = ausgabe.scrollHeight;
+      };
+      const zeilenAus = (a: Antwort) => {
+        const k = a.klasse || 'term-aus';
+        // Laengere Ausgaben laufen zeilenweise ein — eine echte Konsole spuckt auch nicht alles
+        if (a.tippen && !sanft) {
+          beschaeftigt = true;
+          let i = 0;
+          const naechste = () => {
+            if (i >= a.zeilen.length) {
+              anhaengen('\n');
+              beschaeftigt = false;
+              feld.focus();
+              return;
+            }
+            anhaengen(`<span class="${k}">${SCHUTZ(a.zeilen[i])}</span>\n`);
+            i++;
+            setTimeout(naechste, 55);
+          };
+          naechste();
+          return;
+        }
+        anhaengen(a.zeilen.map(z => `<span class="${k}">${SCHUTZ(z)}</span>`).join('\n') + '\n\n');
+      };
+
+      const ausfuehren = (roh: string) => {
+        const eingabe = roh.trim();
+        anhaengen(PROMPT + SCHUTZ(eingabe) + '\n');
+        if (!eingabe) { anhaengen('\n'); return; }
+
+        verlauf.push(eingabe);
+        verlaufPos = verlauf.length;
+
+        // Laeuft das Ratespiel, ist jede Eingabe ein Zug — nicht ein Befehl.
+        const zug = ratenZug(eingabe);
+        if (zug) { zeilenAus(zug); return; }
+
+        const [wort, ...rest] = eingabe.split(/\s+/);
+        const name = ALIAS[wort.toLowerCase()] || wort.toLowerCase();
+        const arg = rest.join(' ');
+
+        if (name === 'clear') { puffer = ''; ausgabe.innerHTML = ''; return; }
+
+        if (name === 'raten') {
+          spiel.laeuft = true;
+          spiel.zahl = 1 + Math.floor(Math.random() * 100);
+          spiel.versuche = 0;
+          zeilenAus({ zeilen: [
+            'Ich denke mir eine Zahl zwischen 1 und 100.',
+            'Rate drauflos — ich sage größer oder kleiner. "stop" beendet.',
+          ], klasse: 'term-hell' });
+          return;
+        }
+
+        if (name === 'history') {
+          zeilenAus({ zeilen: verlauf.length > 1
+            ? verlauf.slice(0, -1).map((z, i) => `  ${String(i + 1).padStart(3)}  ${z}`)
+            : ['Noch nichts im Verlauf.'] });
+          return;
+        }
+
+        // Kleiner Schreck, aber es passiert natuerlich nichts.
+        if (name === 'rm' && /-rf?\s*\/?$/.test(arg)) {
+          zeilenAus({ zeilen: ['Netter Versuch. Das hier ist nur gemalt.'], klasse: 'term-warn' });
+          return;
+        }
+
+        const fn = BEFEHLE[name];
+        if (fn) {
+          const a = fn(arg);
+          zeilenAus(a);
+          if (sr) sr.textContent = a.zeilen.join('. ');
+          return;
+        }
+        zeilenAus({
+          zeilen: [`${wort}: Befehl nicht gefunden. Tippe help.`],
+          klasse: 'term-fehler',
+        });
+      };
+
+      const spiegeln = () => { spiegel.textContent = feld.value; };
+
+      feld.addEventListener('input', spiegeln);
+
+      feld.addEventListener('keydown', ev => {
+        if (beschaeftigt) { ev.preventDefault(); return; }
+
+        if (ev.key === 'Enter') {
+          ev.preventDefault();
+          ausfuehren(feld.value);
+          feld.value = '';
+          spiegeln();
+          return;
+        }
+        if (ev.key === 'ArrowUp' || ev.key === 'ArrowDown') {
+          ev.preventDefault();
+          if (!verlauf.length) return;
+          verlaufPos += ev.key === 'ArrowUp' ? -1 : 1;
+          verlaufPos = Math.max(0, Math.min(verlauf.length, verlaufPos));
+          feld.value = verlauf[verlaufPos] ?? '';
+          spiegeln();
+          return;
+        }
+        if (ev.key === 'Tab') {
+          ev.preventDefault();
+          const t = feld.value.trim();
+          if (!t) return;
+          // Zweites Wort: Dateinamen vervollstaendigen
+          if (/\s/.test(t)) {
+            const [w, ...r] = t.split(/\s+/);
+            const teil = r.join(' ');
+            const treffer = Object.keys(DATEIEN).filter(d => d.startsWith(teil));
+            if (treffer.length === 1) { feld.value = w + ' ' + treffer[0]; spiegeln(); }
+            else if (treffer.length > 1) zeilenAus({ zeilen: [treffer.join('  ')] });
+            return;
+          }
+          const treffer = NAMEN.filter(n => n.startsWith(t.toLowerCase()));
+          if (treffer.length === 1) { feld.value = treffer[0]; spiegeln(); }
+          else if (treffer.length > 1) zeilenAus({ zeilen: [treffer.join('  ')] });
+          return;
+        }
+        if (ev.key === 'l' && ev.ctrlKey) {
+          ev.preventDefault(); puffer = ''; ausgabe.innerHTML = '';
+        }
+      });
+
+      // Klick irgendwo im Fenster setzt den Fokus ins Eingabefeld
+      koerper.addEventListener('mousedown', ev => {
+        if ((ev.target as HTMLElement).closest('a')) return;
+        const markiert = window.getSelection()?.toString();
+        if (markiert) return;
+        ev.preventDefault();
+        feld.focus();
+      });
+
+      // Bild auf/ab blaettert auch bei Fokus im Eingabefeld
+      feld.addEventListener('keydown', ev => {
+        if (ev.key !== 'PageUp' && ev.key !== 'PageDown') return;
+        ev.preventDefault();
+        ausgabe.scrollTop += (ev.key === 'PageUp' ? -1 : 1) * ausgabe.clientHeight * 0.85;
+      });
+
+      // Fensterknoepfe
+      const huelle    = kasten.closest('[data-term-huelle]') as HTMLElement | null;
+      const knSchliessen = kasten.querySelector<HTMLButtonElement>('[data-term-schliessen]');
+      const knKlappen    = kasten.querySelector<HTMLButtonElement>('[data-term-klappen]');
+      const knGross      = kasten.querySelector<HTMLButtonElement>('[data-term-gross]');
+      let abdunkler: HTMLElement | null = null;
+
+      const grossSetzen = (an: boolean) => {
+        kasten.classList.toggle('gross', an);
+        knGross?.setAttribute('aria-pressed', String(an));
+        knGross?.setAttribute('aria-label', an ? 'Vollbild verlassen' : 'Terminal auf Vollbild');
+        if (an) {
+          // Eingeklappt und Vollbild zugleich ergibt keinen Sinn.
+          kasten.classList.remove('eingeklappt');
+          knKlappen?.setAttribute('aria-expanded', 'true');
+          abdunkler = document.createElement('div');
+          abdunkler.className = 'term-abdunkler';
+          abdunkler.addEventListener('click', () => grossSetzen(false));
+          document.body.appendChild(abdunkler);
+          document.body.style.overflow = 'hidden';
+          feld.focus();
+        } else {
+          abdunkler?.remove();
+          abdunkler = null;
+          document.body.style.overflow = '';
+        }
+      };
+
+      // Rot beendet die Sitzung, ein Klick ins Fenster startet neu
+      let beendet = false;
+      const beendeSitzung = () => {
+        grossSetzen(false);
+        beendet = true;
+        beschaeftigt = true;
+        kasten.classList.add('beendet');
+        puffer = '';
+        ausgabe.innerHTML = '';
+        anhaengen('<span class="term-aus">[Prozess beendet]</span>\n<span class="term-aus">Klick ins Fenster startet neu.</span>\n');
+        knSchliessen?.setAttribute('aria-label', 'Terminal neu starten');
+      };
+      const starteNeu = () => {
+        beendet = false;
+        beschaeftigt = false;
+        kasten.classList.remove('beendet');
+        puffer = '';
+        ausgabe.innerHTML = '';
+        anhaengen('<span class="term-hell">Neue Sitzung.</span> <span class="term-aus">Tippe help für eine Übersicht.</span>\n\n');
+        knSchliessen?.setAttribute('aria-label', 'Terminal schließen');
+        feld.focus();
+      };
+      knSchliessen?.addEventListener('click', () => (beendet ? starteNeu() : beendeSitzung()));
+      koerper.addEventListener('click', () => { if (beendet) starteNeu(); });
+      knKlappen?.addEventListener('click', () => {
+        const zu = kasten.classList.toggle('eingeklappt');
+        knKlappen.setAttribute('aria-expanded', String(!zu));
+        knKlappen.setAttribute('aria-label', zu ? 'Terminal ausklappen' : 'Terminal einklappen');
+        if (!zu) feld.focus();
+      });
+      knGross?.addEventListener('click', () => grossSetzen(!kasten.classList.contains('gross')));
+      document.addEventListener('keydown', ev => {
+        if (ev.key === 'Escape' && kasten.classList.contains('gross')) grossSetzen(false);
+      });
+
+      // Groesse ziehen
+      const griff = kasten.querySelector<HTMLElement>('[data-term-griff]');
+      // Geschrieben wird an das Wurzelelement, nicht an die Huelle: nur so kann die Spalte um
+      const wurzel = document.documentElement;
+      if (griff && huelle) {
+        const GRENZE = { bMin: 20, hMin: 8, hMax: 44 }; // in rem
+        const rem = parseFloat(getComputedStyle(document.documentElement).fontSize) || 16;
+
+        /* Obere Breitengrenze, abhaengig vom Fenster */
+        const bMax = () => Math.max(GRENZE.bMin,
+          Math.min(92, (window.innerWidth * 0.94 - 19 * rem) / rem));
+        let start = { x: 0, y: 0, b: 0, h: 0 };
+
+        const ziehen = (ev: PointerEvent) => {
+          const b = start.b + (ev.clientX - start.x) / rem;
+          const h = start.h + (ev.clientY - start.y) / rem;
+          wurzel.style.setProperty('--term-b',
+            Math.min(bMax(), Math.max(GRENZE.bMin, b)).toFixed(2) + 'rem');
+          wurzel.style.setProperty('--term-h',
+            Math.min(GRENZE.hMax, Math.max(GRENZE.hMin, h)).toFixed(2) + 'rem');
+        };
+        const loslassen = (ev: PointerEvent) => {
+          kasten.classList.remove('zieht');
+          try { griff.releasePointerCapture?.(ev.pointerId); } catch {}
+          window.removeEventListener('pointermove', ziehen);
+          window.removeEventListener('pointerup', loslassen);
+        };
+        griff.addEventListener('pointerdown', ev => {
+          ev.preventDefault();
+          const r = kasten.getBoundingClientRect();
+          start = {
+            x: ev.clientX, y: ev.clientY,
+            b: r.width / rem,
+            h: ausgabe.getBoundingClientRect().height / rem,
+          };
+          kasten.classList.add('zieht');
+          // Die Erfassung ist Komfort, keine Voraussetzung: faellt sie aus, muss das Ziehen
+          try { griff.setPointerCapture?.(ev.pointerId); } catch {}
+          window.addEventListener('pointermove', ziehen);
+          window.addEventListener('pointerup', loslassen);
+        });
+
+        // Ohne Maus bedienbar: Pfeiltasten aendern die Groesse schrittweise.
+        griff.addEventListener('keydown', ev => {
+          const schritt = ev.shiftKey ? 4 : 1;
+          const lies = (n: string, v: number) =>
+            parseFloat(getComputedStyle(wurzel).getPropertyValue(n)) || v;
+          let b = lies('--term-b', 44), h = lies('--term-h', 22);
+          if (ev.key === 'ArrowRight') b += schritt;
+          else if (ev.key === 'ArrowLeft') b -= schritt;
+          else if (ev.key === 'ArrowDown') h += schritt;
+          else if (ev.key === 'ArrowUp') h -= schritt;
+          else return;
+          ev.preventDefault();
+          wurzel.style.setProperty('--term-b', Math.min(bMax(), Math.max(GRENZE.bMin, b)) + 'rem');
+          wurzel.style.setProperty('--term-h', Math.min(GRENZE.hMax, Math.max(GRENZE.hMin, h)) + 'rem');
+        });
+      }
+
+      // Vorfuehrung, danach Uebergabe
+      const VORFUEHRUNG = ['whoami', 'cat ausbildung.txt', 'help'];
+      const pause = (ms: number) => new Promise(r => setTimeout(r, ms));
+
+      const sofortFertig = () => {
+        for (const b of VORFUEHRUNG) ausfuehren(b);
+        beschaeftigt = false;
+      };
+
+      const vorfuehren = async () => {
+        for (const befehl of VORFUEHRUNG) {
+          await pause(320);
+          for (const z of Array.from(befehl)) {
+            feld.value += z;
+            spiegeln();
+            await pause(34 + Math.random() * 52);
+          }
+          await pause(240);
+          ausfuehren(feld.value);
+          feld.value = '';
+          spiegeln();
+        }
+        beschaeftigt = false;
+        anhaengen('<span class="term-warn">Du bist dran — tippe einen Befehl.</span>\n\n');
+      };
+
+      if (sanft) { sofortFertig(); return; }
+
+      let gestartet = false;
+      const los = () => { if (gestartet) return; gestartet = true; vorfuehren(); };
+      const beobachter = new IntersectionObserver(e => {
+        if (e.some(x => x.isIntersecting)) { beobachter.disconnect(); los(); }
+      }, { rootMargin: '0px 0px -15% 0px' });
+      beobachter.observe(kasten);
+      setTimeout(() => { beobachter.disconnect(); los(); }, 1200);
+    });
+  })();
+</script>

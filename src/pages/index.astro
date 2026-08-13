@@ -1,0 +1,642 @@
+---
+import MainLayout from '../layouts/MainLayout.astro';
+import Terminal from '../components/Terminal.astro';
+import ScrollAufdecken from '../components/ScrollAufdecken.astro';
+import { Image } from 'astro:assets';
+import selfie from '../assets/selfie.webp';
+import ampel from '../assets/ampel.webp';
+import game from '../assets/game.webp';
+import website from '../assets/website.webp';
+import kontakt from '../assets/kontakt.webp';
+
+const introText =
+  'Nico ist ein angehender Softwareentwickler aus Wolfratshausen. ' +
+  'Er programmiert gerne kleine Projekte, aktuell vor allem mit C++, ' +
+  'und versucht ständig neue Sprachen und Technologien zu lernen. ' +
+  'Wenn er nicht gerade coded, ist er meistens beim Sport, in den Bergen oder am Klavier.';
+---
+
+<MainLayout title="Nico Egerer" description="Nico Egerer — angehender Softwareentwickler aus Wolfratshausen.">
+  <style>
+    /* Hero: .hero ist die Scroll-Strecke, .hero-stage bleibt sticky */
+    /* 240vh Gesamthoehe = 140vh reine Scrollstrecke fuer 72 Bilder */
+    .hero { --hero-scroll: 240vh; position: relative; height: var(--hero-scroll); background: var(--blau); }
+    .hero-stage {
+      position: sticky; top: 0; height: 100vh; overflow: hidden;
+      background: linear-gradient(47deg, var(--blau) 55%, var(--weiss));
+      --lx: 50%; --ly: 40%;
+    }
+    /* Lichtschein, der dem Zeiger folgt (--lx/--ly aus Interaktionen.astro), plus zwei sehr */
+    .hero-stage::before {
+      content: '';
+      position: absolute; inset: -20%;
+      background:
+        radial-gradient(38rem 38rem at var(--lx) var(--ly), rgba(255,255,255,0.55), transparent 62%),
+        radial-gradient(26rem 26rem at 18% 78%, rgba(120,200,235,0.40), transparent 65%),
+        radial-gradient(30rem 30rem at 82% 22%, rgba(255,214,140,0.28), transparent 65%);
+      animation: hero-treiben 26s ease-in-out infinite alternate;
+      pointer-events: none;
+    }
+    @keyframes hero-treiben {
+      from { transform: translate3d(-2%, -1%, 0) scale(1); }
+      to   { transform: translate3d(2%, 2%, 0) scale(1.07); }
+    }
+
+    /* Feine Körnung — nimmt dem Verlauf das Digitale. */
+    .hero-stage::after {
+      content: '';
+      position: absolute; inset: 0;
+      background-image: radial-gradient(rgba(0,0,0,0.16) 0.5px, transparent 0.5px);
+      background-size: 3px 3px;
+      opacity: 0.32;
+      mix-blend-mode: multiply;
+      pointer-events: none;
+    }
+    /* Die Figur nimmt genau den Platz unter dem Schriftzug ein: Hoehe = Viewport - */
+    .hero-figure {
+      --text-top: clamp(90px, 18vh, 180px);
+      --name-size: clamp(2.4rem, 7vw, 5.8rem);
+      --text-lines: 1;
+      --fig-gap: clamp(14px, 3vh, 40px);
+      --fig-h: min(calc(100vh - var(--text-top) - var(--name-size) * 1.2 * var(--text-lines) - var(--fig-gap)), 780px);
+      position: absolute; bottom: 0; left: 50%;
+      transform: translateX(-50%);
+      width: min(calc(var(--fig-h) * 460 / 648), 94vw);
+      height: auto;
+      aspect-ratio: 460 / 648;
+      z-index: 1; pointer-events: none;
+      /* Die Vorlage endet je Frame auf unterschiedlicher Hoehe mit einer harten Kante (Hals */
+      -webkit-mask-image: linear-gradient(to bottom, #000 93%, transparent 100%);
+              mask-image: linear-gradient(to bottom, #000 93%, transparent 100%);
+    }
+    .hero-text { position: absolute; top: clamp(90px, 18vh, 180px); left: 50%; transform: translateX(-50%); display: flex; align-items: baseline; gap: 0.4em; white-space: nowrap; z-index: 2; margin: 0; font-weight: 400; }
+    .hero-greeting { font-family: var(--font-base); font-size: clamp(1.8rem, 5vw, 4.2rem); font-weight: 400; color: var(--weiss); }
+    .hero-name { font-family: var(--font-script); font-size: clamp(2.4rem, 7vw, 5.8rem); font-weight: 500; color: var(--weiss); line-height: 1; padding-left: 15px; }
+
+    /* INTRO */
+    .intro { min-height: 100vh; background: var(--hg); display: flex; align-items: center; justify-content: center; padding: var(--gap-xl) var(--gap-m); }
+    /* Die Typografie des Intro-Absatzes liegt in der Komponente selbst */
+    .intro-inner { width: 80%; text-align: center; }
+
+    /* ÜBER MICH */
+    .about { min-height: 100vh; background: linear-gradient(0, var(--grau) 0%, var(--hg) 100%); display: flex; align-items: center; padding: var(--gap-xl) var(--gap-m); }
+    /* Die rechte Spalte richtet sich nach dem Terminal (auto) statt nach einem festen Anteil */
+    .about-inner {
+      display: grid;
+      /* minmax statt auto: die Spalte darf wachsen, muss aber nachgeben */
+      grid-template-columns: minmax(15rem, 1fr) minmax(0, var(--term-b));
+      gap: var(--gap-l);
+      align-items: center;
+      max-width: min(94vw, max(1050px, calc(var(--term-b) + 26rem)));
+      margin: 0 auto;
+      width: 100%;
+    }
+    @media (max-width: 900px) { .about-inner { grid-template-columns: 1fr; } }
+    .about-photo { width: clamp(200px, 22vw, 320px); height: auto; border-radius: var(--r); box-shadow: 0 20px 60px rgba(0,0,0,0.18); transition: transform 0.4s ease; }
+    .about-photo:hover { transform: scale(1.03) rotate(1deg); }
+    .about-center { display: flex; justify-content: center; }
+    .about-text { font-size: 1rem; line-height: 1.8; color: var(--txt); margin-bottom: 1rem; }
+    .about-buttons { display: flex; align-items: center; gap: 1.4rem; margin-top: var(--gap-m); }
+
+    /* ERFAHRUNG BANNER */
+    .experience-banner { background: var(--grau); padding: var(--gap-l) var(--gap-m); }
+    .exp-inner { margin: 0 auto; text-align: center; }
+    .banner-text { color: var(--weiss); font-size: 1.1rem; line-height: 1.7; margin-bottom: var(--gap-s); }
+
+    /* TIMELINE */
+        /* Grau nach Dunkel — das ist der Farbuebergang der Startseite und bleibt im Hellmodus */
+    .tl-section {
+      background: linear-gradient(180deg, var(--grau) 0%, var(--hg-betont) 100%);
+      padding: var(--gap-xl) 0;
+      /* Karten fahren beim Aufdecken seitlich ein, clip faengt das ab */
+      overflow-x: clip;
+    }
+    .tl-wrap { display: grid; grid-template-columns: 60px 1fr; gap: 0; max-width: 800px; margin: 0 auto; padding: 0 var(--gap-m); align-items: start; }
+    .tl-line-col { position: relative; display: flex; justify-content: center; }
+    .tl-track { position: relative; width: 4px; background: rgba(255,255,255,0.12); border-radius: 4px; }
+    .tl-fill { position: absolute; top: 0; left: 0; right: 0; height: 0%; background: var(--hg-2); border-radius: 4px; transition: height 0.08s linear; box-shadow: 0 0 12px rgba(255,255,255,0.3); }
+    .tl-dot { position: absolute; left: 50%; transform: translateX(-50%); width: 14px; height: 14px; border-radius: 50%; background: rgba(255,255,255,0.2); border: 2px solid rgba(255,255,255,0.3); transition: background 0.35s ease, border-color 0.35s ease, transform 0.35s ease, box-shadow 0.35s ease; }
+    .tl-dot.active { background: var(--hg-2); border-color: var(--weiss); transform: translateX(-50%) scale(1.35); box-shadow: 0 0 10px rgba(255,255,255,0.5); }
+    .tl-entries { display: flex; flex-direction: column; gap: 1.5rem; padding-left: 1.8rem; }
+    .tl-card { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); border-radius: var(--r); padding: 1.6rem 2rem; opacity: 0; transform: translateX(30px); transition: opacity 0.5s ease, transform 0.5s ease, background 0.25s ease, box-shadow 0.25s ease; }
+    .tl-card.visible { opacity: 1; transform: translateX(0); }
+    .tl-card:hover { background: rgba(255,255,255,0.11); box-shadow: 0 8px 30px rgba(0,0,0,0.25); }
+    .tl-year { display: block; font-family: var(--font-serif); font-size: 1.9rem; font-weight: 400; color: var(--weiss); margin-bottom: 0.2rem; line-height: 1; }
+    .tl-title { color: var(--weiss); font-size: 1.1rem; font-weight: 500; margin-bottom: 0.45rem; line-height: 1.35; }
+    .tl-text { color: rgba(255,255,255,0.6); font-size: 0.92rem; line-height: 1.55; margin-bottom: 0.8rem; }
+    .tl-more { color: rgba(255,255,255,0.5); font-size: 0.88rem; transition: color 0.2s, padding-left 0.2s; }
+    .tl-more:hover { color: var(--weiss); padding-left: 4px; }
+
+    /* MEIN ZIEL */
+    .goal { background: var(--hg-betont); padding: var(--gap-xl) var(--gap-m); }
+    .goal-inner { display: grid; grid-template-columns: auto 1fr; gap: var(--gap-l); align-items: center; max-width: 1000px; margin: 0 auto; }
+    /* py kommt aus der Parallaxe, --bz vom Hover */
+    .goal-image { width: clamp(180px, 18vw, 260px); height: clamp(180px, 18vw, 260px); border-radius: 50%; object-fit: cover; box-shadow: 0 12px 40px rgba(0,0,0,0.4); transform: translate3d(0, var(--py, 0px), 0) scale(var(--bz, 1)); transition: box-shadow 0.4s ease; }
+    .goal-image:hover { --bz: 1.05; }
+    /* ScrollAufdecken erbt die Farbe vom Umfeld — hier die Tonwerte setzen. */
+    .goal-hell { color: rgba(255,255,255,0.78); }
+    .about-dunkel { color: var(--txt); }
+
+    /* PROJEKTE */
+    .projects { background: var(--hg-betont); padding: var(--gap-xl) var(--gap-m); }
+    .projects-inner { max-width: 1100px; margin: 0 auto; }
+    .projects-header { margin-bottom: var(--gap-l); }
+    .projects-subline { color: rgba(255,255,255,0.55); font-size: 0.95rem; margin-top: 0.4rem; }
+    .projects-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.8rem; }
+    .project-card { background: #0f0f0f; border: 1px solid rgba(255,255,255,0.08); border-radius: var(--r); overflow: hidden; transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease; }
+    /* Kein Schatten hier */
+    .project-card { border-color: rgba(255,255,255, calc(0.08 + var(--naehe, 0) * 0.18)); }
+    .project-img { width: 100%; height: 200px; object-fit: cover; transition: transform 0.4s ease; }
+    .project-card:hover .project-img { transform: scale(1.04); }
+    .project-info { padding: 1.2rem 1.5rem 1.5rem; }
+    .project-title { color: var(--weiss); font-size: 1.05rem; font-weight: 600; margin-bottom: 0.45rem; }
+    .project-text { color: rgba(255,255,255,0.5); font-size: 0.88rem; line-height: 1.5; margin-bottom: 1rem; }
+    .project-tags { display: flex; flex-wrap: wrap; gap: 0.45rem; }
+    .projects-footer { margin-top: var(--gap-l); display: flex; justify-content: center; }
+
+    /* ZUKUNFT */
+    .future { background: #0a0a0a; padding: var(--gap-xl) var(--gap-m); }
+    .future-inner { max-width: 700px; margin: 0 auto; text-align: center; }
+    .future-text { color: rgba(255,255,255,0.7); font-size: 1.1rem; line-height: 1.8; margin: var(--gap-s) 0 var(--gap-m); }
+    .future { position: relative; overflow: hidden; }
+    .future-inner { position: relative; z-index: 2; }
+
+    /* Treibende Schlagworte im Randbereich */
+    .future-feld { position: absolute; inset: 0; z-index: 1; pointer-events: none; }
+    .treiber {
+      position: absolute;
+      left: var(--tx); top: var(--ty);
+      font-family: var(--font-rund);
+      font-size: 0.82rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      white-space: nowrap;
+      color: rgba(152,213,235,0.30);
+      border: 1px solid rgba(152,213,235,0.18);
+      border-radius: 40px;
+      padding: 0.35rem 0.9rem;
+      transform: translate(calc(-50% + var(--ax, 0px)), calc(-50% + var(--ay, 0px)));
+      transition: transform 0.9s cubic-bezier(0.22, 0.61, 0.36, 1), color 0.5s ease, border-color 0.5s ease;
+      animation: treiben var(--dauer, 20s) ease-in-out infinite alternate;
+    }
+    .treiber.nah { color: rgba(255,214,140,0.85); border-color: rgba(255,214,140,0.45); }
+    @keyframes treiben {
+      from { margin-top: -10px; }
+      to   { margin-top: 10px; }
+    }
+    /* Auf schmalen Schirmen ist kein Platz — dort wuerden sie den Text stoeren. */
+    @media (max-width: 900px) { .future-feld { display: none; } }
+    @media (prefers-reduced-motion: reduce) { .treiber { animation: none; transition: none; } }
+
+    /* KONTAKT */
+    .contact { background: var(--hg-betont); padding: var(--gap-xl) var(--gap-m); }
+    .contact-inner { display: grid; grid-template-columns: 1.1fr 1fr; gap: var(--gap-l); align-items: center; max-width: 1000px; margin: 0 auto; }
+    .contact-subline { color: rgba(255,255,255,0.55); font-size: 0.95rem; margin-bottom: 1.8rem; }
+    .contact-form { display: flex; flex-direction: column; gap: 0.4rem; }
+    .contact-form label { color: rgba(255,255,255,0.75); font-size: 0.88rem; font-weight: 500; margin-top: 0.6rem; }
+    .cf-input { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.15); border-radius: var(--r-s); padding: 0.8rem 1rem; font-size: 0.95rem; font-family: var(--font-base); color: var(--weiss); width: 100%; outline: none; transition: border-color 0.2s, background 0.2s; }
+    .cf-input::placeholder { color: rgba(255,255,255,0.3); }
+    .cf-input:focus { border-color: var(--blau); background: rgba(255,255,255,0.09); }
+    .cf-textarea { height: 150px; resize: vertical; }
+    .cf-submit { margin-top: 1rem; }
+    .contact-img-col { display: flex; flex-direction: column; align-items: center; gap: 1.4rem; }
+    .contact-img { width: 100%; max-width: 360px; border-radius: var(--r); object-fit: cover; transition: transform 0.35s ease; }
+    .contact-img:hover { transform: scale(1.02); }
+
+    /* RESPONSIVE */
+    @media (max-width: 900px) {
+      .about-inner { grid-template-columns: 1fr; text-align: center; }
+      .about-center { order: -1; }
+      .about-photo { width: clamp(160px, 45vw, 240px); }
+      .about-buttons { justify-content: center; }
+      .goal-inner { grid-template-columns: 1fr; text-align: center; }
+      .goal-image { margin: 0 auto; }
+      .projects-grid { grid-template-columns: repeat(2, 1fr); }
+      .contact-inner { grid-template-columns: 1fr; }
+      .contact-img-col { order: -1; }
+      .contact-img { max-width: 280px; }
+    }
+    /* Telefon: Massstab statt nur Umbruch min-height: 100vh war fuer den Rechner */
+    @media (max-width: 900px) {
+      /* Diese beiden Bloecke sind am Rechner bewusst mittig gesetzt */
+      .exp-inner, .future-inner { text-align: left; }
+
+      .intro, .about { min-height: auto; }
+      .intro-inner { width: 100%; }
+      .about-inner { gap: var(--gap-m); }
+      /* Ohne Terminal traegt die Spalte nur noch das Foto. */
+      .about-center { display: none; }
+      .about-left { text-align: left; }
+      .about-buttons { justify-content: flex-start; }
+      .goal-inner { gap: var(--gap-m); }
+      .projects-grid { gap: var(--gap-m); }
+      .contact-inner { gap: var(--gap-m); }
+    }
+
+    @media (max-width: 600px) {
+      /* Kuerzere Bahn als am Rechner */
+      .hero { --hero-scroll: 140vh; }
+      .hero-figure { --text-top: 82px; }
+      .hero-text { top: 82px; flex-wrap: wrap; justify-content: center; white-space: normal; text-align: center; width: 90%; gap: 0.2em; }
+      .intro-text { font-size: 1.1rem; }
+      .about-photo { width: 55vw; max-width: 200px; }
+      /* overflow-x: clip faengt die Einfahrbewegung der Karten ab */
+      .tl-wrap { grid-template-columns: 40px 1fr; padding: 0 1rem; }
+      .tl-card { padding: 1.1rem 1.2rem; }
+      .tl-year { font-size: 1.5rem; }
+      .tl-entries { padding-left: 1.2rem; }
+      .projects-grid { grid-template-columns: 1fr; }
+      /* Fester Ausschnitt statt fester Hoehe */
+      .project-img { height: auto; aspect-ratio: 2 / 1; }
+
+      /* Das Kontaktbild stand mit order:-1 VOR dem Formular */
+      .contact-img-col { order: 1; }
+      .contact-img { max-width: 170px; }
+      .goal-image { width: 42vw; height: 42vw; max-width: 170px; max-height: 170px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .hero { --hero-scroll: 100vh; }
+    }
+  </style>
+
+  <!-- HERO -->
+  <section class="hero" id="hero">
+    <div class="hero-stage">
+      <canvas
+        id="hero-canvas"
+        class="hero-figure"
+        width="460"
+        height="648"
+        role="img"
+        aria-label="Illustration von Nico"
+      ></canvas>
+      <!-- Der Schriftzug ist die Hauptueberschrift der Startseite -->
+      <h1 class="hero-text">
+        <span class="hero-greeting">Hi ich bin</span><span class="hero-name">Nico</span>
+      </h1>
+    </div>
+  </section>
+
+  <!-- Intro: Text hellt beim Scrollen Wort fuer Wort auf -->
+  <section class="intro">
+    <div class="intro-inner intro-magic">
+      <ScrollAufdecken text={introText}
+      />
+    </div>
+  </section>
+
+  <!-- ÜBER MICH -->
+  <section class="about">
+    <div class="about-inner">
+      <div class="about-left">
+        <span class="label">Über</span>
+        <h2 class="section-heading dark">Wer ich bin</h2>
+        <div class="about-dunkel">
+          <ScrollAufdecken
+          absaetze={[
+              'Ich bin 19 Jahre alt, aber meine Begeisterung für Technik begleitet mich schon seit meiner Kindheit. Schon früh hat mich fasziniert, wie Computer funktionieren und wie man scheinbar komplizierte Probleme lösen kann.',
+              'Noch bevor ich wusste, was Programmierung oder PowerShell ist, gab es diesen Moment: Jemand öffnet die Konsole, tippt ein paar Befehle, und plötzlich funktioniert alles wieder. Da wusste ich: Das will ich auch können.',
+              'Heute arbeite ich am liebsten an eigenen Projekten. Besonders motiviert mich, am Ende ein Ergebnis zu sehen, egal ob kleine Games oder diese Website.',
+            ]}
+          />
+        </div>
+        <div class="about-buttons">
+          <a href="/lebenslauf-nico-egerer.pdf" target="_blank" rel="noopener" class="btn btn-dark-outline">Lebenslauf (PDF)</a>
+          <a href="/about" class="link-arrow">Die private Seite →</a>
+        </div>
+      </div>
+      <div class="about-center">
+        <!-- Der Text daneben erzaehlt, wie jemand eine Konsole oeffnet und alles wieder laeuft -->
+        <Terminal />
+      </div>
+    </div>
+  </section>
+
+  <!-- ERFAHRUNG BANNER -->
+  <section class="experience-banner">
+    <div class="exp-inner">
+      <span class="label white" data-auf="seite">Arbeit</span>
+      <h2 class="section-heading white" data-buchstaben>Erfahrung</h2>
+      <p class="banner-text" data-auf="unschaerfe" data-auf-verzug="160">Das sind meine Meilensteine der Letzten Jahre, von ersten Projekten über Praktika bis zu meiner Ausbildung.</p>
+      <a href="/work" class="btn btn-outline" data-auf="schieben" data-auf-verzug="280">Details</a>
+    </div>
+  </section>
+
+  <!-- TIMELINE -->
+  <section class="tl-section" id="tl-section">
+    <div class="tl-wrap">
+      <div class="tl-line-col">
+        <div class="tl-track">
+          <div class="tl-fill" id="tl-fill"></div>
+          <div class="tl-dots-wrap" id="tl-dots-wrap"></div>
+        </div>
+      </div>
+      <div class="tl-entries" id="tl-entries">
+        <div class="tl-card" data-tl="0">
+          <span class="tl-year">2026</span>
+          <h3 class="tl-title">Website &amp; JumpJump deployed</h3>
+          <p class="tl-text">Diese Website erstellt und JumpJump im Web spielbar gemacht.</p>
+          <a href="/work" class="tl-more">mehr →</a>
+        </div>
+        <div class="tl-card" data-tl="1">
+          <span class="tl-year">2024</span>
+          <h3 class="tl-title">Reiser Simulation and Training</h3>
+          <p class="tl-text">Ausbildung zum Fachinformatiker für Anwendungsentwicklung gestartet.</p>
+          <a href="/work" class="tl-more">mehr →</a>
+        </div>
+        <div class="tl-card" data-tl="2">
+          <span class="tl-year">2024</span>
+          <h3 class="tl-title">Erste eigene Projekte</h3>
+          <p class="tl-text">Erstellung meiner ersten kleinen Spiele mit C++ und Raylib.</p>
+          <a href="/work" class="tl-more">mehr →</a>
+        </div>
+        <div class="tl-card" data-tl="3">
+          <span class="tl-year">2021</span>
+          <h3 class="tl-title">IT-Praktikum</h3>
+          <p class="tl-text">Praxiserfahrung im IT-Umfeld gesammelt.</p>
+          <a href="/work" class="tl-more">mehr →</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MEIN ZIEL -->
+  <section class="goal">
+    <div class="goal-inner">
+      <div class="goal-image-wrap" data-auf="maske" data-zeiger="bild">
+        <Image src={selfie} alt="Nico in den Bergen" class="goal-image" quality={72} widths={[260, 520]} sizes="260px" data-parallax="0.09" />
+      </div>
+      <div class="goal-content goal-hell">
+        <span class="label white" data-auf="seite">Vision</span>
+        <h2 class="section-heading white" data-buchstaben>Mein Ziel</h2>
+        <ScrollAufdecken
+          absaetze={[
+            'Mein Ziel ist es, mich Schritt für Schritt zu einem sehr guten Softwareentwickler zu entwickeln und dabei nicht nur meine technischen Fähigkeiten, sondern auch meine organisatorischen und kommunikativen Kompetenzen weiter auszubauen.',
+            'Schon früh habe ich gemerkt, dass mir strukturiertes Arbeiten, Verantwortung und das Koordinieren von Aufgaben liegen. Deshalb kann ich mir langfristig gut vorstellen, Projekte zu leiten oder eine Führungsposition zu übernehmen.',
+            'Langfristig ist es mein Ziel, entweder eine Abteilung im IT-Bereich zu leiten oder ein eigenes IT-Unternehmen zu gründen und innovative Softwarelösungen zu entwickeln.',
+          ]}
+        />
+      </div>
+    </div>
+  </section>
+
+  <!-- PROJEKTE -->
+  <section class="projects">
+    <div class="projects-inner">
+      <div class="projects-header">
+        <span class="label white" data-auf="seite">Portfolio</span>
+        <h2 class="section-heading white" data-buchstaben>Ausgewählte Arbeiten</h2>
+        <p class="projects-subline" data-auf="unschaerfe" data-auf-verzug="140">Einige meiner besten Projekte aus diesem Jahr</p>
+      </div>
+      <div class="projects-grid" data-staffel="kippen" data-staffel-schritt="130">
+        <div class="project-card leuchtrahmen">
+          <Image src={ampel} alt="Raspberry Pi Kreuzung" class="project-img" quality={72} widths={[400, 600, 800]} sizes="(max-width: 900px) 100vw, 33vw" />
+          <div class="project-info">
+            <h3 class="project-title">Projekte mit dem Raspberry&nbsp;Pi</h3>
+            <p class="project-text">Projekte wie eine Kreuzung oder Luftfeuchtigkeits und Temperatursensor</p>
+            <div class="project-tags">
+              <span class="tag">Python</span><span class="tag">MQTT</span><span class="tag">NodeRed</span>
+            </div>
+          </div>
+        </div>
+        <div class="project-card leuchtrahmen">
+          <Image src={game} alt="JumpJump Spiel" class="project-img" quality={72} widths={[400, 600, 800]} sizes="(max-width: 900px) 100vw, 33vw" />
+          <div class="project-info">
+            <h3 class="project-title">JumpJump</h3>
+            <p class="project-text">Platformer-Spiel JumpJump in C++ mit der game library Raylib, kompiliert mit WebAssembly.</p>
+            <div class="project-tags">
+              <span class="tag">C++</span><span class="tag">Shell&nbsp;Skripte</span><span class="tag">WASM</span>
+            </div>
+          </div>
+        </div>
+        <div class="project-card leuchtrahmen">
+          <Image src={website} alt="Meine Website" class="project-img" quality={72} widths={[400, 600, 800]} sizes="(max-width: 900px) 100vw, 33vw" />
+          <div class="project-info">
+            <h3 class="project-title">Diese Website</h3>
+            <p class="project-text">Strukturiert wie ein echtes Kundenprojekt von der Skizze auf Papier über Figma bis zu Webflow.</p>
+            <div class="project-tags">
+              <span class="tag">Figma</span><span class="tag">HTML&nbsp;/&nbsp;CSS</span><span class="tag">Webflow</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="projects-footer">
+        <a href="/projects" class="btn btn-outline">Alle ansehen</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ZUKUNFT -->
+  <section class="future" id="future">
+    <!-- Der Platz links und rechts trug bisher nichts -->
+    <div class="future-feld" aria-hidden="true">
+      <span class="treiber" style="--tx: 8%;  --ty: 22%; --dauer: 19s;">Unreal Engine</span>
+      <span class="treiber" style="--tx: 14%; --ty: 68%; --dauer: 24s;">C++</span>
+      <span class="treiber" style="--tx: 4%;  --ty: 46%; --dauer: 21s;">Co-op</span>
+      <span class="treiber" style="--tx: 84%; --ty: 18%; --dauer: 22s;">Machine Learning</span>
+      <span class="treiber" style="--tx: 90%; --ty: 58%; --dauer: 18s;">Neuronale Netze</span>
+      <span class="treiber" style="--tx: 78%; --ty: 80%; --dauer: 26s;">Shader</span>
+      <span class="treiber" style="--tx: 20%; --ty: 88%; --dauer: 23s;">Multiplayer</span>
+      <span class="treiber" style="--tx: 88%; --ty: 36%; --dauer: 20s;">Rust</span>
+    </div>
+    <div class="future-inner">
+      <span class="label white">Zukunft</span>
+      <h2 class="section-heading white">Zukünftige Projekte</h2>
+      <p class="future-text">Komplexere Spiele mit C++ und Unreal Engine auch mit Co-op-Modus, um meine Programmierkenntnisse zu verbessern. Außerdem plane ich mich in künstliche Intelligenz und maschinelles Lernen zu vertiefen. Neue Technologien interessieren mich.</p>
+      <a href="/projects" class="btn btn-light">Meine Projekte</a>
+    </div>
+  </section>
+
+  <!-- KONTAKT -->
+  <section class="contact">
+    <div class="contact-inner">
+      <div class="contact-form-col">
+        <span class="label white">Schreib mir</span>
+        <h2 class="section-heading white">Lass uns Sprechen</h2>
+        <p class="contact-subline">Ich antworte schnell auf Nachrichten</p>
+        <form class="contact-form" id="contact-form">
+          <label for="cf-name">Name</label>
+          <input type="text" id="cf-name" name="name" maxlength="256" class="cf-input" placeholder="Dein Name" />
+          <label for="cf-email">E-Mail Adresse</label>
+          <input type="email" id="cf-email" name="email" maxlength="256" required class="cf-input" placeholder="deine@email.de" />
+          <label for="cf-msg">Nachricht</label>
+          <textarea id="cf-msg" name="message" maxlength="5000" required placeholder="Deine Nachricht..." class="cf-input cf-textarea"></textarea>
+          <button type="submit" class="btn btn-outline cf-submit">Absenden</button>
+        </form>
+        <div class="cf-success" id="cf-success"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m4.5 12.5 5 5 10-11"/></svg> Danke! Deine Nachricht wurde gesendet.</div>
+        <div class="cf-error" id="cf-error"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg> Fehler beim Senden. Bitte versuche es erneut oder kontaktiere mich anders.</div>
+      </div>
+      <div class="contact-img-col">
+        <Image src={kontakt} alt="Kontaktbild" class="contact-img" quality={72} widths={[280, 360, 720]} sizes="(max-width: 900px) 280px, 360px" />
+        <a href="/contact" class="btn btn-outline contact-details-btn">Meine Kontaktdaten</a>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // HERO: freigestellte Frame-Sequenz, der Frame-Index haengt am Scroll-Fortschritt
+      const hero   = document.getElementById('hero');
+      const canvas = document.getElementById('hero-canvas') as HTMLCanvasElement | null;
+
+      if (hero && canvas) {
+        const FRAMES = 72;
+        const ctx    = canvas.getContext('2d');
+        const imgs: HTMLImageElement[] = [];
+        const ready: boolean[] = [];
+        let current  = -1;
+        let queued   = false;
+
+        // Bis ein Frame geladen ist, das naechstgelegene vorhandene zeigen
+        const nearestReady = (i: number) => {
+          if (ready[i]) return i;
+          for (let d = 1; d < FRAMES; d++) {
+            if (ready[i - d]) return i - d;
+            if (ready[i + d]) return i + d;
+          }
+          return -1;
+        };
+
+        const draw = (want: number) => {
+          const i = nearestReady(want);
+          if (!ctx || i < 0 || i === current) return;
+          const img = imgs[i];
+          if (canvas.width !== img.naturalWidth) {
+            canvas.width  = img.naturalWidth;
+            canvas.height = img.naturalHeight;
+          }
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+          current = i;
+        };
+
+        // Zielbild aus der Scrollposition — bewusst als Kommazahl, damit die Anzeige gleich
+        const zielFrame = () => {
+          const scrollable = hero.offsetHeight - window.innerHeight;
+          if (scrollable <= 0) return 0;
+          const p = Math.min(Math.max(-hero.getBoundingClientRect().top / scrollable, 0), 1);
+          return p * (FRAMES - 1);
+        };
+
+        // Eine Mausrad-Raste springt rund 100px weit
+        let zeige = 0;
+        let laeuft = false;
+
+        const schritt = () => {
+          const ziel = zielFrame();
+          zeige += (ziel - zeige) * 0.18;
+          if (Math.abs(ziel - zeige) < 0.25) zeige = ziel;
+          draw(Math.round(zeige));
+          laeuft = zeige !== ziel;
+          if (laeuft) requestAnimationFrame(schritt);
+        };
+
+        // Sicherheitsnetz: springt requestAnimationFrame nicht an (Hintergrundtab, gedrosselte
+        let seit = 0;
+        const onScroll = () => {
+          const jetzt = performance.now();
+          if (laeuft) {
+            if (jetzt - seit > 150) { zeige = zielFrame(); draw(Math.round(zeige)); }
+            return;
+          }
+          laeuft = true;
+          seit = jetzt;
+          requestAnimationFrame(schritt);
+        };
+
+        // Nur AVIF: ein Format, rund ein Drittel leichter als WebP
+        const urlFor = (i: number) => `/hero/avif/f_${String(i + 1).padStart(2, '0')}.avif`;
+
+        const fetchFrame = (i: number) => new Promise<void>(resolve => {
+          const img = new Image();
+          img.setAttribute('fetchpriority', i === 0 ? 'high' : 'low');
+          img.onload = () => {
+            imgs[i] = img;
+            ready[i] = true;
+            // erstes Bild direkt zeichnen: in Hintergrundtabs laeuft kein rAF
+            if (current === -1) { zeige = zielFrame(); draw(Math.round(zeige)); } else onScroll();
+            resolve();
+            // Vorab-Dekodieren glaettet den ersten Durchlauf, blockiert aber nie
+            img.decode?.().catch(() => {});
+          };
+          img.onerror = () => resolve();
+          img.src = urlFor(i);
+        });
+
+        // In Wellen laden: erst jedes 8. Bild, dann verdichten
+        (async () => {
+          await fetchFrame(0);
+          if (!ready[0]) {
+            // Kein AVIF im Browser: einmalig das Standbild zeichnen und die Scroll-Animation
+            const poster = new Image();
+            poster.onload = () => {
+              if (!ctx) return;
+              canvas.width = poster.naturalWidth;
+              canvas.height = poster.naturalHeight;
+              ctx.drawImage(poster, 0, 0, canvas.width, canvas.height);
+            };
+            poster.src = '/hero/poster.webp';
+            return;
+          }
+
+          const requested = new Set<number>([0]);
+          for (const stride of [8, 4, 2, 1]) {
+            const wave: number[] = [];
+            for (let i = 0; i < FRAMES; i += stride) {
+              if (!requested.has(i)) { requested.add(i); wave.push(i); }
+            }
+            await Promise.all(wave.map(fetchFrame));
+          }
+        })();
+
+        window.addEventListener('scroll', onScroll, { passive: true });
+        window.addEventListener('resize', onScroll);
+        onScroll();
+      }
+
+      const tlSection  = document.getElementById('tl-section');
+      const tlFill     = document.getElementById('tl-fill') as HTMLElement | null;
+      const tlEntries  = document.getElementById('tl-entries');
+      const tlCards    = document.querySelectorAll('.tl-card');
+      const tlTrack    = document.querySelector('.tl-track') as HTMLElement | null;
+      const tlDotsWrap = document.getElementById('tl-dots-wrap');
+
+      function buildTimelineDots() {
+        if (!tlTrack || !tlEntries || !tlDotsWrap) return;
+        const entriesH = tlEntries.offsetHeight;
+        tlTrack.style.height = entriesH + 'px';
+        tlDotsWrap.innerHTML = '';
+        tlCards.forEach(card => {
+          const cardEl = card as HTMLElement;
+          const cardMid = cardEl.offsetTop + cardEl.offsetHeight / 2;
+          const trackRect   = tlTrack.getBoundingClientRect();
+          const entriesRect = tlEntries.getBoundingClientRect();
+          const relOffset   = entriesRect.top - trackRect.top;
+          const dotTop = relOffset + cardMid;
+          const dot = document.createElement('div');
+          dot.className = 'tl-dot';
+          dot.style.top = dotTop + 'px';
+          dot.dataset.cardIndex = (cardEl as HTMLElement).dataset.tl;
+          tlDotsWrap.appendChild(dot);
+        });
+      }
+
+      function updateTimeline() {
+        if (!tlSection || !tlFill) return;
+        const sectionRect = tlSection.getBoundingClientRect();
+        const ratio = Math.min(Math.max((window.innerHeight - sectionRect.top) / (tlSection.offsetHeight + window.innerHeight), 0), 1);
+        tlFill.style.height = (ratio * 100) + '%';
+        document.querySelectorAll('.tl-dot').forEach(dot => {
+          const dotEl = dot as HTMLElement;
+          const fillPx = ratio * (tlTrack?.offsetHeight ?? 1);
+          dotEl.classList.toggle('active', fillPx >= parseFloat(dotEl.style.top || '0'));
+        });
+        tlCards.forEach(c => { if (c.getBoundingClientRect().top < window.innerHeight * 0.9) c.classList.add('visible'); });
+      }
+
+      setTimeout(() => { buildTimelineDots(); updateTimeline(); }, 120);
+      window.addEventListener('scroll', updateTimeline, { passive: true });
+      window.addEventListener('resize', () => { buildTimelineDots(); updateTimeline(); });
+    });
+  </script>
+</MainLayout>

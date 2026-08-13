@@ -1,0 +1,163 @@
+---
+// Gemeinsame Mikro-Interaktionen fuer alle Seiten
+---
+
+<div class="fortschritt" aria-hidden="true"><span class="fortschritt-linie"></span></div>
+
+<button class="nach-oben" id="nach-oben" type="button" aria-label="Zurück nach oben">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M6 11l6-6 6 6"/></svg>
+</button>
+
+<script>
+  import { fundamentStarten, wenigerBewegung, zeigerEffekteAn } from '../scripts/basis';
+  import { zeigerEffekteStarten } from '../scripts/zeiger';
+  import { scrollEffekteStarten } from '../scripts/scrollen';
+  import { klickEffekteStarten } from '../scripts/klick';
+  import { textEffekteStarten } from '../scripts/text';
+  import { cursorStarten } from '../scripts/cursor';
+
+  (() => {
+    const sanft = wenigerBewegung();
+
+    // Rollen zentral zuweisen statt einzeln im Markup
+    const rolle = (wahl: string, attribute: Record<string, string>) => {
+      document.querySelectorAll<HTMLElement>(wahl).forEach(el => {
+        for (const [k, v] of Object.entries(attribute)) {
+          if (el.dataset[k] === undefined) el.dataset[k] = v;
+        }
+      });
+    };
+
+    rolle('.btn',                      { magnet: '9',  glanz: '' });
+    rolle('.filter-btn',               { magnet: '5' });
+    rolle('.nav-icon, .modus, .burger',{ magnet: '6' });
+    rolle('.nach-oben',                { magnet: '8' });
+    rolle('.proj-card, .project-card', { neigen: '4.5', glanz: '' });
+    rolle('.profile-card, .value-card, .hobby-card, .kn-block',
+                                       { neigen: '3.5', glanz: '' });
+    // Die Zeitstrahl-Karten fahren beim Aufdecken seitlich ein — ihr transform ist belegt
+    rolle('.tl-card, .contact-channel', { glanz: '' });
+    rolle('.link-arrow, .proj-link, .tl-more, .profile-cta', { magnet: '5' });
+
+    // Allgemeine Schichten starten
+    fundamentStarten();
+    scrollEffekteStarten();   // laeuft immer: Aufdecken darf nie ausfallen
+    klickEffekteStarten();
+    textEffekteStarten();
+    if (zeigerEffekteAn()) {
+      zeigerEffekteStarten();
+      cursorStarten();
+    }
+
+    // Zurueck nach oben
+    const hoch = document.getElementById('nach-oben');
+    const hochPruefen = () => {
+      hoch?.classList.toggle('sichtbar', window.scrollY > window.innerHeight * 1.5);
+    };
+    window.addEventListener('scroll', hochPruefen, { passive: true });
+    hochPruefen();
+    hoch?.addEventListener('click', () => {
+      window.scrollTo({ top: 0, behavior: sanft ? 'auto' : 'smooth' });
+    });
+
+    // Hero: Licht folgt dem Zeiger, Figur bleibt ruhig Frueher wanderte die Figur selbst
+    const buehne = document.querySelector('.hero-stage') as HTMLElement | null;
+    if (buehne && zeigerEffekteAn()) {
+      let zx = 50, zy = 40, ax = 50, ay = 40, laeuft = false;
+      const folgen = () => {
+        ax += (zx - ax) * 0.07;
+        ay += (zy - ay) * 0.07;
+        buehne.style.setProperty('--lx', ax.toFixed(1) + '%');
+        buehne.style.setProperty('--ly', ay.toFixed(1) + '%');
+        if (Math.abs(zx - ax) > 0.2 || Math.abs(zy - ay) > 0.2) requestAnimationFrame(folgen);
+        else laeuft = false;
+      };
+      buehne.addEventListener('pointermove', ev => {
+        const r = buehne.getBoundingClientRect();
+        zx = ((ev.clientX - r.left) / r.width) * 100;
+        zy = ((ev.clientY - r.top) / r.height) * 100;
+        if (!laeuft) { laeuft = true; requestAnimationFrame(folgen); }
+      });
+      buehne.addEventListener('pointerleave', () => {
+        zx = 50; zy = 40;
+        if (!laeuft) { laeuft = true; requestAnimationFrame(folgen); }
+      });
+    }
+
+    // Schlagworte weichen dem Zeiger aus ("Zukunft"-Sektion)
+    const zukunftFeld = document.querySelector('.future-feld');
+    if (zukunftFeld && zeigerEffekteAn()) {
+      const treiber = [...zukunftFeld.querySelectorAll('.treiber')] as HTMLElement[];
+      const sektion = zukunftFeld.closest('.future') as HTMLElement;
+      const radius = 190;   // ab hier reagieren sie
+      const kraft  = 55;    // maximale Auslenkung in Pixeln
+      let kaesten: DOMRect[] = [];
+      const messen = () => { kaesten = treiber.map(t => t.getBoundingClientRect()); };
+
+      sektion.addEventListener('pointerenter', messen);
+      window.addEventListener('resize', messen);
+      sektion.addEventListener('pointermove', ev => {
+        if (kaesten.length !== treiber.length) messen();
+        for (let i = 0; i < treiber.length; i++) {
+          const r = kaesten[i];
+          const dx = (r.left + r.width / 2) - ev.clientX;
+          const dy = (r.top + r.height / 2) - ev.clientY;
+          const dist = Math.hypot(dx, dy);
+          if (dist < radius && dist > 0) {
+            const staerke = (1 - dist / radius) * kraft;
+            treiber[i].style.setProperty('--ax', (dx / dist * staerke).toFixed(1) + 'px');
+            treiber[i].style.setProperty('--ay', (dy / dist * staerke).toFixed(1) + 'px');
+            treiber[i].classList.add('nah');
+          } else {
+            treiber[i].style.setProperty('--ax', '0px');
+            treiber[i].style.setProperty('--ay', '0px');
+            treiber[i].classList.remove('nah');
+          }
+        }
+      }, { passive: true });
+      sektion.addEventListener('pointerleave', () => {
+        for (const t of treiber) {
+          t.style.setProperty('--ax', '0px');
+          t.style.setProperty('--ay', '0px');
+          t.classList.remove('nah');
+        }
+      });
+    }
+
+    // Kopieren-Schaltflaechen
+    document.querySelectorAll('[data-kopieren]').forEach(el => {
+      const b = el as HTMLButtonElement;
+      const beschriftung = b.querySelector('.kopieren-text');
+      b.addEventListener('click', async () => {
+        try {
+          await navigator.clipboard.writeText(b.dataset.kopieren || '');
+          b.dataset.fertig = 'true';
+          if (beschriftung) beschriftung.textContent = 'Kopiert';
+          setTimeout(() => {
+            b.dataset.fertig = 'false';
+            if (beschriftung) beschriftung.textContent = 'Kopieren';
+          }, 1800);
+        } catch {
+          if (beschriftung) beschriftung.textContent = 'Ging nicht';
+        }
+      });
+    });
+
+    // Zeichenzaehler am Nachrichtenfeld
+    const feld = document.getElementById('cf-msg') as HTMLTextAreaElement | null;
+    if (feld) {
+      const max = Number(feld.getAttribute('maxlength')) || 5000;
+      const anzeige = document.createElement('p');
+      anzeige.className = 'zaehler';
+      anzeige.setAttribute('aria-live', 'polite');
+      feld.insertAdjacentElement('afterend', anzeige);
+      const aktualisiere = () => {
+        const n = feld.value.length;
+        anzeige.textContent = n === 0 ? '' : `${n} / ${max}`;
+        anzeige.classList.toggle('knapp', n > max * 0.9);
+      };
+      feld.addEventListener('input', aktualisiere);
+      aktualisiere();
+    }
+  })();
+</script>

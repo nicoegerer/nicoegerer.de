@@ -1,0 +1,170 @@
+---
+import ModusUmschalter from './ModusUmschalter.astro';
+
+const pathname = Astro.url.pathname.replace(/\/$/, '') || '/';
+
+/* Seitennavigation, nach Zugehoerigkeit gruppiert */
+const menue = [
+  { label: 'Startseite', href: '/' },
+  { label: 'Über Mich',  href: '/about', unter: [
+    { label: 'Lebenslauf (PDF)', href: '/lebenslauf-nico-egerer.pdf' },
+  ]},
+  { label: 'Projekte',   href: '/projects', unter: [
+    { label: 'JumpJump',    href: 'https://jumpjump.nicoegerer.de/' },
+    { label: 'Garmin Tool', href: 'https://garmintool.nicoegerer.de/' },
+  ]},
+  { label: 'Erfahrung',  href: '/work' },
+  { label: 'Kontakt',    href: '/contact', unter: [
+    { label: 'GitHub',   href: 'https://github.com/nicoegerer' },
+    { label: 'LinkedIn', href: 'https://www.linkedin.com/in/nico-egerer/' },
+  ]},
+  { label: 'Blog',       href: '/blog' },
+];
+
+/** Externe Ziele und PDFs oeffnen in einem neuen Tab. */
+const neuerTab = (href: string) => href.startsWith('http') || href.endsWith('.pdf');
+---
+
+<header class="nav" id="nav">
+  <div class="nav-inner">
+    <a href="/" class="nav-logo">Nico</a>
+    <div class="nav-right">
+      <a href="https://github.com/nicoegerer" target="_blank" rel="noopener" aria-label="GitHub" class="nav-icon">
+        <svg width="22" height="25" viewBox="0 0 35 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M23.7223 38.5V33.1976C23.7889 32.3167 23.6744 31.431 23.3863 30.5996C23.0981 29.7682 22.643 29.01 22.0512 28.3756C27.6334 27.7289 33.5 25.5304 33.5 15.4429C33.4995 12.8634 32.5448 10.3829 30.8333 8.51467C31.6437 6.25793 31.5864 3.76348 30.6733 1.5495C30.6733 1.5495 28.5756 0.902868 23.7223 4.28384C19.6476 3.13619 15.3525 3.13619 11.2779 4.28384C6.42456 0.902868 4.32679 1.5495 4.32679 1.5495C3.41367 3.76348 3.35638 6.25793 4.16679 8.51467C2.44257 10.3967 1.48684 12.8997 1.50014 15.4983C1.50014 25.5119 7.36676 27.7105 12.949 28.431C12.3641 29.0591 11.913 29.8081 11.6251 30.6294C11.3372 31.4506 11.2188 32.3258 11.2779 33.1976V38.5" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </a>
+      <a href="https://www.linkedin.com/in/nico-egerer/" target="_blank" rel="noopener" aria-label="LinkedIn" class="nav-icon">
+        <svg width="22" height="22" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M0 2.865C0 1.2825 1.315 0 2.9375 0H37.0625C38.685 0 40 1.2825 40 2.865V37.135C40 38.7175 38.685 40 37.0625 40H2.9375C1.315 40 0 38.7175 0 37.135V2.865ZM12.3575 33.485V15.4225H6.355V33.485H12.3575ZM9.3575 12.955C11.45 12.955 12.7525 11.57 12.7525 9.835C12.715 8.0625 11.4525 6.715 9.3975 6.715C7.3425 6.715 6 8.065 6 9.835C6 11.57 7.3025 12.955 9.3175 12.955H9.3575ZM21.6275 33.485V23.3975C21.6275 22.8575 21.6675 22.3175 21.8275 21.9325C22.26 20.855 23.2475 19.7375 24.9075 19.7375C27.08 19.7375 27.9475 21.3925 27.9475 23.8225V33.485H33.95V23.125C33.95 17.575 30.99 14.995 27.04 14.995C23.855 14.995 22.4275 16.745 21.6275 17.9775V18.04H21.5875L21.6275 17.9775V15.4225H15.6275C15.7025 17.1175 15.6275 33.485 15.6275 33.485H21.6275Z" fill="white"/>
+        </svg>
+      </a>
+      <ModusUmschalter />
+      <button class="burger" id="burger" aria-label="Menü öffnen" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<div class="sidebar-overlay" id="sidebar-overlay"></div>
+<nav class="sidebar" id="sidebar" aria-hidden="true">
+  <button class="sidebar-close" id="sidebar-close" aria-label="Menü schließen">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg>
+  </button>
+  <div class="sidebar-links" id="sidebar-links">
+    <span class="sidebar-anzeiger" id="sidebar-anzeiger" aria-hidden="true"></span>
+    {menue.map(eintrag => {
+      const extern = neuerTab(eintrag.href);
+      const aktiv = !extern && pathname === eintrag.href;
+      return (
+        <div class="sidebar-gruppe">
+          <a
+            href={eintrag.href}
+            class:list={['sidebar-link-main', aktiv && 'active']}
+            aria-current={aktiv ? 'page' : undefined}
+            target={extern ? '_blank' : undefined}
+            rel={extern ? 'noopener' : undefined}
+          >{eintrag.label}</a>
+          {eintrag.unter && eintrag.unter.map(u => (
+            <a
+              href={u.href}
+              class="sidebar-link-sub"
+              target={neuerTab(u.href) ? '_blank' : undefined}
+              rel={neuerTab(u.href) ? 'noopener' : undefined}
+            >{u.label}</a>
+          ))}
+        </div>
+      );
+    })}
+  </div>
+
+  <!-- Der Ring am Mauszeiger ist Geschmackssache -->
+  <button type="button" class="sidebar-schalter" id="zeigerring-schalter"
+          role="switch" aria-checked="false" hidden>
+    <span class="sidebar-schalter-text">Ring am Mauszeiger</span>
+    <span class="sidebar-schalter-gleis" aria-hidden="true"><span class="sidebar-schalter-knopf"></span></span>
+  </button>
+</nav>
+
+<script>
+  function initNav() {
+    const burger   = document.getElementById('burger')!;
+    const sidebar  = document.getElementById('sidebar')!;
+    const overlay  = document.getElementById('sidebar-overlay')!;
+    const closeBtn = document.getElementById('sidebar-close')!;
+    const nav      = document.getElementById('nav')!;
+
+    const open  = () => { sidebar.classList.add('open'); overlay.classList.add('open'); sidebar.setAttribute('aria-hidden','false'); burger.setAttribute('aria-expanded','true'); document.body.style.overflow='hidden'; };
+    const close = () => { sidebar.classList.remove('open'); overlay.classList.remove('open'); sidebar.setAttribute('aria-hidden','true'); burger.setAttribute('aria-expanded','false'); document.body.style.overflow=''; };
+
+    burger.addEventListener('click', () => sidebar.classList.contains('open') ? close() : open());
+    closeBtn.addEventListener('click', close);
+    overlay.addEventListener('click', close);
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') close(); });
+    document.querySelectorAll('.sidebar-link-main, .sidebar-link-sub').forEach(l => l.addEventListener('click', close));
+
+    // Auf der Startseite bleibt die Leiste transparent, solange der Hero laeuft, und faerbt
+    const hero = document.getElementById('hero');
+    const upd = () => {
+      const eingefaerbt = hero
+        ? hero.getBoundingClientRect().bottom <= nav.offsetHeight
+        : window.scrollY > 50;
+      nav.classList.toggle('scrolled', eingefaerbt);
+    };
+    window.addEventListener('scroll', upd, { passive: true });
+    window.addEventListener('resize', upd);
+    upd();
+
+    gleitenderAnzeiger();
+    zeigerringSchalter();
+  }
+
+  /* Schalter fuer den Ring am Mauszeiger */
+  async function zeigerringSchalter() {
+    const s = document.getElementById('zeigerring-schalter');
+    if (!s) return;
+    if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+
+    const { ringAn, ringUmschalten, ringAnwenden } = await import('../scripts/cursor');
+    s.hidden = false;
+    const zeichnen = () => s.setAttribute('aria-checked', String(ringAn()));
+    ringAnwenden();
+    zeichnen();
+
+    s.addEventListener('click', () => { ringUmschalten(); zeichnen(); });
+  }
+
+  /* Gleitender Anzeiger im Menue */
+  function gleitenderAnzeiger() {
+    const liste = document.getElementById('sidebar-links');
+    const balken = document.getElementById('sidebar-anzeiger');
+    if (!liste || !balken) return;
+
+    const punkte = [...liste.querySelectorAll<HTMLElement>('.sidebar-link-main, .sidebar-link-sub')];
+    if (!punkte.length) return;
+    const aktiv = liste.querySelector<HTMLElement>('.active');
+
+    const setzen = (el: HTMLElement | null) => {
+      if (!el) { liste.classList.remove('anzeiger-an'); return; }
+      balken.style.setProperty('--ay', el.offsetTop + 'px');
+      balken.style.setProperty('--ah', String(el.offsetHeight));
+      liste.classList.add('anzeiger-an');
+    };
+
+    for (const p of punkte) {
+      p.addEventListener('pointerenter', () => setzen(p));
+      p.addEventListener('focus', () => setzen(p));
+    }
+    liste.addEventListener('pointerleave', () => setzen(aktiv));
+
+    // Beim Oeffnen sitzt der Balken schon am aktiven Eintrag
+    const sidebar = document.getElementById('sidebar');
+    sidebar?.addEventListener('transitionend', ev => {
+      if (ev.target !== sidebar) return;
+      if (sidebar.classList.contains('open')) setzen(aktiv);
+    });
+  }
+
+  document.addEventListener('DOMContentLoaded', initNav);
+</script>

@@ -1,0 +1,38 @@
+---
+import MainLayout from '../layouts/MainLayout.astro';
+---
+
+<MainLayout title="Blog — Nico Egerer" description="Notizen zu Projekten, Code und dem, was zwischen Bergen und Bildschirm passiert.">
+  <style>
+    /* Gleicher heller Verlauf wie auf der 404 — deshalb dunkle Schrift. */
+    .blog { min-height: 100vh; background: linear-gradient(47deg, var(--blau) 55%, var(--weiss)); display: flex; align-items: center; padding: calc(var(--nav-h) + var(--gap-l)) var(--gap-m) var(--gap-l); }
+    .blog-inner { max-width: 620px; margin: 0 auto; }
+    .blog-label { color: #3d6a78; }
+    .blog-title { font-family: var(--font-serif); font-size: clamp(2rem, 6vw, 3.2rem); font-weight: 400; color: #1d3b46; line-height: 1.15; margin-bottom: 1rem; }
+    .blog-text { color: #2c5462; font-size: 1.02rem; line-height: 1.75; margin-bottom: var(--gap-m); }
+    .blog-actions { display: flex; align-items: center; gap: 1.4rem; flex-wrap: wrap; }
+    .blog-actions .link-arrow { color: #1d3b46; }
+
+    @media (max-width: 700px) {
+      .blog { align-items: flex-start; }
+      .blog-text { font-size: 0.96rem; }
+    }
+  </style>
+
+  <section class="blog">
+    <div class="blog-inner">
+      <span class="label blog-label">Bald hier</span>
+      <h1 class="blog-title">Der Blog ist noch im Entwurf</h1>
+      <p class="blog-text">
+        Geplant sind kurze Notizen zu dem, woran ich gerade sitze: was bei einem
+        Projekt schiefgegangen ist, was ich dabei gelernt habe, und gelegentlich
+        etwas aus den Bergen. Bis der erste Beitrag steht, findest du die
+        Projekte selbst schon hier.
+      </p>
+      <div class="blog-actions">
+        <a href="/projects" class="btn btn-dark-outline">Projekte ansehen</a>
+        <a href="/contact" class="link-arrow">Schreib mir →</a>
+      </div>
+    </div>
+  </section>
+</MainLayout>

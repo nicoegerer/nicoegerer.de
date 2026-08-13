@@ -1,0 +1,1188 @@
+/* Variablen */
+:root {
+  --blau:        #98d5eb;
+  --beige:       #faf6f0;
+  --grau:        #acabaa;
+  --dunkel:      #25221e;
+  --weiss:       #ffffff;
+
+  /* Playfair fuer Display, Manrope fuer Text, Dancing Script nur im Hero */
+  --font-base:   'Manrope', system-ui, sans-serif;
+  --font-serif:  'Playfair Display', Georgia, serif;
+  --font-script: 'Dancing Script', cursive;
+  --font-rund:   'Manrope', system-ui, sans-serif;
+
+  --gap-s:  1rem;
+  --gap-m:  2rem;
+  --gap-l:  4rem;
+  --gap-xl: 6rem;
+
+  --r:    20px;
+  --r-s:  10px;
+  --max-w: 1200px;
+  --nav-h: 64px;
+
+  /* Terminalgroesse am :root, damit die Spalte darum mitwachsen kann */
+  --term-b: 44rem;
+  --term-h: 22rem;
+
+  /* Semantische Farbrollen */
+  --hg:        #faf6f0;  /* Seitenhintergrund */
+  --hg-2:      #ffffff;  /* Abgesetzte Flaeche, Karten */
+  --hg-3:      #f2ece2;  /* Dritte Ebene, Eingabefelder */
+  --hg-invers: #25221e;  /* Bewusst dunkle Sektionen */
+  /* Betonte Baender: im SW-Modus heller als der Grund, nicht dunkler */
+  --hg-betont: #25221e;
+  --hg-betont-2: #1a1714; /* Zweite Stufe fuer Verlaeufe */
+  /* Verlaufsstufen im Kopf der Unterseiten */
+  --hg-kopf-2: #f2ece2;
+  --hg-kopf-3: #eae3d6;
+  --raster:    rgba(37,34,30,0.055); /* Feines Raster im Seitenkopf */
+  --txt:        #333333; /* Fliesstext, wie body vorher */
+  --txt-stark:  #1c1a17; /* Ueberschriften */
+  --txt-leise:  #777777; /* Sekundaertext */
+  --txt-schwach:#aaaaaa; /* Beschriftungen, Handles */
+  --txt-lese:   #4b463d; /* Intro-Absatz, der beim Scrollen aufhellt */
+  --txt-invers: #f6f2ea; /* Text auf dunklen Sektionen */
+  --linie:      #e2dace; /* Trennlinien im Seitenkopf */
+  --linie-weich:#dddddd; /* Rahmen an Eingaben und Karten */
+  --akzent:     #2c5a6b; /* Akzent fuer Links und Aktives */
+  --akzent-2:   #0072b5; /* Zweiter Akzent, Profil-Links */
+  --schein:    rgba(37,34,30,0.14); /* Lichtschein bei Hover */
+  --schatten:  rgba(0,0,0,0.12);
+
+  /* Kopfleiste bleibt in beiden Modi dunkel, Logo und Symbole sind hell */
+  --nav-hg:       rgba(10,10,10,0.75);
+  --flaeche-hover:#eeeeee; /* Hover an Knoepfen im Seitenmenue */
+  --linie-trenn:  #e4e0d9; /* Trenner vor den externen Verweisen */
+
+  /* Feinere Textabstufungen, damit der Hellmodus seine Staffelung behaelt */
+  --txt-voll:    #111111; /* Staerkster Ton: Schaltflaechen, Menue, Ueberschrift */
+  --txt-mittel:  #444444; /* Pfeile, Tags */
+  --txt-gedimmt: #555555; /* Schliessen-Knopf im Menue */
+  --txt-sub:     #666666; /* Untermenue */
+  --txt-warm:    #8a8479; /* Kleinbeschriftungen ueber Ueberschriften */
+  --txt-warm-tief:#6f6859; /* Vorspann im Seitenkopf */
+  --linie-hart:  #cccccc; /* Tag-Rahmen */
+  --linie-menue: #e8e4df; /* Trennlinien zwischen Menuepunkten */
+  --flaeche-tag: #f0f0f0; /* Hover an Tags */
+}
+
+/* Schwarz/Weiss: sehr dunkles Grau statt #000, gebrochenes Weiss als Schrift */
+:root[data-modus='sw'] {
+  --hg:        #0d0d0e;
+  --hg-2:      #161617;
+  --hg-3:      #1e1e20;
+  --hg-invers: #f4f2ee;
+  --txt:        #e8e6e1;
+  --txt-stark:  #f6f4ef;
+  --txt-leise:  #a5a19a;
+  --txt-schwach:#777470;
+  --txt-lese:   #efece6;
+  --txt-invers: #141414;
+  --linie:      #2b2b2e;
+  --linie-weich:#333336;
+  --akzent:     #cfd8dc;
+  --akzent-2:   #9fb6c0;
+  --hg-betont:   #1c1c1f;
+  --hg-betont-2: #242427;
+  --hg-kopf-2:   #141416;
+  --hg-kopf-3:   #1b1b1e;
+  --raster:      rgba(255,255,255,0.06);
+  --schein:    rgba(255,255,255,0.16);
+  --schatten:  rgba(0,0,0,0.6);
+  --nav-hg:       rgba(12,12,13,0.82);
+  --flaeche-hover:#2a2a2d;
+  --linie-trenn:  #2b2b2e;
+  --txt-voll:     #f6f4ef;
+  --txt-mittel:   #c9c6c0;
+  --txt-gedimmt:  #a5a19a;
+  --txt-sub:      #a5a19a;
+  --txt-warm:     #9c968c;
+  --txt-warm-tief:#c4bfb6;
+  --linie-hart:   #4a4a4d;
+  --linie-menue:  #2b2b2e;
+  --flaeche-tag:  #2a2a2d;
+
+  /* Palette entsaettigt, sonst leuchtet sie auf dunklem Grund */
+  --blau:   #b8c6cc;
+  --beige:  #161617;
+  --grau:   #4a4a4d;
+  --dunkel: #0d0d0e;
+  --weiss:  #f3f1ec;
+}
+
+/* Nur Farben animieren, nie Layout */
+:root:not(.modus-wechselt) body,
+:root:not(.modus-wechselt) section,
+:root:not(.modus-wechselt) header,
+:root:not(.modus-wechselt) footer,
+:root:not(.modus-wechselt) .btn,
+:root:not(.modus-wechselt) input,
+:root:not(.modus-wechselt) textarea,
+:root:not(.modus-wechselt) select {
+  transition: background-color 0.45s ease, color 0.45s ease,
+              border-color 0.45s ease, box-shadow 0.45s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root body, :root section, :root header, :root footer { transition: none; }
+}
+
+/* Reset & Base */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--font-base);
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--txt);
+  background: var(--hg);
+  overflow-x: hidden;
+}
+img { max-width: 100%; display: block; }
+a   { text-decoration: none; color: inherit; }
+
+/* Typografie */
+/* Kleinbeschriftung ueber den Ueberschriften */
+.label {
+  font-family: var(--font-base);
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  display: block;
+  margin-bottom: 0.7rem;
+  color: var(--txt-warm);
+}
+.label.white { color: rgba(255,255,255,0.65); }
+
+.section-heading {
+  font-family: var(--font-serif);
+  font-size: clamp(2rem, 4.5vw, 3.2rem);
+  font-weight: 400;
+  line-height: 1.15;
+  margin-bottom: var(--gap-s);
+}
+.section-heading.dark  { color: var(--txt-voll); }
+.section-heading.white { color: var(--weiss); }
+
+/* Buttons */
+.btn {
+  display: inline-block;
+  padding: 0.65rem 1.6rem;
+  border-radius: 40px;
+  font-size: 0.95rem;
+  font-family: var(--font-base);
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: all 0.22s ease;
+  white-space: nowrap;
+}
+.btn-outline {
+  background: transparent;
+  color: var(--weiss);
+  border-color: var(--weiss);
+}
+.btn-outline:hover { background: rgba(255,255,255,0.14); transform: translateY(-2px); }
+
+.btn-light {
+  background: rgba(255,255,255,0.1);
+  color: var(--weiss);
+  border-color: rgba(255,255,255,0.4);
+}
+.btn-light:hover { background: rgba(255,255,255,0.22); transform: translateY(-2px); }
+
+.btn-dark-outline {
+  background: transparent;
+  color: var(--txt-voll);
+  border-color: var(--txt-voll);
+}
+/* --hg-2 statt --weiss: dreht sich im SW-Modus korrekt um */
+.btn-dark-outline:hover { background: var(--txt-voll); color: var(--hg-2); transform: translateY(-2px); }
+
+.btn-blau {
+  background: var(--blau);
+  color: var(--txt-voll);
+  border-color: var(--blau);
+}
+.btn-blau:hover { background: #7bc8e0; border-color: #7bc8e0; transform: translateY(-2px); }
+
+.link-arrow {
+  font-size: 1rem;
+  color: var(--txt-mittel);
+  transition: opacity 0.2s;
+}
+.link-arrow:hover { opacity: 0.55; }
+
+/* Tags */
+.tag {
+  background: transparent;
+  color: rgba(255,255,255,0.7);
+  border: 1px solid rgba(255,255,255,0.3);
+  border-radius: 20px;
+  padding: 0.2rem 0.75rem;
+  font-size: 0.78rem;
+  font-family: var(--font-base);
+  transition: background 0.2s, color 0.2s, border-color 0.2s;
+  cursor: default;
+}
+.tag:hover { background: rgba(255,255,255,0.1); color: var(--weiss); border-color: rgba(255,255,255,0.6); }
+
+.tag-dark {
+  background: transparent;
+  color: var(--txt-mittel);
+  border: 1px solid var(--linie-hart);
+  border-radius: 20px;
+  padding: 0.2rem 0.75rem;
+  font-size: 0.78rem;
+  transition: background 0.2s, color 0.2s;
+  cursor: default;
+}
+.tag-dark:hover { background: var(--flaeche-tag); color: var(--txt-voll); }
+
+/* Navigation */
+.nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 200;
+  height: var(--nav-h);
+  transition: background 0.3s ease, backdrop-filter 0.3s ease;
+}
+.nav.scrolled {
+  background: var(--nav-hg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+.nav-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 100%;
+  padding: 0 1.4rem;
+}
+.nav-logo {
+  font-family: var(--font-base);
+  font-size: 1.3rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--weiss);
+  transition: color 0.2s;
+}
+.nav-logo:hover { color: #ffbf41; }
+
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+}
+
+.nav-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  opacity: 0.8;
+  transition: opacity 0.2s, transform 0.2s;
+  flex-shrink: 0;
+}
+.nav-icon:hover { opacity: 1; transform: translateY(-2px); }
+.nav-icon svg   { width: 22px; height: 22px; }
+
+.burger {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 6px;
+  transition: background 0.2s;
+}
+.burger:hover { background: rgba(255,255,255,0.1); }
+.burger span {
+  display: block;
+  width: 24px;
+  height: 2px;
+  /* Liegt auf der dunklen Leiste, bleibt in beiden Modi hell */
+  background: var(--weiss);
+  border-radius: 2px;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+/* Sidebar */
+.sidebar-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.45);
+  z-index: 300;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.35s ease;
+}
+.sidebar-overlay.open { opacity: 1; pointer-events: all; }
+
+.sidebar {
+  position: fixed;
+  top: 0; right: 0; bottom: 0;
+  width: clamp(240px, 22vw, 340px);
+  background: var(--hg);
+  z-index: 400;
+  transform: translateX(100%);
+  transition: transform 0.35s cubic-bezier(0.4,0,0.2,1);
+  display: flex;
+  flex-direction: column;
+  padding: 1.5rem 1.8rem;
+  box-shadow: -8px 0 40px rgba(0,0,0,0.18);
+}
+.sidebar.open { transform: translateX(0); }
+
+.sidebar-close {
+  align-self: flex-end;
+  background: none;
+  border: none;
+  font-size: 1.3rem;
+  cursor: pointer;
+  color: var(--txt-gedimmt);
+  padding: 0.3rem 0.5rem;
+  border-radius: 6px;
+  transition: background 0.2s, color 0.2s;
+  margin-bottom: 1.2rem;
+}
+.sidebar-close:hover { background: var(--flaeche-hover); color: var(--txt-voll); }
+.sidebar-close svg { width: 20px; height: 20px; display: block; }
+
+.sidebar-links {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+/* Hauptpunkt mit seinen Unterpunkten, Trennlinie unter der Gruppe */
+.sidebar-gruppe {
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 0.3rem;
+  border-bottom: 1px solid var(--linie-menue);
+}
+.sidebar-gruppe:last-of-type { border-bottom: none; }
+
+.sidebar-link-main {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--txt-voll);
+  padding: 0.65rem 0;
+  transition: color 0.18s, padding-left 0.18s;
+}
+.sidebar-link-main:hover,
+.sidebar-link-main.active { color: var(--akzent-2); }
+.sidebar-link-main:hover  { padding-left: 6px; }
+
+/* Unterpunkte eingerueckt an einer kurzen Linie */
+.sidebar-link-sub {
+  font-size: 0.9rem;
+  color: var(--txt-sub);
+  padding: 0.38rem 0 0.38rem 1.15rem;
+  transition: color 0.18s, padding-left 0.18s;
+}
+.sidebar-link-sub::before {
+  content: '';
+  position: absolute;
+  left: 0.1rem; top: 50%;
+  width: 0.5rem; height: 1px;
+  background: var(--linie-menue);
+  transition: width 0.18s ease, background 0.18s ease;
+}
+.sidebar-link-sub:hover { color: var(--akzent-2); padding-left: 1.4rem; }
+.sidebar-link-sub:hover::before { width: 0.78rem; background: var(--akzent-2); }
+
+/* Einstellungsschalter im Menuefuss */
+.sidebar-schalter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  width: 100%;
+  margin-top: auto;
+  padding: 0.9rem 0 0.2rem;
+  border: none;
+  border-top: 1px solid var(--linie-menue);
+  background: none;
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.86rem;
+  color: var(--txt-sub);
+  transition: color 0.18s ease;
+}
+.sidebar-schalter:hover { color: var(--txt-voll); }
+.sidebar-schalter[hidden] { display: none; }
+.sidebar-schalter-gleis {
+  position: relative;
+  flex-shrink: 0;
+  width: 34px; height: 20px;
+  border-radius: 999px;
+  background: var(--linie-weich);
+  transition: background 0.24s ease;
+}
+.sidebar-schalter-knopf {
+  position: absolute;
+  top: 3px; left: 3px;
+  width: 14px; height: 14px;
+  border-radius: 50%;
+  background: var(--hg-2);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+  transition: transform 0.24s cubic-bezier(0.34, 1.4, 0.64, 1);
+}
+.sidebar-schalter[aria-checked='true'] .sidebar-schalter-gleis { background: var(--akzent-2); }
+.sidebar-schalter[aria-checked='true'] .sidebar-schalter-knopf { transform: translateX(14px); }
+
+/* Page Hero (subpages) */
+/* Seitenkopf der Unterseiten: heller Papierton mit feinem Raster */
+.page-hero {
+  min-height: 42vh;
+  background: linear-gradient(168deg, var(--hg) 0%, var(--hg-kopf-2) 60%, var(--hg-kopf-3) 100%);
+  display: flex;
+  align-items: flex-end;
+  padding: calc(var(--nav-h) + 3.5rem) var(--gap-m) var(--gap-l);
+  position: relative;
+  overflow: hidden;
+  border-bottom: 1px solid var(--linie);
+}
+/* Raster, blendet zum Rand hin aus */
+.page-hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(to right, var(--raster) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--raster) 1px, transparent 1px);
+  background-size: 74px 74px;
+  -webkit-mask-image: radial-gradient(ellipse 75% 85% at 22% 100%, #000 10%, transparent 72%);
+          mask-image: radial-gradient(ellipse 75% 85% at 22% 100%, #000 10%, transparent 72%);
+  pointer-events: none;
+}
+.page-hero-inner {
+  max-width: var(--max-w);
+  margin: 0 auto;
+  width: 100%;
+  position: relative;
+  z-index: 1;
+}
+.page-hero-title {
+  font-family: var(--font-serif);
+  font-size: clamp(2.6rem, 6vw, 5rem);
+  font-weight: 400;
+  color: var(--txt-stark);
+  line-height: 1.05;
+  letter-spacing: -0.015em;
+  margin-bottom: 1rem;
+}
+.page-hero-sub {
+  color: var(--txt-warm-tief);
+  font-size: clamp(1rem, 1.8vw, 1.2rem);
+  max-width: 52ch;
+  line-height: 1.7;
+}
+/* Akzent ueber die Schreibschrift statt ueber Farbe */
+.page-hero-accent {
+  font-family: var(--font-script);
+  font-weight: 500;
+  color: var(--akzent);
+  padding-left: 0.08em;
+}
+.page-hero .label { color: var(--txt-warm); }
+.page-hero .label.white { color: var(--txt-warm); }
+
+/* Footer */
+.footer {
+  background: var(--hg-betont);
+  padding: var(--gap-m) var(--gap-m) var(--gap-l);
+}
+.footer-inner {
+  max-width: 95%;
+  margin: 0 auto;
+  border-top: 1px solid rgba(255,255,255,0.1);
+  padding-top: var(--gap-m);
+}
+.footer-links {
+  display: flex;
+  gap: var(--gap-l);
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-bottom: var(--gap-m);
+}
+.footer-col { display: flex; flex-direction: column; gap: 0.5rem; }
+.footer-main {
+  color: var(--weiss);
+  font-size: 0.95rem;
+  font-weight: 600;
+  transition: opacity 0.2s;
+  /* Enger Deckel, sonst bricht die Reihe bei ~1024px um */
+  margin-right: clamp(0.8rem, 2.4vw, 46px);
+}
+.footer-main:hover { opacity: 0.65; }
+.footer-sub {
+  color: rgba(255,255,255,0.5);
+  font-size: 0.82rem;
+  transition: opacity 0.2s;
+}
+.footer-sub:hover { opacity: 1; }
+.footer-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+}
+.footer-logo {
+  font-family: var(--font-rund);
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--weiss);
+  transition: color 0.2s;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+}
+.footer-logo:hover { color: #ffbf41; }
+.footer-social { display: flex; gap: 0.75rem; margin-left: auto; }
+.footer-social-icon { width: 24px; height: 24px; }
+.footer-social-icon svg { width: 18px; height: 18px; }
+
+/* Scroll Reveal */
+/* Kurzer Weg statt langer Fade-up-Bewegung */
+.reveal {
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.42s cubic-bezier(0.22, 0.61, 0.36, 1),
+              transform 0.42s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+.reveal.visible { opacity: 1; transform: none; }
+.reveal-delay-1 { transition-delay: 0.06s; }
+.reveal-delay-2 { transition-delay: 0.12s; }
+.reveal-delay-3 { transition-delay: 0.18s; }
+.reveal-delay-4 { transition-delay: 0.24s; }
+
+/* Contact Form (shared) */
+.cf-success, .cf-error {
+  display: none;
+  margin-top: 1rem;
+  padding: 0.9rem 1.2rem;
+  border-radius: var(--r-s);
+  font-size: 0.95rem;
+}
+.cf-success svg, .cf-error svg { width: 17px; height: 17px; vertical-align: -0.2em; margin-right: 0.4rem; }
+.cf-success { background: rgba(80,200,120,0.12); color: #6fc98a; border: 1px solid #6fc98a44; }
+.cf-error   { background: rgba(220,80,80,0.12);  color: #e07070; border: 1px solid #e0707044; }
+.cf-success.show, .cf-error.show { display: block; animation: cf-in 0.3s ease-out; }
+@keyframes cf-in { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: none; } }
+
+/* Feldzustaende: Fehler steht am Feld, nicht gesammelt oben */
+.cf-input:focus, .cf-input-light:focus { box-shadow: 0 0 0 3px rgba(152,213,235,0.35); }
+.cf-input.invalid, .cf-input-light.invalid { border-color: #d46a6a; }
+.cf-input.invalid:focus, .cf-input-light.invalid:focus { box-shadow: 0 0 0 3px rgba(212,106,106,0.22); }
+.cf-hint { display: block; font-size: 0.82rem; line-height: 1.4; color: #d46a6a; margin-top: 0.3rem; }
+.cf-input, .cf-input-light { transition: border-color 0.18s ease, box-shadow 0.18s ease, background 0.18s ease; }
+
+/* Absende-Button waehrend des Sendens: gesperrt, mit Spinner */
+.btn[data-loading="true"] { pointer-events: none; opacity: 0.72; }
+.btn[data-loading="true"]::before {
+  content: '';
+  display: inline-block;
+  width: 0.85em; height: 0.85em;
+  margin-right: 0.55em;
+  vertical-align: -0.08em;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  animation: cf-spin 0.7s linear infinite;
+}
+@keyframes cf-spin { to { transform: rotate(360deg); } }
+
+/* Nur fuer Screenreader */
+.sr-only {
+  position: absolute;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Mikro-Interaktionen */
+
+/* Lichtschein der Buttons laeuft ueber .glanz-schicht */
+.btn { position: relative; overflow: hidden; isolation: isolate; }
+
+/* Leuchtrahmen fuer Karten */
+@property --leucht-winkel {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+
+/* Nur ::after: ::before ist an den Projektkarten belegt */
+.leuchtrahmen { position: relative; isolation: isolate; }
+.leuchtrahmen::after {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  z-index: -1;
+  border-radius: inherit;
+  background: conic-gradient(
+    from var(--leucht-winkel) at 50% 50%,
+    #5fb6d8, #2c5a6b, #e0a445, #5fb6d8
+  );
+  filter: blur(9px);
+  opacity: 0;
+  transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.leuchtrahmen:hover::after {
+  opacity: 0.7;
+  /* Nur beim Hover drehen */
+  animation: leucht-drehen 5s linear infinite;
+}
+@keyframes leucht-drehen {
+  to { --leucht-winkel: 360deg; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .leuchtrahmen:hover::after { animation: none; }
+}
+
+/* Interaktionsschicht */
+
+[data-magnet] {
+  transform:
+    translate3d(var(--mx, 0px), calc(var(--my, 0px) - var(--naehe, 0) * 2px), 0)
+    scale(calc(1 + var(--naehe, 0) * 0.022));
+}
+/* Nur Farbwechsel weich, die haengen am Hover statt am Zeiger */
+.btn, .filter-btn, .nav-icon, .nach-oben {
+  transition: background 0.22s ease, color 0.22s ease,
+              border-color 0.22s ease, box-shadow 0.28s ease;
+}
+
+/* 3D-Neigung; perspective am Element, sonst kippen Nachbarkarten mit */
+[data-neigen] {
+  transform:
+    perspective(900px)
+    rotateX(var(--kippx, 0deg))
+    rotateY(var(--kippy, 0deg))
+    translate3d(0, calc(var(--naehe, 0) * -5px), 0)
+    scale(calc(1 + var(--naehe, 0) * 0.012));
+  transform-style: preserve-3d;
+}
+/* z-index -1 im eigenen Mischbereich: ueber dem Grund, unter dem Inhalt */
+[data-glanz] { isolation: isolate; }
+.glanz-schicht {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: var(--glanz, 0);
+  transition: opacity 0.3s ease;
+  background: radial-gradient(
+    14rem 14rem at var(--gx, 50%) var(--gy, 50%),
+    var(--glanz-farbe, rgba(255, 255, 255, 0.16)), transparent 70%
+  );
+}
+/* Auf hellem Grund traegt ein dunkler Schein besser */
+.btn-dark-outline, .value-card, .hobby-card, .kn-block, .profile-card {
+  --glanz-farbe: rgba(37, 34, 30, 0.10);
+}
+.btn-blau { --glanz-farbe: rgba(255, 255, 255, 0.5); }
+
+/* Druckwelle vom Beruehrungspunkt */
+.welle {
+  position: absolute;
+  border-radius: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  background: currentColor;
+  opacity: 0.28;
+  pointer-events: none;
+  z-index: 2;
+  animation: welle-laeuft 0.62s cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
+}
+@keyframes welle-laeuft {
+  to { transform: translate(-50%, -50%) scale(1); opacity: 0; }
+}
+/* Damit die Welle nicht ueber den Rand hinauslaeuft */
+.btn, .filter-btn, .kopieren, .burger, .modus, .nach-oben,
+.sidebar-link-main, .sidebar-link-sub { position: relative; overflow: hidden; }
+/* Runde Knoepfe brauchen eine runde Welle */
+.modus, .nach-oben { border-radius: 50%; }
+
+/* Bilder heranfahren; mit eigener Parallaxe ausgenommen */
+[data-zeiger='bild'] { overflow: hidden; }
+[data-zeiger='bild'] img:not([data-parallax]) {
+  transition: transform 0.65s cubic-bezier(0.22, 0.61, 0.36, 1), filter 0.5s ease;
+}
+[data-zeiger='bild']:hover img:not([data-parallax]) { transform: scale(1.055); }
+
+/* Buchstaben- und Wortwelle unter dem Zeiger. --nah setzt text.ts je Teil */
+.zeichen, .wort {
+  display: inline-block;
+  transform: translate3d(0, calc(var(--nah, 0) * -0.16em), 0);
+  transition: transform 0.28s cubic-bezier(0.34, 1.3, 0.64, 1),
+              color 0.28s ease;
+  will-change: transform;
+}
+.text-wach .zeichen, .text-wach .wort { transition-duration: 0.12s; }
+
+/* Textlinks: Unterstrich wird von links gezogen */
+.link-arrow, .proj-link, .blog-read-link, .tl-more, .profile-cta {
+  position: relative;
+  display: inline-block;
+}
+.link-arrow::after, .proj-link::after, .blog-read-link::after, .tl-more::after {
+  content: '';
+  position: absolute; left: 0; bottom: -2px;
+  width: 100%; height: 1px;
+  background: currentColor;
+  transform: scaleX(0); transform-origin: 0 50%;
+  transition: transform 0.32s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+.link-arrow:hover::after, .proj-link:hover::after,
+.blog-read-link:hover::after, .tl-more:hover::after { transform: scaleX(1); }
+
+/* Ueberschriften werden freigeschnitten; nur mit aktivem JS */
+.js .section-heading, .js .page-hero-title {
+  clip-path: inset(0 0 110% 0);
+  transition: clip-path 0.72s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+.js .section-heading.aufgedeckt, .js .page-hero-title.aufgedeckt { clip-path: inset(0 0 -20% 0); }
+
+/* Menue: Links laufen nacheinander ein */
+.sidebar-link-main, .sidebar-link-sub {
+  opacity: 0; transform: translateX(14px);
+  transition: opacity 0.34s ease, transform 0.34s cubic-bezier(0.22, 0.61, 0.36, 1), color 0.2s, padding-left 0.18s;
+}
+.sidebar.open .sidebar-link-main, .sidebar.open .sidebar-link-sub { opacity: 1; transform: none; }
+
+/* Kopieren-Schaltflaeche mit Rueckmeldung */
+.kopieren {
+  background: none; border: none; cursor: pointer; color: inherit;
+  display: inline-flex; align-items: center; gap: 0.35rem;
+  font: inherit; font-size: 0.8rem; padding: 0.2rem 0.1rem;
+  opacity: 0.6; transition: opacity 0.2s ease;
+}
+.kopieren:hover { opacity: 1; }
+.kopieren svg { width: 14px; height: 14px; }
+.kopieren[data-fertig='true'] { opacity: 1; color: #3a9d5c; }
+
+/* Zeichenzaehler unter dem Nachrichtenfeld */
+.zaehler { font-size: 0.78rem; color: #aaa; text-align: right; margin-top: 0.15rem; transition: color 0.2s ease; }
+.zaehler.knapp { color: #d46a6a; }
+
+/* Zurueck nach oben, erscheint erst beim Bedarf */
+.nach-oben {
+  position: fixed; right: 22px; bottom: 22px; z-index: 150;
+  width: 44px; height: 44px; border-radius: 50%;
+  background: rgba(37,34,30,0.82); color: #fff; border: none;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; opacity: 0; transform: translateY(12px);
+  transition: opacity 0.3s ease, transform 0.3s ease, background 0.2s ease;
+  pointer-events: none;
+}
+.nach-oben.sichtbar { opacity: 1; pointer-events: auto; }
+.nach-oben:hover { background: #25221e; }
+.nach-oben svg { width: 19px; height: 19px; transition: transform 0.28s cubic-bezier(0.34, 1.3, 0.64, 1); }
+.nach-oben:hover svg { transform: translateY(-2px); }
+
+/* Aufdecken beim Scrollen */
+.js [data-auf] {
+  transition:
+    opacity   0.7s cubic-bezier(0.22, 0.61, 0.36, 1),
+    transform 0.8s cubic-bezier(0.22, 0.61, 0.36, 1),
+    filter    0.7s ease,
+    clip-path 0.9s cubic-bezier(0.22, 0.61, 0.36, 1);
+  will-change: opacity, transform;
+}
+.js [data-auf='schieben']   { opacity: 0; transform: translate3d(0, 26px, 0); }
+.js [data-auf='skalieren']  { opacity: 0; transform: scale(0.93); }
+.js [data-auf='kippen']     { opacity: 0; transform: perspective(800px) rotateX(9deg) translate3d(0, 22px, 0); transform-origin: 50% 100%; }
+.js [data-auf='unschaerfe'] { opacity: 0; filter: blur(11px); transform: translate3d(0, 12px, 0); }
+.js [data-auf='maske']      { clip-path: inset(0 0 100% 0); }
+.js [data-auf='seite']      { opacity: 0; transform: translate3d(-28px, 0, 0); }
+
+.js [data-auf].auf-sichtbar {
+  opacity: 1;
+  filter: none;
+  transform: none;
+  clip-path: inset(0 0 -12% 0);
+}
+/* Nach dem Auftritt keine Reservierung mehr halten */
+.js [data-auf].auf-sichtbar { will-change: auto; }
+
+/* Parallaxe: --py setzt scrollen.ts, abhaengig vom Stand im Bild */
+[data-parallax] { transform: translate3d(0, var(--py, 0px), 0); will-change: transform; }
+
+/* Scroll-Fortschritt */
+.fortschritt {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  z-index: 260;
+  pointer-events: none;
+  background: transparent;
+}
+.fortschritt-linie {
+  display: block;
+  height: 100%;
+  width: 100%;
+  transform: scaleX(var(--scroll-fortschritt, 0));
+  transform-origin: 0 50%;
+  background: linear-gradient(90deg, var(--akzent) 0%, var(--blau) 100%);
+  opacity: 0.9;
+}
+
+/* Kopfleiste faehrt beim Herunterscrollen weg und beim Hochscrollen zurueck */
+.nav {
+  transform: translate3d(0, 0, 0);
+  transition: background 0.3s ease, backdrop-filter 0.3s ease,
+              transform 0.42s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+.nav.nav-weg { transform: translate3d(0, -100%, 0); }
+
+/* Menue: gleitender Anzeiger */
+.sidebar-links { position: relative; }
+.sidebar-anzeiger {
+  position: absolute;
+  left: -0.9rem;
+  width: 2px;
+  border-radius: 2px;
+  background: var(--akzent-2);
+  opacity: 0;
+  transform: translate3d(0, var(--ay, 0px), 0) scaleY(var(--ah, 1));
+  transform-origin: 0 0;
+  height: 1px;
+  transition: transform 0.34s cubic-bezier(0.22, 0.61, 0.36, 1), opacity 0.24s ease;
+  pointer-events: none;
+}
+.sidebar-links.anzeiger-an .sidebar-anzeiger { opacity: 1; }
+
+/* Eigener Zeiger */
+.zeiger-huelle {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+.zeiger-huelle.an { opacity: 1; }
+/* Abgeschaltet ueber den Menuepunkt oder `zeiger` im Terminal */
+.ohne-zeigerring .zeiger-huelle { display: none; }
+.zeiger-ring, .zeiger-punkt {
+  position: absolute;
+  top: 0; left: 0;
+  border-radius: 50%;
+  will-change: transform;
+}
+.zeiger-ring {
+  width: 34px; height: 34px;
+  margin: -17px 0 0 -17px;
+  border: 1.5px solid var(--akzent);
+  opacity: 0.55;
+  transition: width 0.26s cubic-bezier(0.34, 1.3, 0.64, 1),
+              height 0.26s cubic-bezier(0.34, 1.3, 0.64, 1),
+              margin 0.26s cubic-bezier(0.34, 1.3, 0.64, 1),
+              opacity 0.26s ease, border-radius 0.26s ease, background 0.26s ease;
+}
+.zeiger-punkt {
+  width: 5px; height: 5px;
+  margin: -2.5px 0 0 -2.5px;
+  background: var(--akzent);
+  transition: width 0.2s ease, height 0.2s ease, margin 0.2s ease, opacity 0.2s ease;
+}
+.zeiger-huelle[data-zustand='link'] .zeiger-ring  { width: 46px; height: 46px; margin: -23px 0 0 -23px; opacity: 0.75; }
+.zeiger-huelle[data-zustand='link'] .zeiger-punkt { opacity: 0; }
+.zeiger-huelle[data-zustand='knopf'] .zeiger-ring { width: 26px; height: 26px; margin: -13px 0 0 -13px; opacity: 0.9; }
+.zeiger-huelle[data-zustand='bild'] .zeiger-ring {
+  width: 74px; height: 74px; margin: -37px 0 0 -37px;
+  background: color-mix(in srgb, var(--akzent) 14%, transparent);
+  opacity: 0.9;
+}
+.zeiger-huelle[data-zustand='bild'] .zeiger-punkt { opacity: 0; }
+.zeiger-huelle[data-zustand='text'] .zeiger-ring {
+  width: 2px; height: 26px; margin: -13px 0 0 -1px; border-radius: 1px;
+  background: var(--akzent); opacity: 0.8;
+}
+.zeiger-huelle[data-zustand='text'] .zeiger-punkt { opacity: 0; }
+/* Druckpunkt ueber die Groesse: transform traegt die Position */
+.zeiger-huelle.druck .zeiger-ring  { width: 22px; height: 22px; margin: -11px 0 0 -11px; }
+.zeiger-huelle.druck .zeiger-punkt { width: 8px; height: 8px; margin: -4px 0 0 -4px; }
+
+/* Fokus & Druckfeedback */
+/* CurrentColor passt den Ring automatisch an helle wie dunkle Sektionen an */
+:where(a, button, input, select, textarea, [tabindex]):focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+.btn:focus-visible, .nav-icon:focus-visible, .burger:focus-visible { outline-offset: 4px; }
+.btn { touch-action: manipulation; }
+/* Einsinken ohne die Magnetverschiebung zu verlieren */
+.btn:active, .filter-btn:active, .nach-oben:active {
+  transform:
+    translate3d(var(--mx, 0px), var(--my, 0px), 0)
+    scale(0.972);
+}
+
+/* Bedienung mit dem Finger */
+@media (pointer: coarse) {
+  /* Kopfleiste */
+  .nav-icon { width: 44px; height: 44px; }
+  .nav-logo { display: inline-flex; align-items: center; min-height: 44px; }
+  .modus    { width: 44px; height: 44px; }
+  .burger   { padding: 14px 10px; }
+  .nav-right { gap: 0.35rem; }
+
+  /* Seitenmenue */
+  .sidebar-close { min-width: 44px; min-height: 44px; }
+  .sidebar-link-main { padding: 0.85rem 0; }
+  .sidebar-link-sub  { padding: 0.7rem 0 0.7rem 1.15rem; }
+  .sidebar-schalter  { padding: 1rem 0 0.6rem; min-height: 44px; }
+
+  /* Textverweise sind sonst nur so hoch wie ihre Zeile */
+  .link-arrow, .proj-link, .tl-more, .blog-read-link, .profile-cta {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+  }
+
+  /* Fusszeile: dort stehen die Verweise am dichtesten */
+  .footer-main, .footer-sub {
+    display: inline-flex;
+    align-items: center;
+    min-height: 40px;
+  }
+
+  /* Schaltflaechen und Eingaben */
+  .btn { padding: 0.8rem 1.7rem; }
+  .filter-btn { padding: 0.85rem 1.3rem; }
+  .cf-input, .cf-input-light { padding: 0.9rem 1rem; }
+  .kopieren { min-height: 44px; padding: 0.4rem 0.2rem; }
+  .galerie-pfeil { min-width: 44px; min-height: 44px; }
+}
+
+/* Massstab auf dem Telefon */
+@media (max-width: 700px) {
+  :root {
+    --gap-s:  0.8rem;
+    --gap-m:  1.15rem;
+    --gap-l:  1.7rem;
+    --gap-xl: 2.4rem;
+  }
+
+  .section-heading { font-size: 1.75rem; line-height: 1.2; margin-bottom: 0.6rem; }
+  .page-hero-title { font-size: 2.05rem; line-height: 1.12; }
+
+  .page-hero {
+    min-height: auto;
+    padding: calc(var(--nav-h) + 1.4rem) var(--gap-m) var(--gap-l);
+  }
+  .page-hero-sub { font-size: 0.98rem; line-height: 1.6; }
+
+  /* Kleinschrift, die sonst unter 12px rutscht */
+  .label { font-size: 0.8rem; margin-bottom: 0.45rem; }
+  .tag, .tag-dark { font-size: 0.82rem; }
+  .zaehler { font-size: 0.82rem; }
+  .channel-label { font-size: 0.8rem; }
+  .profile-badge { font-size: 0.78rem; }
+  .wg-art { font-size: 0.8rem; }
+  /* 16px verhindert das automatische Hineinzoomen beim Fokus */
+  .cf-input, .cf-input-light, select, textarea { font-size: 16px; }
+
+  /* Karten und Raster enger stellen */
+  .proj-info { padding: 1.1rem 1.15rem 1.3rem; }
+  .value-card, .hobby-card { padding: 1.5rem 1.25rem; }
+  .profile-card { padding: 1.4rem 1.3rem 1.2rem; }
+  .leuchtrahmen::after { display: none; } /* Leuchten ohne Hover sinnlos */
+
+}
+
+/* Eine Kante, sobald alles untereinander steht */
+@media (max-width: 900px) {
+  .intro-inner, .about-inner, .goal-inner, .goal-content,
+  .projects-header, .values-header, .hobbies-header, .faecher-kopf,
+  .profiles-header, .hp-kopf, .exp-inner, .future-inner,
+  .about-cta-inner, .proj-cta-inner, .wk-cta-inner, .crosslink-inner,
+  .weise-inner, .belege-inner, .contact-inner {
+    text-align: left;
+  }
+  .faecher-sub, .profiles-sub, .hp-sub { margin-left: 0; margin-right: 0; }
+
+  /* Was daneben lag, richtet sich mit aus */
+  .about-buttons, .cta-btns, .wk-btns, .cta-reihe,
+  .projects-footer, .crosslink-actions {
+    justify-content: flex-start;
+  }
+  .goal-image, .contact-img, .about-photo { margin-left: 0; margin-right: 0; }
+}
+
+/* Fusszeile auf dem Telefon */
+@media (max-width: 700px) {
+  .footer-links {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0;
+    width: 100%;
+  }
+  .footer-col {
+    /* Kein Schrumpfen, sonst laufen die Verweise ineinander */
+    flex: 0 0 auto;
+    flex-direction: row;
+    align-items: center;
+    gap: 0;
+    border: none;
+  }
+
+     /* alle sechs Verweise in einer Zeile; Schrift waechst mit dem Fenster,
+     space-between verteilt den Rest */
+  .footer-main {
+    font-size: clamp(0.56rem, 2.85vw, 0.95rem);
+    white-space: nowrap;
+    margin-right: 0;
+    padding: 0.4rem 0;
+    min-height: 36px;
+  }
+  .footer-sub { display: none; }
+  /* Schmalerer Innenrand zugunsten der Schriftgroesse */
+  .footer-inner { padding-left: 0.8rem; padding-right: 0.8rem; }
+  .footer-bottom { flex-direction: row; align-items: center; justify-content: space-between; gap: 1rem; }
+}
+
+/* Druckansicht */
+/* Lebenslauf als PDF: Navigation und Deko raus */
+@media print {
+  .nav, .sidebar, .sidebar-overlay, .footer, .btn, .hero { display: none !important; }
+  body { background: #fff !important; color: #000; }
+  .reveal { opacity: 1 !important; transform: none !important; }
+  section { background: #fff !important; padding: 1.2rem 0 !important; break-inside: avoid; }
+  .section-heading, .section-heading.white, .label, .label.white { color: #000 !important; }
+  a { color: #000; text-decoration: underline; }
+}
+
+/* Reduzierte Bewegung */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  html { scroll-behavior: auto; }
+  .reveal { opacity: 1; transform: none; }
+  /* Alles, was sonst erst durch Bewegung sichtbar wird, sofort zeigen */
+  .js .section-heading, .js .page-hero-title { clip-path: none; }
+  .sidebar-link-main, .sidebar-link-sub { opacity: 1; transform: none; }
+
+  /* Ausgangszustaende zuruecksetzen, sonst bleibt Inhalt unsichtbar */
+  .js [data-auf] {
+    opacity: 1 !important;
+    transform: none !important;
+    filter: none !important;
+    clip-path: none !important;
+  }
+  [data-magnet], [data-neigen], [data-parallax] {
+    transform: none !important;
+    box-shadow: none;
+  }
+  .zeichen, .wort { transform: none !important; }
+  .glanz-schicht, .welle, .zeiger-huelle { display: none !important; }
+  .nav.nav-weg { transform: none !important; }
+  .fortschritt-linie { transition: none; }
+}
+
+/* Auf Touch keine Zeiger-Effekte */
+@media not all and (hover: hover) and (pointer: fine) {
+  .zeiger-huelle { display: none; }
+  [data-magnet], [data-neigen] { transform: none; }
+}
+
+/* Timeline (shared) */
+.tl-wrap {
+  display: grid;
+  grid-template-columns: 60px 1fr;
+  max-width: 700px;
+  margin: 0 auto;
+}
+.tl-line-col { display: flex; justify-content: center; }
+.tl-track {
+  width: 3px;
+  background: rgba(255,255,255,0.15);
+  border-radius: 2px;
+  position: relative;
+}
+.tl-fill {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  background: var(--blau);
+  border-radius: 2px;
+  height: 0%;
+  transition: height 0.2s ease;
+}
+.tl-entries {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  padding-left: 1.5rem;
+}
+.tl-card {
+  padding: 1.5rem 1.8rem;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: var(--r);
+  margin-bottom: 1.5rem;
+  opacity: 0;
+  transform: translateX(20px);
+  transition: opacity 0.55s ease, transform 0.55s ease, background 0.3s;
+}
+.tl-card.visible { opacity: 1; transform: translateX(0); }
+.tl-card:hover   { background: rgba(255,255,255,0.08); }
+.tl-year {
+  font-family: var(--font-script);
+  font-size: 2rem;
+  color: var(--blau);
+  display: block;
+  margin-bottom: 0.4rem;
+}
+.tl-title {
+  color: var(--weiss);
+  font-family: var(--font-serif);
+  font-size: 1.1rem;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+}
+.tl-text  { color: rgba(255,255,255,0.55); font-size: 0.9rem; line-height: 1.6; }
+.tl-more  { font-size: 0.88rem; color: var(--blau); display: inline-block; margin-top: 0.5rem; }
+.tl-more:hover { opacity: 0.7; }
+
+/* Responsive */
+/* Ab 701px, darunter gilt die Telefonfassung */
+@media (min-width: 701px) and (max-width: 900px) {
+  .footer-links {
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: clamp(0.8rem, 2vw, var(--gap-l));
+    width: 100%;
+  }
+  .footer-col { flex: 1 1 0; min-width: 0; }
+  .footer-main { margin-right: 0; white-space: nowrap; }
+  .footer-sub  { white-space: nowrap; }
+}
+
+@media (max-width: 600px) {
+  :root { --gap-l: 2.2rem; --gap-xl: 3.2rem; }
+  .sidebar { width: min(86vw, 340px); }
+  .page-hero { min-height: 45vh; }
+  .page-hero-sub { max-width: none; }
+}

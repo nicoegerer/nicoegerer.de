@@ -1,0 +1,210 @@
+/* Strukturelles CSS fuer card-fan-carousel.tsx, Tailwind-Utilities zu Klassen portiert */
+.fan-abschnitt {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  padding: 1rem 1rem 0;
+  position: relative;
+  z-index: 20;
+}
+
+.fan-rahmen {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 90rem;
+}
+
+.fan-layout {
+  --karte: 15rem;
+  display: flex;
+  position: relative;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  max-width: 80rem;
+  height: 38rem;
+  perspective: 1200px;
+}
+
+.fan-card {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: var(--karte);
+  aspect-ratio: 4 / 7;
+  margin-top: calc(var(--karte) * 7 / 4 / -2);
+  margin-left: calc(var(--karte) / -2);
+  border-radius: 1.25rem;
+  overflow: hidden;
+  background: #e7e0d6;
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.22);
+  /* GSAP schreibt transform — hier nur der Hinweis an den Compositor */
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+  transform-origin: center bottom;
+}
+
+a.fan-card { display: block; cursor: pointer; }
+
+.fan-bild {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+.fan-bild img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: inherit;
+}
+
+/* Steuerung: Pfeile und Punkte auf eigenem dunklem Balken */
+.fan-steuerung { --fan-balken: rgba(28, 26, 23, 0.92); }
+:root[data-modus='sw'] .fan-steuerung { --fan-balken: rgba(255, 255, 255, 0.10); }
+.fan-steuerung {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.9rem;
+  margin: 1.5rem auto 0;
+  position: relative;
+  z-index: 30;
+  /* Balken traegt die Bedienung, Pfeile und Punkte stehen darauf immer gleich */
+  background: var(--fan-balken);
+  border-radius: 999px;
+  padding: 0.45rem 0.7rem;
+  box-shadow: 0 6px 22px rgba(0, 0, 0, 0.18);
+}
+/* inline-flex braucht einen Block darum, damit margin:auto zentriert. */
+.fan-steuerung-huelle { display: flex; justify-content: center; }
+
+.fan-pfeil {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  border: 1.5px solid rgba(255, 255, 255, 0.28);
+  background: rgba(255, 255, 255, 0.10);
+  color: #ffffff;
+  cursor: pointer;
+  transition: color 0.3s ease, border-color 0.3s ease, background 0.3s ease;
+}
+.fan-pfeil:hover {
+  border-color: rgba(255, 255, 255, 0.7);
+  background: rgba(255, 255, 255, 0.22);
+}
+.fan-pfeil:active { opacity: 0.7; }
+.fan-pfeil:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+
+/* EINSTELLUNG: Ring um die Pfeile   Der duenne Kreis */
+.fan-pfeil::before {
+  content: '';
+  position: absolute;
+  inset: 3px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  pointer-events: none;
+}
+[data-ring='aus'] .fan-pfeil::before { content: none; }
+.fan-pfeil svg { width: 18px; height: 18px; position: relative; z-index: 2; }
+
+.fan-punkte {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.5rem;
+}
+.fan-punkt {
+  width: 8px;
+  height: 8px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.32);
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.3s ease;
+}
+.fan-punkt:hover { background: rgba(255, 255, 255, 0.65); }
+/* Aktiver Punkt voll weiss und groesser */
+.fan-punkt[aria-current='true'] { background: #ffffff; transform: scale(1.45); }
+.fan-punkt:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
+
+/* Mit dem Finger sind 8px nicht zu treffen */
+@media (pointer: coarse) {
+  .fan-punkt { position: relative; }
+  .fan-punkt::after {
+    content: '';
+    position: absolute;
+    /* Senkrecht grosszuegig, waagerecht knapp, sonst ueberlappen die Trefferflaechen */
+    inset: -16px -2px;
+  }
+  .fan-pfeil { width: 44px; height: 44px; }
+}
+
+/* Zaehlung statt Punkte, wenn viele Bilder im Faecher liegen */
+.fan-zaehler {
+  display: none;
+  min-width: 3.6rem;
+  text-align: center;
+  font-family: var(--font-base);
+  font-size: 0.85rem;
+  font-variant-numeric: tabular-nums;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+/* Punkte bleiben in einer Reihe; ab 20 Bildern uebernimmt die Zaehlung */
+@media (max-width: 700px) {
+  .fan-steuerung { gap: 0.5rem; padding: 0.4rem 0.55rem; }
+  .fan-pfeil { width: 38px; height: 38px; }
+  .fan-pfeil svg { width: 15px; height: 15px; }
+  .fan-punkte { flex-wrap: nowrap; gap: 0.5rem; }
+  .fan-punkt { width: 7px; height: 7px; }
+  .fan-punkt[aria-current='true'] { transform: scale(1.5); }
+
+  .fan-steuerung[data-viele='ja'] .fan-punkte { display: none; }
+  .fan-steuerung[data-viele='ja'] .fan-zaehler { display: block; }
+}
+
+/* Grundstellung ohne JavaScript */
+.fan-layout { --spreiz: 1; }
+
+.fan-card:nth-child(1) { transform: translate(calc(-30rem * var(--spreiz)), 7.3rem) rotate(-21deg) scale(0.7756); z-index: 1; }
+.fan-card:nth-child(2) { transform: translate(calc(-22rem * var(--spreiz)), 4rem)   rotate(-14deg) scale(0.8498); z-index: 2; }
+.fan-card:nth-child(3) { transform: translate(calc(-11rem * var(--spreiz)), 1.3rem) rotate(-7deg)  scale(0.9346); z-index: 3; }
+.fan-card:nth-child(4) { transform: none;                                                                        z-index: 10; }
+.fan-card:nth-child(5) { transform: translate(calc(11rem * var(--spreiz)), 1.3rem)  rotate(7deg)   scale(0.9346); z-index: 3; }
+.fan-card:nth-child(6) { transform: translate(calc(22rem * var(--spreiz)), 4rem)    rotate(14deg)  scale(0.8498); z-index: 2; }
+.fan-card:nth-child(7) { transform: translate(calc(30rem * var(--spreiz)), 7.3rem)  rotate(21deg)  scale(0.7756); z-index: 1; }
+/* Alles ab der achten Karte ist erst nach dem Blaettern an der Reihe. */
+.fan-card:nth-child(n+8) { opacity: 0; z-index: 0; }
+
+@media (max-width: 1023px) {
+  .fan-layout { --karte: 13.5rem; height: 34rem; --spreiz: 0.75; }
+}
+@media (max-width: 767px) {
+  .fan-layout { --karte: 12rem; height: 28rem; --spreiz: 0.5; }
+}
+@media (max-width: 639px) {
+  .fan-layout { --karte: 10.5rem; height: 26rem; --spreiz: 0.38; }
+}
+@media (max-width: 479px) {
+  .fan-layout { --karte: 8.5rem; height: 22rem; --spreiz: 0.28; }
+}
+
+/* Ohne Bewegung: Faecher steht still, Karten bleiben sichtbar. */
+@media (prefers-reduced-motion: reduce) {
+  .fan-card { transition: none !important; }
+}

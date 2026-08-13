@@ -1,0 +1,62 @@
+---
+// Reihenfolge = Gruppierung: jeder Unterpunkt haengt sich an den Hauptpunkt DAVOR.
+const navLinks = [
+  { label: 'Startseite',    href: '/',         main: true  },
+  { label: 'Über Mich',     href: '/about',    main: true  },
+  { label: 'Lebenslauf (PDF)', href: '/lebenslauf-nico-egerer.pdf', main: false, external: true },
+  { label: 'Projekte',      href: '/projects', main: true  },
+  { label: 'JumpJump',      href: 'https://jumpjump.nicoegerer.de/',   main: false },
+  { label: 'Garmin Tool',   href: 'https://garmintool.nicoegerer.de/', main: false },
+  { label: 'Erfahrung',     href: '/work',     main: true  },
+  { label: 'Kontakt',       href: '/contact',  main: true  },
+  { label: 'GitHub',        href: 'https://github.com/nicoegerer',            main: false, external: true },
+  { label: 'LinkedIn',      href: 'https://www.linkedin.com/in/nico-egerer/', main: false, external: true },
+  { label: 'Blog',          href: '/blog',     main: true  },
+];
+
+// Group into columns: each main link + its following sub-links
+const columns: { main: typeof navLinks[0]; subs: typeof navLinks }[] = [];
+navLinks.forEach(link => {
+  if (link.main) {
+    columns.push({ main: link, subs: [] });
+  } else if (columns.length) {
+    columns[columns.length - 1].subs.push(link);
+  }
+});
+---
+
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-links">
+      {columns.map(col => (
+        // data-punkt erlaubt es, einzelne Eintraege auf schmalen Schirmen gezielt auszublenden
+        <div class="footer-col" data-punkt={col.main.label}>
+          <a href={col.main.href} class="footer-main">{col.main.label}</a>
+          {col.subs.map(s => (
+            <a
+              href={s.href}
+              class="footer-sub"
+              target={s.external ? '_blank' : undefined}
+              rel={s.external ? 'noopener' : undefined}
+            >{s.label}</a>
+          ))}
+        </div>
+      ))}
+    </div>
+    <div class="footer-bottom">
+      <a href="/" class="footer-logo">Nico</a>
+      <div class="footer-social">
+        <a href="https://github.com/nicoegerer" target="_blank" rel="noopener" aria-label="GitHub" class="nav-icon footer-social-icon">
+          <svg width="22" height="25" viewBox="0 0 35 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M23.7223 38.5V33.1976C23.7889 32.3167 23.6744 31.431 23.3863 30.5996C23.0981 29.7682 22.643 29.01 22.0512 28.3756C27.6334 27.7289 33.5 25.5304 33.5 15.4429C33.4995 12.8634 32.5448 10.3829 30.8333 8.51467C31.6437 6.25793 31.5864 3.76348 30.6733 1.5495C30.6733 1.5495 28.5756 0.902868 23.7223 4.28384C19.6476 3.13619 15.3525 3.13619 11.2779 4.28384C6.42456 0.902868 4.32679 1.5495 4.32679 1.5495C3.41367 3.76348 3.35638 6.25793 4.16679 8.51467C2.44257 10.3967 1.48684 12.8997 1.50014 15.4983C1.50014 25.5119 7.36676 27.7105 12.949 28.431C12.3641 29.0591 11.913 29.8081 11.6251 30.6294C11.3372 31.4506 11.2188 32.3258 11.2779 33.1976V38.5" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </a>
+        <a href="https://www.linkedin.com/in/nico-egerer/" target="_blank" rel="noopener" aria-label="LinkedIn" class="nav-icon footer-social-icon">
+          <svg width="22" height="22" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M0 2.865C0 1.2825 1.315 0 2.9375 0H37.0625C38.685 0 40 1.2825 40 2.865V37.135C40 38.7175 38.685 40 37.0625 40H2.9375C1.315 40 0 38.7175 0 37.135V2.865ZM12.3575 33.485V15.4225H6.355V33.485H12.3575ZM9.3575 12.955C11.45 12.955 12.7525 11.57 12.7525 9.835C12.715 8.0625 11.4525 6.715 9.3975 6.715C7.3425 6.715 6 8.065 6 9.835C6 11.57 7.3025 12.955 9.3175 12.955H9.3575ZM21.6275 33.485V23.3975C21.6275 22.8575 21.6675 22.3175 21.8275 21.9325C22.26 20.855 23.2475 19.7375 24.9075 19.7375C27.08 19.7375 27.9475 21.3925 27.9475 23.8225V33.485H33.95V23.125C33.95 17.575 30.99 14.995 27.04 14.995C23.855 14.995 22.4275 16.745 21.6275 17.9775V18.04H21.5875L21.6275 17.9775V15.4225H15.6275C15.7025 17.1175 15.6275 33.485 15.6275 33.485H21.6275Z" fill="white"/>
+          </svg>
+        </a>
+      </div>
+    </div>
+  </div>
+</footer>

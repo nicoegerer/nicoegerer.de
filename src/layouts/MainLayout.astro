@@ -1,0 +1,237 @@
+---
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
+import Interaktionen from '../components/Interaktionen.astro';
+import '../styles/global.css';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const {
+  title = 'Nico Egerer',
+  description = 'Nico Egerer — angehender Softwareentwickler aus Wolfratshausen.',
+} = Astro.props;
+
+const kanonisch = new URL(Astro.url.pathname, Astro.site).href;
+---
+
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Vor dem ersten Rendern: Effekte, die Inhalte zunaechst verbergen, greifen nur wenn -->
+    <script is:inline>
+      document.documentElement.classList.add('js');
+      // Hell ist der Standard
+      try {
+        document.documentElement.dataset.modus = localStorage.getItem('modus') || 'hell';
+      } catch (e) { document.documentElement.dataset.modus = 'hell'; }
+    </script>
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={kanonisch} />
+    <meta name="theme-color" content="#98d5eb" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Nico Egerer" />
+    <meta property="og:locale" content="de_DE" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={kanonisch} />
+    <meta property="og:image" content={new URL('/images/og-bild.jpg', Astro.site)} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={new URL('/images/og-bild.jpg', Astro.site)} />
+
+    <link rel="icon" href="/images/favicon.png" type="image/png" />
+    <link rel="apple-touch-icon" href="/images/app-icon.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@500;700&family=Playfair+Display:wght@400;500;600&family=Manrope:wght@300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <Nav />
+    <main>
+      <slot />
+    </main>
+    <Footer />
+    <Interaktionen />
+
+    <script>
+      // Global: Scroll reveal
+      function initReveal() {
+        const els = document.querySelectorAll('.reveal');
+        if (!els.length) return;
+        const obs = new IntersectionObserver(entries => {
+          entries.forEach(e => {
+            if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); }
+          });
+        }, { threshold: 0.1 });
+        els.forEach(el => obs.observe(el));
+      }
+
+      // Global: Timeline
+      function initTimeline() {
+        const tlSection = document.getElementById('tl-section');
+        const tlFill    = document.getElementById('tl-fill');
+        const tlCards   = document.querySelectorAll('.tl-card');
+        if (!tlSection || !tlFill) return;
+        const update = () => {
+          const r = tlSection.getBoundingClientRect();
+          const ratio = Math.min(Math.max((window.innerHeight - r.top) / (r.height + window.innerHeight), 0), 1);
+          (tlFill as HTMLElement).style.height = (ratio * 100) + '%';
+          tlCards.forEach(c => {
+            if (c.getBoundingClientRect().top < window.innerHeight * 0.88) c.classList.add('visible');
+          });
+        };
+        window.addEventListener('scroll', update, { passive: true });
+        setTimeout(update, 100);
+      }
+
+      // EmailJS contact form
+      const EMAILJS_PUBLIC_KEY      = '06H9FmKshm9bn70Us';
+      const EMAILJS_SERVICE_ID      = 'service_gp9s55y';
+      const EMAILJS_TEMPLATE_NOTIFY = 'template_qrftc8c';
+      const EMAILJS_TEMPLATE_REPLY  = 'template_2juygdo';
+
+      function initContactForm() {
+        const form    = document.getElementById('contact-form') as HTMLFormElement | null;
+        const success = document.getElementById('cf-success');
+        const error   = document.getElementById('cf-error');
+        if (!form) return;
+
+        // Eigene Meldungen statt der Browser-Bubbles, damit der Fehler am Feld steht.
+        form.setAttribute('novalidate', '');
+        success?.setAttribute('role', 'status');
+        error?.setAttribute('role', 'alert');
+
+        const felder = Array.from(
+          form.querySelectorAll('.cf-input, .cf-input-light')
+        ) as (HTMLInputElement | HTMLTextAreaElement)[];
+
+        const meldung = (el: HTMLInputElement | HTMLTextAreaElement) => {
+          if (el.validity.valueMissing) return 'Bitte fülle dieses Feld aus.';
+          if (el.validity.typeMismatch && el.type === 'email') return 'Diese E-Mail-Adresse sieht nicht gültig aus.';
+          return '';
+        };
+
+        const hinweisFor = (el: HTMLElement) => {
+          let h = el.parentElement?.querySelector('.cf-hint') as HTMLElement | null;
+          if (!h) {
+            h = document.createElement('span');
+            h.className = 'cf-hint';
+            el.insertAdjacentElement('afterend', h);
+          }
+          return h;
+        };
+
+        const pruefe = (el: HTMLInputElement | HTMLTextAreaElement) => {
+          const text = meldung(el);
+          const h = hinweisFor(el);
+          h.textContent = text;
+          h.style.display = text ? 'block' : 'none';
+          el.classList.toggle('invalid', !!text);
+          el.setAttribute('aria-invalid', text ? 'true' : 'false');
+          return !text;
+        };
+
+        felder.forEach(el => {
+          // Erst beim Verlassen pruefen — Fehler waehrend des Tippens nerven.
+          el.addEventListener('blur', () => pruefe(el));
+          el.addEventListener('input', () => { if (el.classList.contains('invalid')) pruefe(el); });
+        });
+
+        let ejsReady = false;
+        const s = document.createElement('script');
+        s.src = 'https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js';
+        s.async = true;
+        s.onload = () => { (window as any).emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY }); ejsReady = true; };
+        document.head.appendChild(s);
+
+        form.addEventListener('submit', async e => {
+          e.preventDefault();
+          success?.classList.remove('show');
+          error?.classList.remove('show');
+
+          // Alle Felder pruefen, danach zum ersten Fehler springen
+          const fehlerhaft = felder.filter(el => !pruefe(el));
+          if (fehlerhaft.length) {
+            fehlerhaft[0].focus();
+            fehlerhaft[0].scrollIntoView({ block: 'center', behavior: 'smooth' });
+            return;
+          }
+
+          const btn = form.querySelector('.cf-submit') as HTMLButtonElement;
+          const btnText = btn.textContent;
+          btn.disabled = true;
+          btn.dataset.loading = 'true';
+          btn.textContent = 'Wird gesendet…';
+
+          const wait = () => new Promise<void>((res, rej) => {
+            if (ejsReady) return res();
+            let t = 0;
+            const iv = setInterval(() => {
+              t += 100;
+              if (ejsReady) { clearInterval(iv); res(); }
+              if (t >= 8000) { clearInterval(iv); rej(); }
+            }, 100);
+          });
+
+          const name = (document.getElementById('cf-name') as HTMLInputElement).value.trim();
+          const mail = (document.getElementById('cf-email') as HTMLInputElement).value.trim();
+          const msg  = (document.getElementById('cf-msg') as HTMLTextAreaElement).value.trim();
+          const ts   = new Date().toLocaleString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+
+          try {
+            await wait();
+            const ejs = (window as any).emailjs;
+            await ejs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_NOTIFY,
+              { from_name: name, from_email: mail, reply_to: mail, to_name: 'Nico',
+                initials: name.split(' ').map((n: string) => n[0] ?? '').join('').toUpperCase().slice(0, 2),
+                message: msg, time: ts });
+            await ejs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_REPLY,
+              { from_name: name, message: msg, email: mail });
+            success?.classList.add('show');
+            form.reset();
+            // Zurueckgesetzte Felder duerfen nicht als fehlerhaft markiert bleiben
+            felder.forEach(el => {
+              el.classList.remove('invalid');
+              el.removeAttribute('aria-invalid');
+              const h = el.parentElement?.querySelector('.cf-hint') as HTMLElement | null;
+              if (h) h.style.display = 'none';
+            });
+          } catch {
+            error?.classList.add('show');
+          } finally {
+            btn.disabled = false;
+            delete btn.dataset.loading;
+            btn.textContent = btnText;
+          }
+        });
+      }
+
+      // Buttons mit data-print oeffnen den Druckdialog ("Als PDF speichern")
+      function initPrint() {
+        document.querySelectorAll('[data-print]').forEach(btn =>
+          btn.addEventListener('click', () => window.print())
+        );
+      }
+
+      document.addEventListener('DOMContentLoaded', () => {
+        initReveal();
+        initTimeline();
+        initContactForm();
+        initPrint();
+      });
+    </script>
+  </body>
+</html>

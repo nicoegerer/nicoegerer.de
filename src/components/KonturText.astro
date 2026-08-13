@@ -1,0 +1,128 @@
+---
+// Konturschrift, in der eine Farbmaske dem Zeiger folgt
+interface Props {
+  text: string;
+  /** Beschriftung fuer Screenreader, falls der Text allein nicht traegt. */
+  label?: string;
+  klasse?: string;
+}
+const { text, label, klasse = '' } = Astro.props;
+const id = 'kt-' + Math.random().toString(36).slice(2, 9);
+---
+
+<div class:list={['kontur', klasse]} data-kontur>
+  <svg viewBox="0 0 300 76" role="img" aria-label={label ?? text} preserveAspectRatio="xMidYMid meet">
+    <defs>
+      <linearGradient id={`${id}-farbe`} gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="300" y2="76">
+        <stop offset="0%" stop-color="#5fb6d8" />
+        <stop offset="45%" stop-color="#2c5a6b" />
+        <stop offset="100%" stop-color="#e0a445" />
+      </linearGradient>
+
+      <radialGradient id={`${id}-maske`} gradientUnits="userSpaceOnUse" r="58" cx="150" cy="38">
+        <stop offset="0%" stop-color="white" />
+        <stop offset="100%" stop-color="black" />
+      </radialGradient>
+
+      <mask id={`${id}-fenster`}>
+        <rect x="0" y="0" width="100%" height="100%" fill={`url(#${id}-maske)`} />
+      </mask>
+    </defs>
+
+    <!-- 1. Grundkontur, zeichnet sich beim Erscheinen selbst -->
+    <text class="kontur-linie" x="50%" y="50%" text-anchor="middle" dominant-baseline="middle"
+          textLength="286" lengthAdjust="spacingAndGlyphs">{text}</text>
+
+    <!-- Farbige Fassung, nur sichtbar wo die Maske offen ist -->
+    <text class="kontur-farbe" x="50%" y="50%" text-anchor="middle" dominant-baseline="middle"
+          textLength="286" lengthAdjust="spacingAndGlyphs"
+          stroke={`url(#${id}-farbe)`} mask={`url(#${id}-fenster)`}>{text}</text>
+  </svg>
+</div>
+
+<style>
+  .kontur { width: 100%; }
+  .kontur svg { width: 100%; height: auto; display: block; overflow: visible; }
+
+  .kontur text {
+    font-family: var(--font-serif);
+    font-size: 46px;
+    font-weight: 500;
+    fill: transparent;
+    stroke-width: 0.6;
+    /* Der Text ist eine Grafik — kein I-Beam versprechen. */
+    user-select: none;
+  }
+
+  .kontur-linie {
+    stroke: #cdc4b6;
+    stroke-dasharray: 1400;
+    stroke-dashoffset: 1400;
+  }
+  .kontur.gezeichnet .kontur-linie {
+    transition: stroke-dashoffset 2.4s cubic-bezier(0.4, 0, 0.2, 1);
+    stroke-dashoffset: 0;
+  }
+
+  .kontur-farbe { opacity: 0; transition: opacity 0.32s cubic-bezier(0.4, 0, 0.2, 1); }
+  .kontur.aktiv .kontur-farbe { opacity: 1; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .kontur-linie { stroke-dashoffset: 0; }
+    .kontur.gezeichnet .kontur-linie { transition: none; }
+    .kontur-farbe { transition: none; }
+  }
+</style>
+
+<script>
+  (() => {
+    const sanft = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    document.querySelectorAll<HTMLElement>('[data-kontur]').forEach(feld => {
+      const svg = feld.querySelector('svg');
+      const maske = feld.querySelector<SVGRadialGradientElement>('radialGradient');
+      if (!svg || !maske) return;
+
+      // Kontur zeichnen
+      let los = false;
+      const zeichnen = () => {
+        if (los) return;
+        los = true;
+        feld.classList.add('gezeichnet');
+      };
+      const beobachter = new IntersectionObserver(e => {
+        if (e.some(x => x.isIntersecting)) { beobachter.disconnect(); zeichnen(); }
+      }, { rootMargin: '0px 0px -10% 0px' });
+      beobachter.observe(feld);
+      setTimeout(() => { beobachter.disconnect(); zeichnen(); }, 1000);
+
+      if (sanft || window.matchMedia('(pointer: coarse)').matches) return;
+
+      // Maskenmittelpunkt dem Zeiger nachfuehren — in SVG-Koordinaten, damit es unabhaengig
+      let rahmen: DOMRect | null = null;
+
+      const messen = () => { rahmen = svg.getBoundingClientRect(); };
+
+      feld.addEventListener('pointerenter', () => {
+        messen();
+        feld.classList.add('aktiv');
+      });
+
+      feld.addEventListener('pointermove', ev => {
+        if (!rahmen) messen();
+        if (!rahmen || !rahmen.width || !rahmen.height) return;
+        maske.setAttribute('cx', (((ev.clientX - rahmen.left) / rahmen.width) * 300).toFixed(1));
+        maske.setAttribute('cy', (((ev.clientY - rahmen.top) / rahmen.height) * 76).toFixed(1));
+        feld.classList.add('aktiv');
+      });
+
+      feld.addEventListener('pointerleave', () => {
+        feld.classList.remove('aktiv');
+      });
+
+      // Der gemerkte Rahmen wird durch Scrollen und Groessenaenderung ungueltig.
+      window.addEventListener('scroll', () => { rahmen = null; }, { passive: true });
+      window.addEventListener('resize', () => { rahmen = null; });
+    });
+  })();
+</script>

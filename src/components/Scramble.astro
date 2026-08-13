@@ -1,0 +1,100 @@
+---
+// Text, der sich aus Zufallszeichen "entschlüsselt"
+interface Props {
+  text: string;
+  /** Millisekunden je Schritt. Kleiner = schneller. */
+  tempo?: number;
+  klasse?: string;
+}
+const { text, tempo = 26, klasse = '' } = Astro.props;
+---
+
+<span class:list={['scramble', klasse]} data-scramble data-text={text} data-tempo={tempo}>
+  <span class="scramble-platz" aria-hidden="true">{text}</span>
+  <span class="scramble-lauf" aria-hidden="true"></span>
+  <span class="sr-only">{text}</span>
+</span>
+
+<style>
+  .scramble {
+    position: relative;
+    display: inline-block;
+    font-family: ui-monospace, 'SF Mono', 'Cascadia Mono', Menlo, Consolas, monospace;
+    white-space: pre;
+  }
+  /* Blindkopie haelt die Breite frei — sonst wackelt das Layout, waehrend die Zeichen */
+  .scramble-platz { visibility: hidden; }
+  .scramble-lauf { position: absolute; inset: 0; }
+</style>
+
+<script>
+  (() => {
+    const ZEICHEN = '_!X$0-+*#';
+    const sanft = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    const zufall = (vorher?: string) => {
+      let z: string;
+      do { z = ZEICHEN[Math.floor(Math.random() * ZEICHEN.length)]; } while (z === vorher);
+      return z;
+    };
+
+    document.querySelectorAll<HTMLElement>('[data-scramble]').forEach(feld => {
+      const lauf  = feld.querySelector<HTMLElement>('.scramble-lauf');
+      const text  = feld.dataset.text ?? '';
+      const tempo = Number(feld.dataset.tempo) || 26;
+      if (!lauf || !text) return;
+
+      // Ohne Bewegung steht der Text einfach da.
+      if (sanft) { lauf.textContent = text; return; }
+
+      lauf.textContent = ' '.repeat(text.length);
+
+      let phase = 1;
+      let schritt = 0;
+      let uhr: ReturnType<typeof setInterval> | null = null;
+
+      const takt = () => {
+        const zeichen: string[] = [];
+
+        if (phase === 1) {
+          // Von links mit Rauschen auffuellen
+          const bis = Math.min(schritt + 1, text.length);
+          for (let i = 0; i < bis; i++) zeichen.push(zufall(zeichen[i - 1]));
+          for (let i = bis; i < text.length; i++) zeichen.push(' ');
+          lauf.textContent = zeichen.join('');
+
+          if (schritt < text.length * 2 - 1) schritt++;
+          else { phase = 2; schritt = 0; }
+          return;
+        }
+
+        // Phase 2: echten Text von links aufdecken
+        const fertig = Math.floor(schritt / 2);
+        for (let i = 0; i < fertig && i < text.length; i++) zeichen.push(text[i]);
+        if (fertig < text.length) zeichen.push(schritt % 2 === 0 ? '_' : zufall());
+        while (zeichen.length < text.length) zeichen.push(zufall());
+        lauf.textContent = zeichen.join('');
+
+        if (schritt < text.length * 2 - 1) schritt++;
+        else {
+          lauf.textContent = text;
+          if (uhr) { clearInterval(uhr); uhr = null; }
+        }
+      };
+
+      let gestartet = false;
+      const los = () => {
+        if (gestartet) return;
+        gestartet = true;
+        uhr = setInterval(takt, tempo);
+      };
+
+      // Start beim Sichtwerden, mit Timeout als Sicherheitsnetz
+      const beobachter = new IntersectionObserver(e => {
+        if (e.some(x => x.isIntersecting)) { beobachter.disconnect(); los(); }
+      }, { rootMargin: '0px 0px -10% 0px' });
+      beobachter.observe(feld);
+      setTimeout(() => { beobachter.disconnect(); los(); }, 1200);
+    });
+  })();
+</script>

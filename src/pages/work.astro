@@ -1,0 +1,272 @@
+---
+import MainLayout from '../layouts/MainLayout.astro';
+import ScrollAufdecken from '../components/ScrollAufdecken.astro';
+
+// Angaben stammen aus dem Lebenslauf-Export
+const stationen = [
+  {
+    zeit: 'seit 09/2024',
+    rolle: 'Auszubildender Fachinformatiker Anwendungsentwicklung',
+    ort: 'Reiser Simulation and Training GmbH · Berg',
+    art: 'Ausbildung',
+    laufend: true,
+    text: 'Anwendungsentwicklung im Simulationsumfeld, parallel Berufsschule in Fürstenfeldbruck.',
+    stichworte: ['C++', 'Git', 'Jira', 'Bitbucket', 'Bamboo'],
+  },
+  {
+    zeit: '2022 – 2024',
+    rolle: 'Nebenjob',
+    ort: 'Med. dent. J. Runge-Palermo · München',
+    art: 'Nebentätigkeit',
+    laufend: false,
+    text: 'Über zwei Jahre parallel zur Schule — Zuverlässigkeit und Selbstorganisation im Alltag.',
+    stichworte: [],
+  },
+  {
+    zeit: '3 Wochen',
+    rolle: 'Schulpraktikum Fachinformatik Anwendungsentwicklung',
+    ort: 'Evia',
+    art: 'Praktikum',
+    laufend: false,
+    text: 'Erster Einblick in die Anwendungsentwicklung im Betrieb.',
+    stichworte: [],
+  },
+  {
+    zeit: '3 Wochen',
+    rolle: 'Schülerpraktikum',
+    ort: 'Bosch Markus Möbelei',
+    art: 'Praktikum',
+    laufend: false,
+    text: 'Handwerkliches Praktikum — sauberes, genaues Arbeiten am Werkstück.',
+    stichworte: [],
+  },
+];
+
+const koennen = [
+  { feld: 'Programmierung', punkte: ['C++', 'PowerShell (Grundlagen)', 'Java (Grundlagen)', 'Linux Bash (Grundlagen)', 'HTML / CSS (Grundlagen)'] },
+  { feld: 'Container & DevOps', punkte: ['Docker (Grundlagen)', 'Git / GitHub', 'Grundverständnis CI/CD'] },
+  { feld: 'Projektmanagement', punkte: ['Agile Softwareentwicklung', 'Atlassian (Jira, Bitbucket, Bamboo)'] },
+  { feld: 'Betriebssysteme', punkte: ['Windows 10 / 11', 'Linux'] },
+  { feld: 'IT-Sicherheit', punkte: ['Sicherheitskonzepte nach BDSG und DSGVO', 'Vermeidung von Cyberangriffen', 'Malware-Arten'] },
+];
+
+const nachweise = [
+  { titel: 'C1 English Language Certificate', geber: 'AHK' },
+  { titel: 'B2 Upper Intermediate Englisch', geber: 'Cavendish School of English, Malta' },
+  { titel: 'Doing Business In The Global Environment', geber: 'ECBM' },
+  { titel: 'Mittlere Reife — Schnitt 2,2', geber: 'Staatliche Realschule Wolfratshausen' },
+  { titel: 'Projektpräsentation Note 1', geber: 'Staatliche Realschule Wolfratshausen' },
+  { titel: 'Informationstechnologie — Aufbauunterricht', geber: 'Staatliche Realschule Wolfratshausen' },
+];
+
+const ausland = [
+  { ort: 'Dublin', zeit: '10–11/2025', was: 'ERASMUS-Reise mit ECBM' },
+  { ort: 'Bournemouth', zeit: '08–09/2023', was: 'Sprachreise mit Gastfamilie (EF)' },
+  { ort: 'Malta', zeit: '08–09/2022', was: 'Sprachreise mit täglichem Unterricht' },
+  { ort: 'Chiemsee', zeit: '08/2021', was: 'Englischkurs, Camps for Friends' },
+];
+---
+
+<MainLayout
+  title="Erfahrung — Nico Egerer"
+  description="Beruflicher Werdegang, Fähigkeiten und Nachweise von Nico Egerer — Auszubildender Fachinformatiker für Anwendungsentwicklung."
+>
+  <style>
+    /* Kennzahlen direkt unter dem Kopf — gibt der Seite sofort Halt */
+    .fakten { background: var(--hg-2); border-bottom: 1px solid var(--linie); padding: var(--gap-m); }
+    .fakten-inner { max-width: var(--max-w); margin: 0 auto; display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--gap-m); }
+    .fakt-wert { display: block; font-family: var(--font-serif); font-size: clamp(1.5rem, 3vw, 2.3rem); color: var(--txt); line-height: 1.1; }
+    .fakt-name { display: block; color: var(--txt-leise); font-size: 0.82rem; margin-top: 0.35rem; }
+
+    /* Werdegang als Zeitachse statt Kartenraster */
+    .werdegang { background: var(--hg); padding: var(--gap-xl) var(--gap-m); }
+    .werdegang-inner { max-width: 880px; margin: 0 auto; }
+    .wg-kopf { margin-bottom: var(--gap-l); }
+    .wg-eintrag {
+      display: grid; grid-template-columns: 8.5rem 1fr; gap: var(--gap-m);
+      padding: 1.9rem 0; border-top: 1px solid var(--linie); position: relative; isolation: isolate;
+    }
+    .wg-eintrag:last-child { border-bottom: 1px solid var(--linie); }
+    .wg-zeit { font-family: var(--font-serif); font-size: 1rem; color: #6f6859; padding-top: 0.15rem; white-space: nowrap; }
+    .wg-art { display: inline-block; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--txt-leise); margin-bottom: 0.5rem; }
+    .wg-rolle { font-size: 1.12rem; font-weight: 600; color: var(--txt); line-height: 1.35; margin-bottom: 0.25rem; }
+    .wg-ort { color: var(--txt-leise); font-size: 0.92rem; margin-bottom: 0.6rem; }
+    .wg-text { color: var(--txt-leise); font-size: 0.95rem; line-height: 1.7; }
+    .wg-stichworte { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.85rem; }
+    .wg-laufend { display: inline-flex; align-items: center; gap: 0.4rem; color: var(--akzent); font-size: 0.78rem; font-weight: 600; }
+    .wg-punkt { width: 7px; height: 7px; border-radius: 50%; background: var(--akzent); animation: puls 2.4s ease-in-out infinite; }
+    @keyframes puls { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.4; transform: scale(0.75); } }
+    .wg-eintrag::after {
+      content: ''; position: absolute; inset: 0 -1.5rem; border-radius: var(--r);
+      background: rgba(255,255,255,0.72); opacity: 0; transition: opacity 0.28s ease; z-index: -1;
+    }
+    .wg-eintrag:hover::after { opacity: 1; }
+
+    /* Können */
+    .koennen { background: var(--hg-2); padding: var(--gap-xl) var(--gap-m); }
+    .koennen-inner { max-width: var(--max-w); margin: 0 auto; }
+    .koennen-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: var(--gap-m); margin-top: var(--gap-l); }
+    .kn-block { border-top: 2px solid var(--txt); padding-top: 1rem; }
+    .kn-feld { font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--txt); font-weight: 700; margin-bottom: 0.9rem; }
+    .kn-punkte { list-style: none; display: flex; flex-direction: column; gap: 0.5rem; }
+    .kn-punkte li { color: var(--txt-leise); font-size: 0.93rem; padding-left: 1rem; position: relative; }
+    .kn-punkte li::before { content: ''; position: absolute; left: 0; top: 0.62em; width: 6px; height: 1px; background: #b5ac9c; }
+
+    /* Arbeitsweise */
+    .weise { background: var(--hg-betont); padding: var(--gap-xl) var(--gap-m); color: rgba(255,255,255,0.78); }
+    .weise-inner { max-width: 880px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1.3fr; gap: var(--gap-l); align-items: start; }
+
+    /* Nachweise & Ausland */
+    .belege { background: var(--hg); padding: var(--gap-xl) var(--gap-m); }
+    .belege-inner { max-width: var(--max-w); margin: 0 auto; display: grid; grid-template-columns: 1.2fr 1fr; gap: var(--gap-l); align-items: start; }
+    .bl-liste { list-style: none; display: flex; flex-direction: column; margin-top: var(--gap-m); }
+    .bl-liste li { padding: 0.85rem 0; border-bottom: 1px solid var(--linie); }
+    .bl-titel { color: var(--txt); font-size: 0.98rem; font-weight: 500; }
+    .bl-geber { color: var(--txt-leise); font-size: 0.85rem; margin-top: 0.15rem; }
+    .al-liste { list-style: none; display: flex; flex-direction: column; gap: 1rem; margin-top: var(--gap-m); }
+    .al-eintrag { display: grid; grid-template-columns: 7rem 1fr; column-gap: 0.9rem; align-items: baseline; }
+    .al-ort { font-family: var(--font-serif); font-size: 1.05rem; color: var(--txt); }
+    .al-zeit { font-size: 0.78rem; color: var(--txt-leise); }
+    .al-was { color: var(--txt-leise); font-size: 0.9rem; grid-column: 2; }
+
+    .wk-cta { background: linear-gradient(135deg, #0a1a22, var(--dunkel)); padding: var(--gap-xl) var(--gap-m); text-align: center; }
+    .wk-cta-inner { max-width: 620px; margin: 0 auto; }
+    .wk-cta-inner p { color: rgba(255,255,255,0.62); margin: 1rem 0 2rem; line-height: 1.75; }
+    .wk-btns { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+
+    @media (max-width: 900px) {
+      .fakten-inner { grid-template-columns: repeat(2, 1fr); gap: var(--gap-s); }
+      .weise-inner, .belege-inner { grid-template-columns: 1fr; }
+      .wg-eintrag { grid-template-columns: 1fr; gap: 0.5rem; }
+      .wg-zeit { font-size: 0.88rem; }
+    }
+    /* Gesperrte Versalien brauchen auf dem Telefon mehr Groesse */
+    @media (max-width: 700px) {
+      .wg-art { font-size: 0.8rem; letter-spacing: 0.08em; }
+    }
+  </style>
+
+  <section class="page-hero">
+    <div class="page-hero-inner">
+      <span class="label">Beruflich</span>
+      <h1 class="page-hero-title">Meine <span class="page-hero-accent">Erfahrung</span></h1>
+      <p class="page-hero-sub" data-auf="unschaerfe" data-auf-verzug="120">Ausbildung im Simulationsumfeld, Praktika, Sprachaufenthalte — und was ich dabei gelernt habe.</p>
+    </div>
+  </section>
+
+  <section class="fakten">
+    <!-- Die Zahlen laufen hoch, sobald der Block ins Bild kommt -->
+    <div class="fakten-inner" data-staffel="skalieren" data-staffel-schritt="90">
+      <div><span class="fakt-wert">seit 2024</span><span class="fakt-name">in Ausbildung bei Reiser</span></div>
+      <div><span class="fakt-wert">Berg</span><span class="fakt-name">Arbeitsort, Oberbayern</span></div>
+      <div><span class="fakt-wert">C1</span><span class="fakt-name">Englisch, zertifiziert</span></div>
+      <div><span class="fakt-wert" data-zaehler="4">4</span><span class="fakt-name">Sprachaufenthalte</span></div>
+    </div>
+  </section>
+
+  <section class="werdegang">
+    <div class="werdegang-inner">
+      <div class="wg-kopf reveal">
+        <span class="label">Stationen</span>
+        <h2 class="section-heading dark" data-buchstaben>Werdegang</h2>
+      </div>
+      {stationen.map((s, i) => (
+        <article class="wg-eintrag" data-auf="seite" data-auf-verzug={i * 100}>
+          <div class="wg-zeit">{s.zeit}</div>
+          <div>
+            <span class="wg-art">{s.art}</span>
+            <h3 class="wg-rolle">{s.rolle}</h3>
+            <p class="wg-ort">{s.ort}</p>
+            <p class="wg-text">{s.text}</p>
+            {s.stichworte.length > 0 && (
+              <div class="wg-stichworte">
+                {s.stichworte.map(w => <span class="tag-dark">{w}</span>)}
+              </div>
+            )}
+            {s.laufend && (
+              <div class="wg-stichworte"><span class="wg-laufend"><span class="wg-punkt"></span>läuft aktuell</span></div>
+            )}
+          </div>
+        </article>
+      ))}
+    </div>
+  </section>
+
+  <section class="koennen">
+    <div class="koennen-inner">
+      <div class="reveal">
+        <span class="label">Werkzeugkasten</span>
+        <h2 class="section-heading dark" data-buchstaben>Was ich kann</h2>
+      </div>
+      <div class="koennen-grid" data-staffel="schieben" data-staffel-schritt="90">
+        {koennen.map(k => (
+          <div class="kn-block reveal">
+            <p class="kn-feld">{k.feld}</p>
+            <ul class="kn-punkte">
+              {k.punkte.map(p => <li>{p}</li>)}
+            </ul>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="weise">
+    <div class="weise-inner">
+      <div class="reveal">
+        <span class="label white">Haltung</span>
+        <h2 class="section-heading white" data-buchstaben>Wie ich arbeite</h2>
+      </div>
+      <ScrollAufdecken
+          absaetze={[
+          'Ich fange lieber klein an und baue aus, statt mich an einem großen Entwurf festzuhalten. Bei JumpJump war der erste Schritt eine Figur, die springt — der Rest kam Stück für Stück dazu.',
+          'Was ich nicht verstehe, will ich nachbauen. Aus Kursen sind deshalb eigene Projekte geworden: erst der Gameloop, dann das Kompilieren nach WebAssembly, dann die Seite drumherum.',
+          'Im Betrieb arbeite ich agil mit Jira, Bitbucket und Bamboo. Strukturiertes Arbeiten und Verantwortung übernehmen liegen mir.',
+        ]}
+        zitat="Am Ende zählt, dass es läuft."
+      />
+    </div>
+  </section>
+
+  <section class="belege">
+    <div class="belege-inner">
+      <div class="reveal">
+        <span class="label">Nachweise</span>
+        <h2 class="section-heading dark" data-buchstaben>Zeugnisse &amp; Zertifikate</h2>
+        <ul class="bl-liste">
+          {nachweise.map(n => (
+            <li>
+              <div class="bl-titel">{n.titel}</div>
+              <div class="bl-geber">{n.geber}</div>
+            </li>
+          ))}
+        </ul>
+      </div>
+      <div class="reveal reveal-delay-2">
+        <span class="label">Unterwegs</span>
+        <h2 class="section-heading dark" data-buchstaben>Sprachaufenthalte</h2>
+        <ul class="al-liste">
+          {ausland.map(a => (
+            <li class="al-eintrag">
+              <span class="al-ort">{a.ort}</span>
+              <span class="al-zeit">{a.zeit}</span>
+              <span class="al-was">{a.was}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="wk-cta">
+    <div class="wk-cta-inner reveal">
+      <span class="label white">Weiter</span>
+      <h2 class="section-heading white" data-buchstaben>Den ganzen Lebenslauf?</h2>
+      <p>Alle Stationen, die Schullaufbahn und sämtliche Nachweise gibt es als PDF — oder schreib mir direkt.</p>
+      <div class="wk-btns">
+        <a href="/lebenslauf-nico-egerer.pdf" target="_blank" rel="noopener" class="btn btn-outline">Lebenslauf als PDF</a>
+        <a href="/contact" class="btn btn-light">Kontakt aufnehmen</a>
+      </div>
+    </div>
+  </section>
+</MainLayout>

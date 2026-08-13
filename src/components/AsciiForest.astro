@@ -1,0 +1,88 @@
+---
+// ASCII-Wald als Hintergrund
+interface Props {
+  klasse?: string;
+  /** Deckkraft des Hintergrunds, damit Text darueber lesbar bleibt. */
+  deckkraft?: number;
+}
+const { klasse = '', deckkraft = 0.5 } = Astro.props;
+---
+
+<div
+  class:list={['forest', klasse]}
+  data-forest
+  aria-hidden="true"
+  style={`--forest-deckkraft:${deckkraft}`}
+>
+  <video
+    class="forest-video"
+    poster="/video/ascii-forest-standbild.webp"
+    muted
+    loop
+    playsinline
+    preload="none"
+    disablepictureinpicture
+  ></video>
+</div>
+
+<style>
+  .forest {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 0;
+    opacity: var(--forest-deckkraft, 0.5);
+  }
+  .forest-video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    /* Wald auf die warme Palette der Seite gezogen */
+    filter: grayscale(1) sepia(0.35) saturate(1.5) hue-rotate(155deg) contrast(1.08);
+  }
+</style>
+
+<script>
+  (() => {
+    const sanft = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    // Das Video wiegt 435 KB und ist reine Dekoration hinter der Galerie
+    const schmal = window.matchMedia('(max-width: 900px)').matches;
+    const sparsam = (navigator as any).connection?.saveData === true;
+    const QUELLE = '/video/ascii-forest.mp4';
+
+    document.querySelectorAll<HTMLElement>('[data-forest]').forEach(kasten => {
+      const video = kasten.querySelector<HTMLVideoElement>('.forest-video');
+      if (!video) return;
+
+      // Ohne Bewegung bleibt das Standbild stehen — kein Video laden.
+      if (sanft || schmal || sparsam) return;
+
+      let geladen = false;
+      const laden = () => {
+        if (geladen) return;
+        geladen = true;
+        video.src = QUELLE;
+        // play() kann abgelehnt werden (Energiesparmodus, Richtlinien)
+        video.play().catch(() => {});
+      };
+
+      const anhalten = () => { if (geladen && !video.paused) video.pause(); };
+      const weiter   = () => { if (geladen) video.play().catch(() => {}); };
+
+      // Sichtbarkeit steuert die Wiedergabe
+      const beobachter = new IntersectionObserver(e => {
+        const sichtbar = e.some(x => x.isIntersecting);
+        if (sichtbar) { laden(); weiter(); } else anhalten();
+      }, { rootMargin: '200px' });
+      beobachter.observe(kasten);
+      setTimeout(laden, 1500);
+
+      // Im versteckten Tab nicht dekodieren.
+      document.addEventListener('visibilitychange', () => {
+        document.hidden ? anhalten() : weiter();
+      });
+    });
+  })();
+</script>

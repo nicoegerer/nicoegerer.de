@@ -1,0 +1,30 @@
+---
+import MainLayout from '../layouts/MainLayout.astro';
+---
+
+<MainLayout title="Seite nicht gefunden — Nico Egerer" description="Diese Seite gibt es nicht (mehr).">
+  <style>
+    .nf { min-height: 100vh; background: linear-gradient(47deg, var(--blau) 55%, var(--weiss)); display: flex; align-items: center; justify-content: center; padding: calc(var(--nav-h) + var(--gap-l)) var(--gap-m) var(--gap-l); text-align: center; }
+    .nf-inner { max-width: 560px; }
+    .nf-code { font-family: var(--font-script); font-size: clamp(5rem, 18vw, 10rem); line-height: 1; color: var(--weiss); }
+    .nf-title { font-family: var(--font-serif); font-size: clamp(1.5rem, 4vw, 2.4rem); font-weight: 400; color: #1d3b46; margin-bottom: 0.8rem; }
+    .nf-text { color: #2c5462; font-size: 1.02rem; line-height: 1.7; margin-bottom: var(--gap-m); }
+    .nf-actions { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+  </style>
+
+  <section class="nf">
+    <div class="nf-inner">
+      <p class="nf-code">404</p>
+      <h1 class="nf-title">Diese Seite gibt es nicht</h1>
+      <p class="nf-text">
+        Der Link ist wohl veraltet oder hat sich vertippt. Von hier kommst du
+        zurück zum Anfang oder direkt zu meinen Projekten.
+      </p>
+      <div class="nf-actions">
+        <a href="/" class="btn btn-dark-outline">Zur Startseite</a>
+        <a href="/projects" class="btn btn-dark-outline">Projekte ansehen</a>
+        <a href="/contact" class="btn btn-dark-outline">Kontakt</a>
+      </div>
+    </div>
+  </section>
+</MainLayout>

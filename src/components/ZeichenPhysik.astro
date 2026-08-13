@@ -1,0 +1,162 @@
+---
+// Text, dessen Buchstaben vor dem Zeiger ausweichen und danach zurueckfedern
+interface Props {
+  text: string;
+  /** Semantisches Element — Ueberschriften brauchen h1/h2 statt p. */
+  als?: 'p' | 'h1' | 'h2' | 'h3';
+  klasse?: string;
+}
+const { text, als = 'p', klasse = '' } = Astro.props;
+const Tag = als;
+---
+
+<Tag class:list={['zp', klasse]} data-zp role="img" aria-label={text}>
+  <span class="zp-text" aria-hidden="true">{text}</span>
+</Tag>
+
+<style>
+  .zp {
+    position: relative;
+    /* Der Text ist nach dem Aufspalten keine Textauswahl mehr — ein I-Beam-Cursor wuerde */
+    cursor: default;
+    user-select: none;
+  }
+  .zp-text { display: inline; }
+
+  /* Nach dem Aufspalten: Woerter halten den Umbruch, Zeichen werden frei gesetzt. */
+  .zp.aufgeteilt .zp-wort { display: inline-block; white-space: nowrap; }
+  .zp.aufgeteilt .zp-zeichen {
+    display: inline-block;
+    will-change: transform;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .zp.aufgeteilt .zp-zeichen { transform: none !important; }
+  }
+</style>
+
+<script>
+  (() => {
+    const RADIUS = 140;   // Wirkradius des Zeigers in Pixeln
+    const KRAFT  = 14;    // maximale Auslenkung in Pixeln
+    const STIFF  = 0.08;  // Federhaerte
+    const DAEMPF = 0.82;  // Daempfung
+
+    const sanft = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const grob  = window.matchMedia('(pointer: coarse)').matches;
+
+    document.querySelectorAll<HTMLElement>('[data-zp]').forEach(feld => {
+      // Auf Touch und bei reduzierter Bewegung bleibt der Text schlicht Text.
+      if (sanft || grob) return;
+
+      const quelle = feld.querySelector<HTMLElement>('.zp-text');
+      if (!quelle) return;
+      const text = quelle.textContent ?? '';
+      if (!text.trim()) return;
+
+      type Zeichen = {
+        el: HTMLElement;
+        bx: number; by: number;   // Ruheposition
+        x: number; y: number;     // aktuelle Verschiebung
+        vx: number; vy: number;   // Geschwindigkeit
+        b: number; h: number;     // Groesse fuer die Mittelpunktsrechnung
+      };
+      let zeichen: Zeichen[] = [];
+      let zeiger: { x: number; y: number } | null = null;
+      let laeuft = false;
+
+      // Woerter behalten den Umbruch, innerhalb der Woerter je ein Span pro Zeichen.
+      const aufteilen = () => {
+        feld.classList.remove('aufgeteilt');
+        quelle.innerHTML = '';
+        const spans: HTMLElement[] = [];
+
+        for (const wort of text.split(/(\s+)/)) {
+          if (!wort) continue;
+          if (/^\s+$/.test(wort)) { quelle.appendChild(document.createTextNode(wort)); continue; }
+          const w = document.createElement('span');
+          w.className = 'zp-wort';
+          for (const z of Array.from(wort)) {
+            const s = document.createElement('span');
+            s.className = 'zp-zeichen';
+            s.textContent = z;
+            w.appendChild(s);
+            spans.push(s);
+          }
+          quelle.appendChild(w);
+        }
+
+        // Erst messen (im normalen Fluss), dann auf Transform umstellen.
+        const rahmen = feld.getBoundingClientRect();
+        zeichen = spans.map(el => {
+          const r = el.getBoundingClientRect();
+          return {
+            el,
+            bx: r.left - rahmen.left, by: r.top - rahmen.top,
+            x: 0, y: 0, vx: 0, vy: 0,
+            b: r.width, h: r.height,
+          };
+        });
+        feld.classList.add('aufgeteilt');
+      };
+
+      const schritt = () => {
+        let bewegt = false;
+
+        for (const z of zeichen) {
+          let zx = 0, zy = 0;
+          if (zeiger) {
+            const mx = z.bx + z.b / 2, my = z.by + z.h / 2;
+            const ux = mx - zeiger.x, uy = my - zeiger.y;
+            const d = Math.hypot(ux, uy);
+            if (d < RADIUS && d > 0.1) {
+              const f = (1 - (d / RADIUS) ** 2) * KRAFT;
+              zx = (ux / d) * f;
+              zy = (uy / d) * f;
+            }
+          }
+          z.vx = (z.vx + (zx - z.x) * STIFF) * DAEMPF;
+          z.vy = (z.vy + (zy - z.y) * STIFF) * DAEMPF;
+          z.x += z.vx;
+          z.y += z.vy;
+
+          if (Math.abs(z.vx) > 0.01 || Math.abs(z.vy) > 0.01 ||
+              Math.abs(z.x) > 0.01 || Math.abs(z.y) > 0.01) bewegt = true;
+
+          z.el.style.transform = `translate(${z.x.toFixed(2)}px, ${z.y.toFixed(2)}px)`;
+        }
+
+        // Anhalten, sobald nichts mehr in Bewegung ist und der Zeiger weg ist.
+        laeuft = bewegt || zeiger !== null;
+        if (laeuft) requestAnimationFrame(schritt);
+      };
+
+      const anstossen = () => {
+        if (!laeuft) { laeuft = true; requestAnimationFrame(schritt); }
+      };
+
+      feld.addEventListener('pointermove', ev => {
+        if (ev.pointerType !== 'mouse') return;
+        const r = feld.getBoundingClientRect();
+        zeiger = { x: ev.clientX - r.left, y: ev.clientY - r.top };
+        anstossen();
+      });
+      feld.addEventListener('pointerleave', () => { zeiger = null; anstossen(); });
+
+      // Schriften aendern die Zeichenbreiten — erst danach messen.
+      const start = () => { aufteilen(); };
+      if (document.fonts?.ready) document.fonts.ready.then(start).catch(start);
+      else start();
+
+      // Umbruch aendert sich bei Breitenwechsel; Hoehe allein reicht nicht.
+      let breite = feld.getBoundingClientRect().width;
+      new ResizeObserver(() => {
+        const neu = feld.getBoundingClientRect().width;
+        if (Math.abs(neu - breite) < 4) return;
+        breite = neu;
+        zeiger = null;
+        aufteilen();
+      }).observe(feld);
+    });
+  })();
+</script>
