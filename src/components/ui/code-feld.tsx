@@ -1,14 +1,10 @@
-// Interaktiver Zeichenhintergrund fuer die Projektseite
 import { useEffect, useRef } from "react";
 import "./code-feld.css";
 
-// Slash und Stern bewusst getrennt, damit im Quelltext kein /* entsteht
 const ZEICHEN = "{}[]()<>/+-=*;:_|&%$#@!?01".split("");
 
 export interface CodeFeldProps {
-  /** Kantenlaenge einer Rasterzelle in Pixeln. */
   raster?: number;
-  /** Wirkradius des Zeigers in Pixeln. */
   radius?: number;
 }
 
@@ -23,7 +19,6 @@ export default function CodeFeld({ raster = 26, radius = 150 }: CodeFeldProps) {
 
     const sanft = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const grob = !window.matchMedia("(hover: hover) and (pointer: fine)").matches;
-    // Ohne echten Zeiger gibt es nichts zu folgen — dann gar nicht erst starten.
     if (sanft || grob) return;
 
     let breite = 0, hoehe = 0, dpr = 1;

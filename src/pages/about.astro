@@ -7,16 +7,22 @@ import ZeichenPhysik from '../components/ZeichenPhysik.astro';
 import ScrollAufdecken from '../components/ScrollAufdecken.astro';
 import Hoehenprofil from '../components/Hoehenprofil.astro';
 import { Image } from 'astro:assets';
-import gipfelkreuz from '../assets/galerie/Bild3.webp';
+import gipfel from '../assets/gipfel.webp';
 ---
 
-<MainLayout title="Über Mich — Nico Egerer" description="Lerne Nico Egerer kennen – angehender Softwareentwickler, Technikbegeisterter und Sportler aus Wolfratshausen.">
+<MainLayout title="Über Mich | Nico Egerer" description="Lerne Nico Egerer kennen, angehender Softwareentwickler, Technikbegeisterter und Sportler aus Wolfratshausen.">
   <style>
     .about-split { background: var(--hg); padding: var(--gap-xl) var(--gap-m); }
-    .about-split-inner { max-width: var(--max-w); margin: 0 auto; display: grid; grid-template-columns: 1fr 1.4fr; gap: var(--gap-l); align-items: center; }
-    .about-split-img { position: relative; display: flex; flex-direction: column; gap: 1.6rem; }
-    /* Hochformat, die Hoehe ergibt sich aus dem Bild */
-    .about-main-photo { width: 100%; max-width: 380px; height: auto; border-radius: var(--r); box-shadow: 0 20px 60px rgba(0,0,0,0.15); }
+    .about-split-inner { max-width: var(--max-w); margin: 0 auto; display: grid; grid-template-columns: 1fr 1.1fr; gap: var(--gap-l); align-items: center; }
+    .about-bild {
+      border-radius: var(--r);
+      overflow: hidden;
+      /* Weichzeichnung nicht groesser als der Versatz, sonst laeuft der
+         Schatten oben ueber die Rundung hinaus */
+      filter: drop-shadow(0 1px 2px rgba(40,34,26,0.10))
+              drop-shadow(0 14px 14px rgba(40,34,26,0.16));
+    }
+    .about-bild-img { display: block; width: 100%; height: auto; aspect-ratio: 3 / 2; object-fit: cover; object-position: 50% 42%; }
     .about-fliess { color: var(--txt-leise); }
     .about-actions { display: flex; align-items: center; gap: 1.5rem; margin-top: 1.8rem; flex-wrap: wrap; }
     .values-section { background: var(--hg-betont); padding: var(--gap-xl) var(--gap-m); }
@@ -49,44 +55,37 @@ import gipfelkreuz from '../assets/galerie/Bild3.webp';
     .about-cta-inner p { color: rgba(255,255,255,0.6); font-size: 1.05rem; margin: 1rem 0 2rem; }
     .cta-btns { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
     @media (max-width: 900px) {
-      .about-split-inner { grid-template-columns: 1fr; }
-      .about-split-img { max-width: 100%; margin: 0 auto; align-items: center; }
-      .about-split-img .about-main-photo { max-width: 340px; }
+      .about-split-inner { grid-template-columns: 1fr; gap: var(--gap-m); }
+      .about-bild-img { aspect-ratio: 4 / 3; }
       .values-grid { grid-template-columns: repeat(2,1fr); }
       .crosslink-inner { flex-direction: column; align-items: flex-start; gap: var(--gap-m); }
       .hobbies-cards { grid-template-columns: 1fr; max-width: 420px; margin: 0 auto; }
     }
-    /* Die Bergkette sitzt hinter dem Text und blendet nach oben aus, damit die Ueberschrift */
     .about-berge {
       -webkit-mask-image: linear-gradient(to top, #000 25%, transparent 88%);
               mask-image: linear-gradient(to top, #000 25%, transparent 88%);
     }
-    /* Der Wald blendet zu den Raendern aus, damit er den Text nicht stoert und die Kante */
     .about-wald {
       -webkit-mask-image: radial-gradient(ellipse 90% 80% at 50% 50%, #000 25%, transparent 80%);
               mask-image: radial-gradient(ellipse 90% 80% at 50% 50%, #000 25%, transparent 80%);
     }
     .page-hero-inner { position: relative; z-index: 2; }
 
-    /* Bergsilhouette ohne JavaScript */
     .berg-ersatz { position: absolute; inset: 0; z-index: 0; }
     .berg-ersatz svg { width: 100%; height: 100%; display: block; }
     .be-fern { fill: #14313f; }
     .be-nah  { fill: #0d2029; }
     @media (min-width: 860px) { .berg-ersatz { display: none; } }
 
-    /* Der Kopf traegt jetzt die dunkle Bergszene — Schrift und Rasterlinien muessen darauf */
     .page-hero-berg { background: #0b1a24; border-bottom-color: #16303d; }
     .page-hero-berg::before { display: none; }
 
-    /* Abdunkler zwischen Szene und Text */
     .page-hero-berg::after {
       content: '';
       position: absolute;
       inset: 0;
       z-index: 1;
       pointer-events: none;
-      /* Seitlich statt flaechig, damit die Bergsilhouette sichtbar bleibt */
       background:
         linear-gradient(to right,
           rgba(5, 14, 20, 0.94) 0%,
@@ -105,17 +104,14 @@ import gipfelkreuz from '../assets/galerie/Bild3.webp';
     .page-hero-berg .label.white { color: rgba(246,242,234,0.82); }
     .page-hero-berg .page-hero-accent { color: #8ed4ec; }
 
-    /* Der Wald sitzt jetzt hinter der Galerie statt im Kopf. */
     .galerie-huelle { position: relative; overflow: hidden; }
     @media (max-width: 600px) { .values-grid { grid-template-columns: 1fr; } }
-    /* Auf dem Telefon steht alles in einer Spalte — dort wirkt der Wechsel zwischen mittig */
     @media (max-width: 900px) {
       .values-header, .hobbies-header { text-align: left; }
     }
   </style>
 
   <section class="page-hero page-hero-berg">
-    <!-- Three.js-Bergszene als Kopf -->
     <div class="berg-ersatz" aria-hidden="true">
       <svg viewBox="0 0 1200 320" preserveAspectRatio="none">
         <path class="be-fern" d="M0 320 L140 176 L260 232 L400 132 L540 208 L680 150 L840 220 L980 146 L1090 198 L1200 160 L1200 320 Z"/>
@@ -126,24 +122,33 @@ import gipfelkreuz from '../assets/galerie/Bild3.webp';
     <div class="page-hero-inner">
       <span class="label white">Abseits vom Schreibtisch</span>
       <h1 class="page-hero-title">Berge, Wasser, <span class="page-hero-accent">Kilometer</span></h1>
-      <p class="page-hero-sub" data-auf="unschaerfe" data-auf-verzug="120">Triathlon, Klettern und die Alpen. Was ich mache, wenn der Rechner aus ist — und warum das mit dem Programmieren mehr zu tun hat, als man denkt.</p>
+      <p class="page-hero-sub" data-auf="unschaerfe" data-auf-verzug="120">Triathlon, Klettern und die Alpen. Was ich mache, wenn der Rechner aus ist, und warum das mit dem Programmieren mehr zu tun hat, als man denkt.</p>
     </div>
   </section>
 
   <section class="about-split">
     <div class="about-split-inner">
-      <div class="about-split-img" data-auf="maske" data-zeiger="bild">
-        <Image src={gipfelkreuz} alt="Nico am Gipfelkreuz in den bayerischen Alpen" class="about-main-photo" quality={72} widths={[340, 380, 760]} sizes="380px" loading="lazy" />
+      <div class="about-bild" data-auf="skalieren" data-zeiger="bild">
+        <Image
+          src={gipfel}
+          alt="Am Gipfelkreuz, im Hintergrund die Alpen"
+          class="about-bild-img"
+          quality={88}
+          widths={[560, 840, 1120]}
+          sizes="(max-width: 900px) 100vw, 46vw"
+          loading="lazy"
+        />
       </div>
+
       <div class="about-split-text">
         <span class="label">Warum ich das mache</span>
         <ZeichenPhysik als="h2" klasse="section-heading dark" text="Ausdauer ist eine Haltung" />
         <div class="about-fliess">
           <ScrollAufdecken
           absaetze={[
-              'Ich bin 19 und komme aus Wolfratshausen — zwischen Isar und Voralpen aufgewachsen. Die Berge waren vor dem Rechner da, und sie sind bis heute der Ort, an dem ich am klarsten denke.',
+              'Ich bin 19 und komme aus Wolfratshausen, zwischen Isar und Voralpen aufgewachsen. Die Berge waren vor dem Rechner da, und sie sind bis heute der Ort, an dem ich am klarsten denke.',
               'Triathlon hat mir beigebracht, was ich vorher nicht wusste: Es geht nicht um den einen guten Tag. Es geht um die vielen unspektakulären davor. Schwimmen, wenn niemand zuschaut. Radfahren, wenn es regnet. Laufen, wenn der Kopf schon aufgeben will.',
-              'Genau das ist der Punkt, an dem Sport und Programmieren dasselbe verlangen. Ein Bug um 22 Uhr fühlt sich an wie der letzte Anstieg — man weiß, dass es weh tut, und man macht trotzdem weiter. Disziplin lernt man nicht am Schreibtisch. Man bringt sie mit.',
+              'Genau das ist der Punkt, an dem Sport und Programmieren dasselbe verlangen. Ein Bug um 22 Uhr fühlt sich an wie der letzte Anstieg: man weiß, dass es weh tut, und man macht trotzdem weiter. Disziplin lernt man nicht am Schreibtisch. Man bringt sie mit.',
             ]}
           />
         </div>
@@ -174,23 +179,22 @@ import gipfelkreuz from '../assets/galerie/Bild3.webp';
         </div>
         <div class="value-card">
           <div class="value-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3"/><path d="M3 20a6 6 0 0 1 12 0"/><path d="M16 5.5a3 3 0 0 1 0 5"/><path d="M18 14.5a6 6 0 0 1 3 5.5"/></svg></div>
-          <h3>Laufen</h3><p>Die ehrlichste Disziplin. Keine Ausrüstung, keine Ausreden — nur Schuhe, Strecke und der eigene Kopf.</p>
+          <h3>Laufen</h3><p>Die ehrlichste Disziplin. Keine Ausrüstung, keine Ausreden, nur Schuhe, Strecke und der eigene Kopf.</p>
         </div>
         <div class="value-card">
           <div class="value-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 19h20L14.5 6 11 12l-2.2-3.2z"/><path d="M11.6 11 9 15"/></svg></div>
-          <h3>Berge</h3><p>Klettern, Klettersteig, Hochtour. Am Gipfel ist das Problem gelöst — und der Weg dorthin war der eigentliche Punkt.</p>
+          <h3>Berge</h3><p>Klettern, Klettersteig, Hochtour. Am Gipfel ist das Problem gelöst, und der Weg dorthin war der eigentliche Punkt.</p>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- Werdegang und Skills stehen auf /work, hier nur der Verweis -->
   <section class="crosslink-section">
     <div class="crosslink-inner reveal">
       <div class="crosslink-text">
         <span class="label">Die andere Hälfte</span>
         <h2 class="section-heading dark">Und beruflich?</h2>
-        <p class="crosslink-sub">Diese Seite gehört dem Sport. Was ich entwickle, womit ich arbeite und was ich bisher gebaut habe, steht drüben — Startseite, Projekte und Erfahrung.</p>
+        <p class="crosslink-sub">Diese Seite gehört dem Sport. Was ich entwickle, womit ich arbeite und was ich bisher gebaut habe, steht drüben: Startseite, Projekte und Erfahrung.</p>
       </div>
       <div class="crosslink-actions">
         <a href="/" class="btn btn-dark-outline">Zur Startseite</a>
@@ -223,7 +227,6 @@ import gipfelkreuz from '../assets/galerie/Bild3.webp';
   </section>
 
   <div class="galerie-huelle">
-    <!-- ASCII-Wald (Max Fu, 21st.dev), Video liegt im Projekt statt am Fremd-CDN. Steht hier -->
     <AsciiForest klasse="about-wald" deckkraft={0.28} />
     <FaecherGalerie />
   </div>

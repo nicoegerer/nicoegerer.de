@@ -1,8 +1,6 @@
 ---
-// Konturschrift, in der eine Farbmaske dem Zeiger folgt
 interface Props {
   text: string;
-  /** Beschriftung fuer Screenreader, falls der Text allein nicht traegt. */
   label?: string;
   klasse?: string;
 }
@@ -29,11 +27,9 @@ const id = 'kt-' + Math.random().toString(36).slice(2, 9);
       </mask>
     </defs>
 
-    <!-- 1. Grundkontur, zeichnet sich beim Erscheinen selbst -->
     <text class="kontur-linie" x="50%" y="50%" text-anchor="middle" dominant-baseline="middle"
           textLength="286" lengthAdjust="spacingAndGlyphs">{text}</text>
 
-    <!-- Farbige Fassung, nur sichtbar wo die Maske offen ist -->
     <text class="kontur-farbe" x="50%" y="50%" text-anchor="middle" dominant-baseline="middle"
           textLength="286" lengthAdjust="spacingAndGlyphs"
           stroke={`url(#${id}-farbe)`} mask={`url(#${id}-fenster)`}>{text}</text>
@@ -50,7 +46,6 @@ const id = 'kt-' + Math.random().toString(36).slice(2, 9);
     font-weight: 500;
     fill: transparent;
     stroke-width: 0.6;
-    /* Der Text ist eine Grafik — kein I-Beam versprechen. */
     user-select: none;
   }
 
@@ -83,7 +78,6 @@ const id = 'kt-' + Math.random().toString(36).slice(2, 9);
       const maske = feld.querySelector<SVGRadialGradientElement>('radialGradient');
       if (!svg || !maske) return;
 
-      // Kontur zeichnen
       let los = false;
       const zeichnen = () => {
         if (los) return;
@@ -98,7 +92,6 @@ const id = 'kt-' + Math.random().toString(36).slice(2, 9);
 
       if (sanft || window.matchMedia('(pointer: coarse)').matches) return;
 
-      // Maskenmittelpunkt dem Zeiger nachfuehren — in SVG-Koordinaten, damit es unabhaengig
       let rahmen: DOMRect | null = null;
 
       const messen = () => { rahmen = svg.getBoundingClientRect(); };
@@ -120,7 +113,6 @@ const id = 'kt-' + Math.random().toString(36).slice(2, 9);
         feld.classList.remove('aktiv');
       });
 
-      // Der gemerkte Rahmen wird durch Scrollen und Groessenaenderung ungueltig.
       window.addEventListener('scroll', () => { rahmen = null; }, { passive: true });
       window.addEventListener('resize', () => { rahmen = null; });
     });

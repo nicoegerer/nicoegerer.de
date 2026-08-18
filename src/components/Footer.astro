@@ -1,5 +1,4 @@
 ---
-// Reihenfolge = Gruppierung: jeder Unterpunkt haengt sich an den Hauptpunkt DAVOR.
 const navLinks = [
   { label: 'Startseite',    href: '/',         main: true  },
   { label: 'Über Mich',     href: '/about',    main: true  },
@@ -14,7 +13,6 @@ const navLinks = [
   { label: 'Blog',          href: '/blog',     main: true  },
 ];
 
-// Group into columns: each main link + its following sub-links
 const columns: { main: typeof navLinks[0]; subs: typeof navLinks }[] = [];
 navLinks.forEach(link => {
   if (link.main) {
@@ -29,7 +27,6 @@ navLinks.forEach(link => {
   <div class="footer-inner">
     <div class="footer-links">
       {columns.map(col => (
-        // data-punkt erlaubt es, einzelne Eintraege auf schmalen Schirmen gezielt auszublenden
         <div class="footer-col" data-punkt={col.main.label}>
           <a href={col.main.href} class="footer-main">{col.main.label}</a>
           {col.subs.map(s => (

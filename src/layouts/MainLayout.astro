@@ -2,6 +2,7 @@
 import Nav from '../components/Nav.astro';
 import Footer from '../components/Footer.astro';
 import Interaktionen from '../components/Interaktionen.astro';
+import { Font } from 'astro:assets';
 import '../styles/global.css';
 
 interface Props {
@@ -11,7 +12,7 @@ interface Props {
 
 const {
   title = 'Nico Egerer',
-  description = 'Nico Egerer — angehender Softwareentwickler aus Wolfratshausen.',
+  description = 'Nico Egerer, angehender Softwareentwickler aus Wolfratshausen.',
 } = Astro.props;
 
 const kanonisch = new URL(Astro.url.pathname, Astro.site).href;
@@ -22,7 +23,6 @@ const kanonisch = new URL(Astro.url.pathname, Astro.site).href;
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <!-- Vor dem ersten Rendern: Effekte, die Inhalte zunaechst verbergen, greifen nur wenn -->
     <script is:inline>
       document.documentElement.classList.add('js');
       // Hell ist der Standard
@@ -41,22 +41,16 @@ const kanonisch = new URL(Astro.url.pathname, Astro.site).href;
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={kanonisch} />
-    <meta property="og:image" content={new URL('/images/og-bild.jpg', Astro.site)} />
-    <meta property="og:image:width" content="1200" />
-    <meta property="og:image:height" content="630" />
-    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:card" content="summary" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
-    <meta name="twitter:image" content={new URL('/images/og-bild.jpg', Astro.site)} />
 
-    <link rel="icon" href="/images/favicon.png" type="image/png" />
-    <link rel="apple-touch-icon" href="/images/app-icon.png" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@500;700&family=Playfair+Display:wght@400;500;600&family=Manrope:wght@300;400;500;600;700;800&display=swap"
-      rel="stylesheet"
-    />
+    <link rel="icon" href="/favicon.png" type="image/png" sizes="96x96" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+
+    <Font cssVariable="--schrift-text" preload />
+    <Font cssVariable="--schrift-titel" preload />
+    <Font cssVariable="--schrift-hand" />
   </head>
   <body>
     <Nav />
@@ -67,7 +61,6 @@ const kanonisch = new URL(Astro.url.pathname, Astro.site).href;
     <Interaktionen />
 
     <script>
-      // Global: Scroll reveal
       function initReveal() {
         const els = document.querySelectorAll('.reveal');
         if (!els.length) return;
@@ -79,7 +72,6 @@ const kanonisch = new URL(Astro.url.pathname, Astro.site).href;
         els.forEach(el => obs.observe(el));
       }
 
-      // Global: Timeline
       function initTimeline() {
         const tlSection = document.getElementById('tl-section');
         const tlFill    = document.getElementById('tl-fill');
@@ -97,7 +89,6 @@ const kanonisch = new URL(Astro.url.pathname, Astro.site).href;
         setTimeout(update, 100);
       }
 
-      // EmailJS contact form
       const EMAILJS_PUBLIC_KEY      = '06H9FmKshm9bn70Us';
       const EMAILJS_SERVICE_ID      = 'service_gp9s55y';
       const EMAILJS_TEMPLATE_NOTIFY = 'template_qrftc8c';
@@ -109,7 +100,6 @@ const kanonisch = new URL(Astro.url.pathname, Astro.site).href;
         const error   = document.getElementById('cf-error');
         if (!form) return;
 
-        // Eigene Meldungen statt der Browser-Bubbles, damit der Fehler am Feld steht.
         form.setAttribute('novalidate', '');
         success?.setAttribute('role', 'status');
         error?.setAttribute('role', 'alert');
@@ -145,7 +135,6 @@ const kanonisch = new URL(Astro.url.pathname, Astro.site).href;
         };
 
         felder.forEach(el => {
-          // Erst beim Verlassen pruefen — Fehler waehrend des Tippens nerven.
           el.addEventListener('blur', () => pruefe(el));
           el.addEventListener('input', () => { if (el.classList.contains('invalid')) pruefe(el); });
         });
@@ -162,7 +151,6 @@ const kanonisch = new URL(Astro.url.pathname, Astro.site).href;
           success?.classList.remove('show');
           error?.classList.remove('show');
 
-          // Alle Felder pruefen, danach zum ersten Fehler springen
           const fehlerhaft = felder.filter(el => !pruefe(el));
           if (fehlerhaft.length) {
             fehlerhaft[0].focus();
@@ -202,7 +190,6 @@ const kanonisch = new URL(Astro.url.pathname, Astro.site).href;
               { from_name: name, message: msg, email: mail });
             success?.classList.add('show');
             form.reset();
-            // Zurueckgesetzte Felder duerfen nicht als fehlerhaft markiert bleiben
             felder.forEach(el => {
               el.classList.remove('invalid');
               el.removeAttribute('aria-invalid');
@@ -219,7 +206,6 @@ const kanonisch = new URL(Astro.url.pathname, Astro.site).href;
         });
       }
 
-      // Buttons mit data-print oeffnen den Druckdialog ("Als PDF speichern")
       function initPrint() {
         document.querySelectorAll('[data-print]').forEach(btn =>
           btn.addEventListener('click', () => window.print())

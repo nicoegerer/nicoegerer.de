@@ -1,5 +1,4 @@
 ---
-// Gemeinsame Mikro-Interaktionen fuer alle Seiten
 ---
 
 <div class="fortschritt" aria-hidden="true"><span class="fortschritt-linie"></span></div>
@@ -19,7 +18,6 @@
   (() => {
     const sanft = wenigerBewegung();
 
-    // Rollen zentral zuweisen statt einzeln im Markup
     const rolle = (wahl: string, attribute: Record<string, string>) => {
       document.querySelectorAll<HTMLElement>(wahl).forEach(el => {
         for (const [k, v] of Object.entries(attribute)) {
@@ -35,11 +33,9 @@
     rolle('.proj-card, .project-card', { neigen: '4.5', glanz: '' });
     rolle('.profile-card, .value-card, .hobby-card, .kn-block',
                                        { neigen: '3.5', glanz: '' });
-    // Die Zeitstrahl-Karten fahren beim Aufdecken seitlich ein — ihr transform ist belegt
     rolle('.tl-card, .contact-channel', { glanz: '' });
     rolle('.link-arrow, .proj-link, .tl-more, .profile-cta', { magnet: '5' });
 
-    // Allgemeine Schichten starten
     fundamentStarten();
     scrollEffekteStarten();   // laeuft immer: Aufdecken darf nie ausfallen
     klickEffekteStarten();
@@ -49,7 +45,6 @@
       cursorStarten();
     }
 
-    // Zurueck nach oben
     const hoch = document.getElementById('nach-oben');
     const hochPruefen = () => {
       hoch?.classList.toggle('sichtbar', window.scrollY > window.innerHeight * 1.5);
@@ -60,7 +55,6 @@
       window.scrollTo({ top: 0, behavior: sanft ? 'auto' : 'smooth' });
     });
 
-    // Hero: Licht folgt dem Zeiger, Figur bleibt ruhig Frueher wanderte die Figur selbst
     const buehne = document.querySelector('.hero-stage') as HTMLElement | null;
     if (buehne && zeigerEffekteAn()) {
       let zx = 50, zy = 40, ax = 50, ay = 40, laeuft = false;
@@ -84,7 +78,6 @@
       });
     }
 
-    // Schlagworte weichen dem Zeiger aus ("Zukunft"-Sektion)
     const zukunftFeld = document.querySelector('.future-feld');
     if (zukunftFeld && zeigerEffekteAn()) {
       const treiber = [...zukunftFeld.querySelectorAll('.treiber')] as HTMLElement[];
@@ -124,7 +117,6 @@
       });
     }
 
-    // Kopieren-Schaltflaechen
     document.querySelectorAll('[data-kopieren]').forEach(el => {
       const b = el as HTMLButtonElement;
       const beschriftung = b.querySelector('.kopieren-text');
@@ -143,7 +135,6 @@
       });
     });
 
-    // Zeichenzaehler am Nachrichtenfeld
     const feld = document.getElementById('cf-msg') as HTMLTextAreaElement | null;
     if (feld) {
       const max = Number(feld.getAttribute('maxlength')) || 5000;

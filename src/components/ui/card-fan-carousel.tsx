@@ -1,11 +1,9 @@
-// Bilder-Faecher nach dem 21st.dev-Muster "card-fan-carousel" (@aayush-duhan), hier
 import { useState, useEffect, useRef, useCallback } from "react";
 import gsap from "gsap";
 import "./card-fan-carousel.css";
 
 export interface CardItem {
   imgUrl: string;
-  /* Von Astros getImage erzeugt — der Browser laedt die passende Groesse */
   srcSet?: string;
   sizes?: string;
   breite?: number | string;
@@ -16,9 +14,13 @@ export interface CardItem {
 
 interface SocialCardsProps {
   cards: CardItem[];
-  /* Duenner Kreis innerhalb der Pfeil-Schaltflaechen */
   ring?: boolean;
+  /* Takt der Slideshow in ms; 0 schaltet sie ab */
+  autoMs?: number;
 }
+
+/* Ruhe, nachdem jemand selbst geblaettert hat */
+const PAUSE_NACH_EINGRIFF = 9000;
 
 const MAX_VISIBLE = 7;
 const HALF = 3;
@@ -41,9 +43,7 @@ function getResponsiveMultiplier(width: number) {
   return 1.0;
 }
 
-/* Returns a multiplier (0..1] that scales y-offsets and entry animation distances when */
 function getHeightMultiplier(width: number) {
-  // Ideal layout heights (in px at 16px root) matching the CSS breakpoints
   let idealPx: number;
   if (width < 480) idealPx = 22 * 16;       // 352px
   else if (width < 640) idealPx = 26 * 16;  // 416px
@@ -70,12 +70,15 @@ function getSlotConfig(totalCards: number, slot: number) {
   };
 }
 
-export default function SocialCards({ cards, ring = true }: SocialCardsProps) {
+export default function SocialCards({ cards, ring = true, autoMs = 5000 }: SocialCardsProps) {
   const containerRef = useRef<HTMLDivElement>(null);
+  const abschnittRef = useRef<HTMLElement>(null);
   const isAnimating = useRef(false);
   const hasEntered = useRef(false);
   const directionRef = useRef<"left" | "right" | null>(null);
   const prevVisible = useRef<Set<number>>(new Set());
+  const letzterEingriff = useRef(0);
+  const [laeuft, setLaeuft] = useState(false);
 
   const totalCards = cards.length;
   const needsPagination = totalCards > MAX_VISIBLE;
@@ -102,7 +105,6 @@ export default function SocialCards({ cards, ring = true }: SocialCardsProps) {
     );
   }, [totalCards, needsPagination]);
 
-  // Direktsprung ueber die Punkte — die Vorlage hatte sie nur als Anzeige.
   const springe = useCallback((ziel: number) => {
     if (isAnimating.current || !needsPagination) return;
     setCenterIndex(prev => {
@@ -112,6 +114,48 @@ export default function SocialCards({ cards, ring = true }: SocialCardsProps) {
       return ziel;
     });
   }, [needsPagination]);
+
+  const vonHand = useCallback((tun: () => void) => {
+    letzterEingriff.current = Date.now();
+    tun();
+  }, []);
+
+  /* Selbstlauf, nur im Sichtfeld, bei sichtbarem Tab und ohne Zeiger darauf */
+  useEffect(() => {
+    const abschnitt = abschnittRef.current;
+    if (!abschnitt || !needsPagination || !autoMs) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    const beobachter = new IntersectionObserver(
+      ([eintrag]) => setLaeuft(eintrag.isIntersecting),
+      { threshold: 0.35 }
+    );
+    beobachter.observe(abschnitt);
+
+    let zeigerDrauf = false;
+    const an = () => { zeigerDrauf = true; };
+    const aus = () => { zeigerDrauf = false; };
+    abschnitt.addEventListener("pointerenter", an);
+    abschnitt.addEventListener("pointerleave", aus);
+    abschnitt.addEventListener("focusin", an);
+    abschnitt.addEventListener("focusout", aus);
+
+    const takt = setInterval(() => {
+      if (!laeuft || zeigerDrauf || document.hidden) return;
+      if (isAnimating.current) return;
+      if (Date.now() - letzterEingriff.current < PAUSE_NACH_EINGRIFF) return;
+      cycle("right");
+    }, autoMs);
+
+    return () => {
+      clearInterval(takt);
+      beobachter.disconnect();
+      abschnitt.removeEventListener("pointerenter", an);
+      abschnitt.removeEventListener("pointerleave", aus);
+      abschnitt.removeEventListener("focusin", an);
+      abschnitt.removeEventListener("focusout", aus);
+    };
+  }, [needsPagination, autoMs, laeuft, cycle]);
 
   useEffect(() => {
     const container = containerRef.current;
@@ -175,7 +219,6 @@ export default function SocialCards({ cards, ring = true }: SocialCardsProps) {
 
     prevVisible.current = new Set(visibleMap.keys());
 
-    // Hover interactions
     const visibleEntries: { el: HTMLElement; slot: number }[] = [];
     cardElements.forEach((el, i) => {
       const slot = visibleMap.get(i);
@@ -270,8 +313,7 @@ export default function SocialCards({ cards, ring = true }: SocialCardsProps) {
   );
 
   return (
-    // data-ring steuert den duennen Kreis in den Pfeilen (siehe die markierte EINSTELLUNG
-    <section className="fan-abschnitt" data-ring={ring ? "an" : "aus"}>
+    <section ref={abschnittRef} className="fan-abschnitt" data-ring={ring ? "an" : "aus"}>
       <div className="fan-rahmen">
         <div ref={containerRef} className="fan-layout">
           {cards.map((card, index) => {
@@ -283,7 +325,6 @@ export default function SocialCards({ cards, ring = true }: SocialCardsProps) {
                   sizes={card.sizes}
                   width={card.breite}
                   height={card.hoehe}
-                  /* Die ersten Karten stehen sofort im Bild, der Rest wartet */
                   loading={index < MAX_VISIBLE ? "eager" : "lazy"}
                   decoding="async"
                   alt={card.alt || `Bild ${index + 1}`}
@@ -304,7 +345,7 @@ export default function SocialCards({ cards, ring = true }: SocialCardsProps) {
         {/* data-viele: ab 20 Bildern passen die Punkte auf dem Telefon nicht
             mehr in eine Reihe, dort tritt die Zaehlung an ihre Stelle */}
         <div className="fan-steuerung" data-viele={cards.length > 20 ? "ja" : "nein"}>
-          <button type="button" className="fan-pfeil" onClick={() => cycle("left")} aria-label="Vorheriges Bild">
+          <button type="button" className="fan-pfeil" onClick={() => vonHand(() => cycle("left"))} aria-label="Vorheriges Bild">
             {chevron("left")}
           </button>
           <div className="fan-punkte">
@@ -315,14 +356,14 @@ export default function SocialCards({ cards, ring = true }: SocialCardsProps) {
                 className="fan-punkt"
                 aria-label={card.alt ? card.alt : `Bild ${i + 1} anzeigen`}
                 aria-current={i === centerIndex ? "true" : undefined}
-                onClick={() => springe(i)}
+                onClick={() => vonHand(() => springe(i))}
               />
             ))}
           </div>
           <span className="fan-zaehler" aria-hidden="true">
             {centerIndex + 1} / {cards.length}
           </span>
-          <button type="button" className="fan-pfeil" onClick={() => cycle("right")} aria-label="Nächstes Bild">
+          <button type="button" className="fan-pfeil" onClick={() => vonHand(() => cycle("right"))} aria-label="Nächstes Bild">
             {chevron("right")}
           </button>
         </div>

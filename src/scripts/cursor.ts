@@ -1,12 +1,8 @@
-// Zusaetzlicher Zeigerring: Punkt auf der Mausposition, Ring zieht nach.
-// Der Systemzeiger bleibt sichtbar, der Ring kommentiert nur, was
-// darunter liegt (Link, Bild, Button, Textfeld).
 
 import { zeiger, anmelden, zeigerEffekteAn, naehern, starten } from './basis';
 
 const SCHLUESSEL = 'zeigerring';
 
-// Standard aus — wer ihn will, schaltet ihn im Menue dazu
 export function ringAn(): boolean {
   try { return localStorage.getItem(SCHLUESSEL) === 'an'; }
   catch { return false; }
@@ -50,7 +46,6 @@ export function cursorStarten() {
     if (!sichtbar) {
       sichtbar = true;
       huelle.classList.add('an');
-      // nicht von links oben hereinfliegen
       rx = px = zeiger.x; ry = py = zeiger.y;
     }
     px = zeiger.x; py = zeiger.y;

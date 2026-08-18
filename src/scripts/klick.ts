@@ -1,5 +1,3 @@
-// Druckwelle vom Beruehrungspunkt. Auf Touch die einzige Rueckmeldung,
-// dass der Tipper angekommen ist.
 
 import { wenigerBewegung } from './basis';
 
@@ -18,7 +16,6 @@ export function klickEffekteStarten() {
     const r = ziel.getBoundingClientRect();
     const x = (ev as PointerEvent).clientX - r.left;
     const y = (ev as PointerEvent).clientY - r.top;
-    // Radius bis in die entfernteste Ecke, damit die Welle die Flaeche fuellt
     const radius = Math.hypot(Math.max(x, r.width - x), Math.max(y, r.height - y));
 
     const welle = document.createElement('span');
@@ -29,7 +26,6 @@ export function klickEffekteStarten() {
     welle.style.width = welle.style.height = radius * 2 + 'px';
     ziel.appendChild(welle);
 
-    // animationend bleibt aus, wenn der Tab in den Hintergrund geht
     const weg = () => welle.remove();
     welle.addEventListener('animationend', weg, { once: true });
     setTimeout(weg, 900);

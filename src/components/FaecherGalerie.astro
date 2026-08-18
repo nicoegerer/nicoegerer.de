@@ -1,13 +1,10 @@
 ---
-// Rahmen um die React-Insel card-fan-carousel
 import { getImage } from 'astro:assets';
 import SocialCards from './ui/card-fan-carousel';
 
 // Ring innerhalb der Blaetter-Pfeile: auf false setzen, um ihn abzuschalten
 const RING_UM_PFEILE = true;
 
-// Alle Bilder aus src/assets/galerie, aufsteigend nach der Zahl im Namen.
-// Neue Bilder einfach in den Ordner legen — die Liste liest sich selbst.
 const dateien = import.meta.glob<{ default: ImageMetadata }>(
   '../assets/galerie/*.{webp,jpg,jpeg,png}',
   { eager: true }
@@ -16,12 +13,8 @@ const dateien = import.meta.glob<{ default: ImageMetadata }>(
 const zahl = (pfad: string) => Number(pfad.match(/(\d+)\D*$/)?.[1] ?? 0);
 const sortiert = Object.entries(dateien).sort((a, b) => zahl(a[0]) - zahl(b[0]));
 
-// Bildbeschreibung je Datei; steht im alt-Attribut und an den Blaetter-Punkten.
-// Was hier fehlt, bekommt "Bild 3" als Ersatz.
 const texte: Record<string, string> = {};
 
-// Die Karten sind je nach Breite 136–240 CSS-Pixel breit, mit Retina also
-// hoechstens 480 Geraetepixel. Drei Stufen decken das ab.
 const BREITEN = [180, 280, 480];
 const GROESSEN =
   '(max-width: 479px) 136px, (max-width: 639px) 168px, ' +
@@ -32,14 +25,10 @@ const cards = await Promise.all(
     const name = pfad.split('/').pop()!.replace(/\.\w+$/, '');
     const bild = await getImage({
       src: modul.default,
-      // Deckelt zugleich das Ausweichbild — sonst legt Astro pro Foto noch
-      // die volle Aufloesung ab, die kein Browser je anfordert.
       width: BREITEN[BREITEN.length - 1],
       widths: BREITEN,
       sizes: GROESSEN,
       format: 'webp',
-      // Die Vorlagen sind nur leicht komprimiert; auf Kartengroesse
-      // ist bei 70 nichts zu sehen und die Datei ein Viertel so gross.
       quality: 70,
     });
     return {
@@ -58,11 +47,10 @@ const cards = await Promise.all(
   <div class="faecher-kopf">
     <span class="label">In Bildern</span>
     <h2 class="section-heading dark" id="faecher-titel">Unterwegs</h2>
-    <p class="faecher-sub">Berge, Wasser, Schnee und ein paar Städte — fahr mit der Maus über die Karten oder blättere durch.</p>
+    <p class="faecher-sub">Berge, Wasser, Schnee und ein paar Städte. Fahr mit der Maus über die Karten oder blättere durch.</p>
   </div>
 
-  <!-- client:visible mit Vorlauf, damit die Einflug-Animation nicht abgeschnitten wirkt -->
-  <SocialCards cards={cards} ring={RING_UM_PFEILE} client:visible={{ rootMargin: '600px' }} />
+  <SocialCards cards={cards} ring={RING_UM_PFEILE} autoMs={3000} client:visible={{ rootMargin: '600px' }} />
 </section>
 
 <style>
@@ -70,7 +58,6 @@ const cards = await Promise.all(
   .faecher-kopf { max-width: var(--max-w); margin: 0 auto var(--gap-m); text-align: center; }
   .faecher-sub { color: var(--txt-leise); font-size: 0.98rem; max-width: 46ch; margin: 0 auto; }
 
-  /* Auf dem Telefon steht der Kopf zwischen linksbuendigen Sektionen */
   @media (max-width: 900px) {
     .faecher { padding: var(--gap-l) var(--gap-m) var(--gap-m); }
     .faecher-kopf { text-align: left; margin-bottom: var(--gap-s); }

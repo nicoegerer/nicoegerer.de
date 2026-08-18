@@ -6,7 +6,7 @@
     "dev": "astro dev",
     "start": "astro dev",
     "build": "astro build",
-    "preview": "astro preview --port 4322",
+    "preview": "astro preview --port 4321",
     "astro": "astro"
   },
   "dependencies": {
@@ -14,7 +14,7 @@
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.4",
     "@types/three": "^0.185.4",
-    "astro": "^5.18.2",
+    "astro": "^7.2.2",
     "gsap": "^3.15.0",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",

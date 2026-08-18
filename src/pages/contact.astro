@@ -1,8 +1,10 @@
 ---
 import MainLayout from '../layouts/MainLayout.astro';
+import { Image } from 'astro:assets';
+import kontakt from '../assets/kontakt.webp';
 ---
 
-<MainLayout title="Kontakt — Nico Egerer" description="Nimm Kontakt mit Nico Egerer auf — per Formular, E-Mail oder LinkedIn.">
+<MainLayout title="Kontakt | Nico Egerer" description="Nimm Kontakt mit Nico Egerer auf, per Formular, E-Mail oder LinkedIn.">
   <style>
     .contact-section { background: var(--hg); padding: var(--gap-xl) var(--gap-m); }
     .contact-section-inner { max-width: var(--max-w); margin: 0 auto; display: grid; grid-template-columns: 1.3fr 1fr; gap: var(--gap-l); align-items: start; }
@@ -32,7 +34,18 @@ import MainLayout from '../layouts/MainLayout.astro';
     .response-badge { display: flex; align-items: center; gap: 1rem; background: rgba(152,213,235,0.1); border: 1.5px solid rgba(152,213,235,0.3); border-radius: var(--r); padding: 1rem 1.3rem; font-size: 1.3rem; }
     .response-badge strong { color: var(--txt); font-size: 0.95rem; display: block; margin-bottom: 0.15rem; }
     .response-badge p { color: var(--txt-leise); font-size: 0.85rem; margin: 0; }
-    /* Plattformen — zusammengefuehrt aus der frueheren Seite /profiles */
+    .page-hero-kontakt .page-hero-inner { display: grid; grid-template-columns: 1fr auto; gap: var(--gap-l); align-items: end; }
+    .kontakt-portrait {
+      width: clamp(190px, 20vw, 260px);
+      border-radius: var(--r);
+      overflow: hidden;
+      /* Weichzeichnung nicht groesser als der Versatz, sonst laeuft der
+         Schatten oben ueber die Rundung hinaus */
+      filter: drop-shadow(0 1px 2px rgba(40,34,26,0.12))
+              drop-shadow(0 14px 14px rgba(40,34,26,0.18));
+    }
+    .kontakt-portrait img { display: block; width: 100%; height: auto; }
+
     .profiles-section { background: var(--hg-2); padding: var(--gap-xl) var(--gap-m); }
     .profiles-inner { max-width: var(--max-w); margin: 0 auto; }
     .profiles-header { text-align: center; margin-bottom: var(--gap-l); }
@@ -54,30 +67,34 @@ import MainLayout from '../layouts/MainLayout.astro';
     .profile-handle { font-size: 0.85rem; color: var(--txt-schwach); margin-top: -0.3rem; margin-bottom: 0.2rem; }
     .profile-desc { color: var(--txt-leise); font-size: 0.9rem; line-height: 1.65; flex: 1; }
     .profile-cta { font-size: 0.9rem; color: var(--akzent-2); font-weight: 500; margin-top: 0.8rem; transition: transform 0.2s ease; }
-    /* Der Verweis traegt bereits den Magneten (--mx/--my) — ein zweites transform hier */
     .profile-card:hover .profile-cta { opacity: 1; }
 
     @media (max-width: 900px) {
+      .page-hero-kontakt .page-hero-inner { grid-template-columns: 1fr; gap: var(--gap-m); }
+      .kontakt-portrait { order: -1; width: 130px; }
       .contact-section-inner { grid-template-columns: 1fr; }
       .cf-row { grid-template-columns: 1fr; }
       .profiles-grid { grid-template-columns: 1fr; max-width: 460px; margin: 0 auto; }
     }
-    /* Beide Beschriftungen lagen unter 12px */
     @media (max-width: 700px) {
       .channel-label { font-size: 0.8rem; }
       .profile-badge { font-size: 0.78rem; }
       .contact-channel { padding: 1.1rem 1.2rem; }
-      /* Gleiche Kante wie der Rest der Seite — siehe global.css, 10f. */
       .profiles-header { text-align: left; }
       .profiles-sub { margin-left: 0; }
     }
   </style>
 
-  <section class="page-hero">
+  <section class="page-hero page-hero-kontakt">
     <div class="page-hero-inner">
-      <span class="label white">Schreib mir</span>
-      <h1 class="page-hero-title">Lass uns <span class="page-hero-accent">reden</span></h1>
-      <p class="page-hero-sub" data-auf="unschaerfe" data-auf-verzug="120">Ich antworte schnell — egal ob Projekt, Frage oder einfach Hallo.</p>
+      <div class="page-hero-worte">
+        <span class="label white">Schreib mir</span>
+        <h1 class="page-hero-title">Lass uns <span class="page-hero-accent">reden</span></h1>
+        <p class="page-hero-sub" data-auf="unschaerfe" data-auf-verzug="120">Ich antworte schnell, egal ob Projekt, Frage oder einfach Hallo.</p>
+      </div>
+      <div class="kontakt-portrait" data-auf="skalieren" data-auf-verzug="220" data-zeiger="bild">
+        <Image src={kontakt} alt="Ich vor der Skyline von New York" quality={88} widths={[260, 520, 780]} sizes="260px" />
+      </div>
     </div>
   </section>
 
@@ -86,7 +103,7 @@ import MainLayout from '../layouts/MainLayout.astro';
       <div class="contact-form-col reveal">
         <span class="label">Direktnachricht</span>
         <h2 class="section-heading dark" data-buchstaben>Kontaktformular</h2>
-        <p class="contact-subline-dark">Füll das Formular aus — ich melde mich innerhalb von 24 Stunden.</p>
+        <p class="contact-subline-dark">Füll das Formular aus, ich melde mich innerhalb von 24 Stunden.</p>
         <form class="contact-form-ext" id="contact-form">
           <div class="cf-row">
             <div class="cf-field"><label for="cf-name">Vorname &amp; Nachname</label><input type="text" id="cf-name" name="name" maxlength="256" class="cf-input-light" placeholder="Max Mustermann" required /></div>
@@ -156,7 +173,7 @@ import MainLayout from '../layouts/MainLayout.astro';
           </div>
           <h3 class="profile-name">GitHub</h3>
           <p class="profile-handle">@nicoegerer</p>
-          <p class="profile-desc">Meine öffentlichen Repositories — von C++ Spielen über Python Scripts bis zu dieser Website. Hier lebt mein Code.</p>
+          <p class="profile-desc">Meine öffentlichen Repositories, von C++ Spielen über Python Scripts bis zu dieser Website. Hier lebt mein Code.</p>
           <div class="profile-cta">Profil ansehen →</div>
         </a>
 
@@ -182,7 +199,7 @@ import MainLayout from '../layouts/MainLayout.astro';
           </div>
           <h3 class="profile-name">Meine Projekte</h3>
           <p class="profile-handle">nicoegerer.de/projects</p>
-          <p class="profile-desc">Von C++ Games über Raspberry-Pi-Hardware bis zu dieser Website — alle Arbeiten mit Technik und Hintergrund.</p>
+          <p class="profile-desc">Von C++ Games über Raspberry-Pi-Hardware bis zu dieser Website, alle Arbeiten mit Technik und Hintergrund.</p>
           <div class="profile-cta">Projekte ansehen →</div>
         </a>
       </div>

@@ -1,9 +1,6 @@
 ---
-// Text, der beim Scrollen Stueck fuer Stueck dunkler wird
 interface Props {
-  /** Wortweises Aufhellen — fuer kurze, wirkungsvolle Absaetze. */
   text?: string;
-  /** Absatzweises Aufhellen — fuer Fliesstext. */
   absaetze?: string[];
   klasse?: string;
 }
@@ -22,7 +19,6 @@ const modus = text ? 'wort' : 'absatz';
   .sa-wort { display: flex; flex-wrap: wrap; justify-content: center; }
   .sa-absatz { display: flex; flex-direction: column; gap: 1.1rem; }
 
-  /* Die Deckkraft folgt der Scrollposition direkt, ist also schon von sich aus stufenlos */
   .sa-teil { transition: opacity 0.12s linear; }
 
   .sa-wort .sa-teil {
@@ -31,7 +27,6 @@ const modus = text ? 'wort' : 'absatz';
     font-size: clamp(1.25rem, 2.6vw, 3rem);
     font-weight: 400;
     line-height: 1.25;
-    /* Eigene Rolle statt Fliesstextton, damit der SW-Modus mitkippt */
     color: var(--txt-lese);
   }
   .sa-absatz .sa-teil {
@@ -41,7 +36,6 @@ const modus = text ? 'wort' : 'absatz';
     color: inherit;
   }
 
-  /* Abgedunkelt wird nur, wenn das Skript laeuft — den genauen Wert setzt es je Element */
   .sa.aktiv .sa-teil { opacity: 0.16; }
 
   @media (prefers-reduced-motion: reduce) {
@@ -64,7 +58,6 @@ const modus = text ? 'wort' : 'absatz';
 
     const zeichne = () => {
       const h = window.innerHeight;
-      // Gedachte Lesekante im unteren Drittel: was darueber steht, ist gelesen und damit hell
       const kante = h * 0.74;
       const band = Math.max(90, h * 0.18); // weicher Uebergang statt harter Kante
 
@@ -72,14 +65,12 @@ const modus = text ? 'wort' : 'absatz';
         for (const t of teile) {
           const r = t.getBoundingClientRect();
           const mitte = r.top + r.height / 2;
-          // 0 = noch unter der Kante, 1 = vollstaendig darueber
           const anteil = Math.min(Math.max((kante - mitte) / band, 0), 1);
           t.style.opacity = (0.16 + 0.84 * anteil).toFixed(3);
         }
       }
     };
 
-    // Buendeln, mit Selbstheilung falls requestAnimationFrame nicht ausloest.
     let offen = false, seit = 0;
     const beiScroll = () => {
       const jetzt = performance.now();
