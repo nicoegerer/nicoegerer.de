@@ -1,6 +1,3 @@
-// Gemeinsame Basis fuer alle Zeiger- und Scroll-Effekte:
-// ein pointermove-Listener, eine Frame-Schleife, ein Rect-Cache.
-// Effekte lesen im Frame erst alle Werte und schreiben danach.
 
 const mFein  = window.matchMedia('(hover: hover) and (pointer: fine)');
 const mSanft = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -16,7 +13,6 @@ export function beiUmgebungswechsel(fn: () => void) {
 
 export const zeiger = { x: -9999, y: -9999, da: false };
 
-// Rueckgabe true = Aufgabe braucht weitere Frames
 type Aufgabe = () => boolean;
 
 const aufgaben = new Set<Aufgabe>();
@@ -45,7 +41,6 @@ export function starten() {
 export function anmelden(a: Aufgabe) { aufgaben.add(a); starten(); }
 export function abmelden(a: Aufgabe) { aufgaben.delete(a); }
 
-// Fallback fuer Tabs, in denen requestAnimationFrame nicht feuert
 export function selbstheilung(grenze = 400) {
   const jetzt = performance.now();
   if (laeuft && jetzt - letzterLauf > grenze) { laeuft = false; schleife(); }
@@ -56,7 +51,6 @@ let rechteckeAlt = true;
 
 export function rechteckeVerwerfen() { rechteckeAlt = true; }
 
-// alle Rects am Stueck lesen, damit nur ein Layout entsteht
 function neuVermessen() {
   for (const el of gemessen.keys()) gemessen.set(el, el.getBoundingClientRect());
   rechteckeAlt = false;
@@ -108,6 +102,5 @@ export function fundamentStarten() {
   window.addEventListener('scroll', verwerfen, { passive: true });
   window.addEventListener('resize', verwerfen);
 
-  // Schriften laden nach und verschieben das Layout
   (document as any).fonts?.ready?.then?.(verwerfen);
 }

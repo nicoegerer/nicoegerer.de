@@ -1,9 +1,3 @@
-// Zeiger-Effekte, gesteuert ueber Datenattribute im Markup:
-//   data-magnet[="12"]  Element zieht zum Zeiger
-//   data-neigen[="5"]   3D-Neigung ueber der Flaeche
-//   data-glanz          Lichtfleck folgt dem Zeiger (--gx/--gy/--glanz)
-//   data-naehe          --naehe 0..1 je nach Abstand
-// Laeuft komplett ueber die Schleife aus basis.ts.
 
 import {
   zeiger, anmelden, rechteckVon, rechteckBeobachten, rechteckVergessen,
@@ -14,7 +8,6 @@ interface Stueck {
   el: HTMLElement;
   art: 'magnet' | 'neigen' | 'glanz' | 'naehe';
   staerke: number;
-  // a/b/c sind die aktuellen Werte, zielA/B/C die angepeilten
   a: number; b: number; c: number;
   zielA: number; zielB: number; zielC: number;
   drin: boolean;
@@ -22,10 +15,8 @@ interface Stueck {
 
 const stuecke: Stueck[] = [];
 
-// Abstand in px, ab dem ein magnetisches Element reagiert
 const FANG = 90;
 
-// eigene Ebene statt ::before/::after — die sind an den Karten schon belegt
 function glanzEbene(el: HTMLElement) {
   if (el.querySelector(':scope > .glanz-schicht')) return;
   const s = document.createElement('span');
@@ -50,7 +41,6 @@ function schritt(): boolean {
   let weiter = false;
   const zx = zeiger.x, zy = zeiger.y, da = zeiger.da;
 
-  // lesen
   for (const s of stuecke) {
     const r = rechteckVon(s.el);
     if (r.bottom < -200 || r.top > innerHeight + 200) {
@@ -65,7 +55,6 @@ function schritt(): boolean {
 
     if (s.art === 'magnet') {
       const dx = zx - mx, dy = zy - my;
-      // Fangbereich waechst mit dem Element, sonst reagieren breite Buttons zu spaet
       const nx = dx / (r.width / 2 + FANG);
       const ny = dy / (r.height / 2 + FANG);
       const d = Math.hypot(nx, ny);
@@ -90,7 +79,6 @@ function schritt(): boolean {
         s.zielB = innen ? (px - 0.5) *  2 * s.staerke : 0;
         s.zielC = innen ? 1 : 0;
       } else if (s.art === 'glanz') {
-        // Position stehen lassen und nur ausblenden, sonst springt der Fleck
         if (innen) { s.zielA = px * 100; s.zielB = py * 100; }
         s.zielC = innen ? 1 : 0;
         s.drin = innen;
@@ -103,7 +91,6 @@ function schritt(): boolean {
     }
   }
 
-  // schreiben
   for (const s of stuecke) {
     const t = s.drin ? 0.18 : 0.12;
     s.a = naehern(s.a, s.zielA, t);
@@ -123,7 +110,6 @@ function schritt(): boolean {
       st.setProperty('--kippx', s.a.toFixed(2) + 'deg');
       st.setProperty('--kippy', s.b.toFixed(2) + 'deg');
       st.setProperty('--naehe', s.c.toFixed(3));
-      // einheitenlos fuer den Schatten in CSS, Vorzeichen entgegen der Neigung
       const n = s.staerke || 1;
       st.setProperty('--sx', (-s.b / n).toFixed(3));
       st.setProperty('--sy', ( s.a / n).toFixed(3));
@@ -138,7 +124,6 @@ function schritt(): boolean {
   return weiter;
 }
 
-// nachtraeglich eingefuegte Elemente aufnehmen
 export function zeigerEffekteErfassen(wurzel: ParentNode = document) {
   if (!zeigerEffekteAn()) return;
   const nimm = (wahl: string, art: Stueck['art'], vorgabe: number) => {

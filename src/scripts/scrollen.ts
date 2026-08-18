@@ -1,13 +1,3 @@
-// Scroll-Effekte ueber Datenattribute:
-//   data-parallax="0.18"   Element wandert langsamer als die Seite
-//   data-auf="maske"       Aufdecken: maske|schieben|skalieren|unschaerfe|kippen|seite
-//   data-auf-verzug="120"  Verzoegerung in ms
-//   data-staffel           Kinder nacheinander aufdecken
-//   data-zaehler="1240"    Zahl zaehlt beim Erscheinen hoch
-//
-// Kein IntersectionObserver: der feuert in gedrosselten Tabs nicht und
-// der Inhalt bliebe unsichtbar. Stattdessen Scroll-Event plus ein
-// synchroner Durchlauf beim Laden.
 
 import {
   anmelden, klemmen, rechteckeVerwerfen, starten, wenigerBewegung, selbstheilung,
@@ -29,8 +19,6 @@ function aufdeckenPruefen() {
   }
 }
 
-// exportiert, weil das Hoehenprofil seine Zahlen erst startet,
-// wenn die gezeichnete Linie die Marke erreicht
 export function zaehlerStarten(wurzel: HTMLElement) {
   const felder = wurzel.matches('[data-zaehler]')
     ? [wurzel]
@@ -54,7 +42,6 @@ export function zaehlerStarten(wurzel: HTMLElement) {
       else f.textContent = ziel.toFixed(nachkomma) + anhang;
     };
     requestAnimationFrame(lauf);
-    // falls keine Frames kommen, steht der Endwert trotzdem
     setTimeout(() => { if (!f.textContent) f.textContent = ziel.toFixed(nachkomma) + anhang; }, dauer + 400);
   }
 }
@@ -67,7 +54,6 @@ function parallaxeSchritt() {
   for (const s of schichten) {
     const r = s.el.getBoundingClientRect();
     if (r.bottom < -300 || r.top > h + 300) continue;
-    // 0 in der Bildmitte, ±1 an den Raendern
     const mitte = (r.top + r.height / 2 - h / 2) / h;
     s.el.style.setProperty('--py', (mitte * s.faktor * -100).toFixed(2) + 'px');
   }
@@ -85,7 +71,6 @@ function kopfUndFortschritt() {
   const nav = document.getElementById('nav');
   if (!nav) return;
 
-  // beim Runterscrollen ausblenden, beim Hochscrollen sofort zurueck
   const menueOffen = document.getElementById('sidebar')?.classList.contains('open');
   const runter = y > letzteHoehe;
   if (Math.abs(y - letzteHoehe) > 6 && !menueOffen) {
@@ -119,7 +104,6 @@ function zeichnen() {
 }
 
 export function scrollEffekteStarten() {
-  // Gruppen zuerst: die setzen data-auf an ihren Kindern
   document.querySelectorAll<HTMLElement>('[data-staffel]').forEach(gruppe => {
     const art = gruppe.dataset.staffel || 'schieben';
     const schritt = parseInt(gruppe.dataset.staffelSchritt || '90', 10);
@@ -140,7 +124,6 @@ export function scrollEffekteStarten() {
     });
   });
 
-  // aeltere Aufdeck-Mechanik mit eigenen Klassennamen
   document.querySelectorAll<HTMLElement>('.section-heading, .page-hero-title')
     .forEach(el => aufdecker.push({ el, verzug: 0, offen: false, klasse: 'aufgedeckt' }));
   document.querySelectorAll<HTMLElement>('.reveal')
@@ -155,7 +138,6 @@ export function scrollEffekteStarten() {
   window.addEventListener('scroll', beiScroll, { passive: true });
   window.addEventListener('resize', () => { rechteckeVerwerfen(); beiScroll(); });
 
-  // synchron, damit sichtbarer Inhalt auch ohne Frames aufgedeckt wird
   zeichnen();
   window.addEventListener('load', () => { rechteckeVerwerfen(); zeichnen(); });
   setTimeout(zeichnen, 300);

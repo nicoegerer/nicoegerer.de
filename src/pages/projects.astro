@@ -7,9 +7,10 @@ import { Image } from 'astro:assets';
 import ampel from '../assets/ampel.webp';
 import game from '../assets/game.webp';
 import website from '../assets/website.webp';
+import garmintool from '../assets/garmintool.webp';
 ---
 
-<MainLayout title="Projekte — Nico Egerer" description="Alle Projekte von Nico Egerer – C++, Python, Web, Raspberry Pi und mehr.">
+<MainLayout title="Projekte | Nico Egerer" description="Alle Projekte von Nico Egerer: C++, Python, Web, Raspberry Pi und mehr.">
   <style>
     .projects-section { background: var(--hg); padding: var(--gap-xl) var(--gap-m); }
     .projects-section-inner { max-width: var(--max-w); margin: 0 auto; }
@@ -19,7 +20,6 @@ import website from '../assets/website.webp';
     .filter-btn.active { background: var(--hg-betont); border-color: var(--dunkel); color: var(--weiss); }
     .proj-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: var(--gap-m); }
     .proj-card { background: var(--hg-betont); border-radius: var(--r); overflow: hidden; border: 1px solid rgba(255,255,255,0.07); transition: transform 0.3s, box-shadow 0.3s; }
-    /* Hier steht die dunkle Karte auf hellem Grund — ein Schatten trägt */
     .proj-card {
       box-shadow:
         calc(var(--sx, 0) * 13px)
@@ -48,19 +48,15 @@ import website from '../assets/website.webp';
     .proj-cta-inner p { color: rgba(255,255,255,0.6); font-size: 1rem; margin: 1rem 0 2rem; }
     .cta-reihe { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
 
-    /* Der Lichtfleck kommt jetzt aus der gemeinsamen .glanz-schicht der Interaktionsschicht */
     .proj-card { position: relative; isolation: isolate; --glanz-farbe: rgba(152,213,235,0.20); }
     @media (max-width: 900px) { .proj-grid { grid-template-columns: repeat(2,1fr); } }
-    /* Die Konturschrift ersetzt den Seitentitel — gleiche optische Groesse, nach oben */
     .proj-titel { max-width: 46rem; margin: 0 0 1rem -0.35rem; }
     @media (max-width: 600px) { .proj-grid { grid-template-columns: 1fr; } }
-    /* Die Filter sind auf dieser Seite die einzige echte Bedienung — mit dem Finger */
     @media (pointer: coarse) {
       .filter-btn { padding: 0.85rem 1.3rem; }
       .filter-bar { gap: 0.6rem; }
     }
     @media (max-width: 700px) {
-      /* Sieben Karten untereinander: 200px Bildhoehe je Karte ergaben vier Bildschirmlaengen */
       .proj-img { height: auto; aspect-ratio: 16 / 9; }
       .proj-grid { gap: var(--gap-m); }
       .filter-bar { margin-bottom: var(--gap-m); }
@@ -70,7 +66,6 @@ import website from '../assets/website.webp';
   <section class="page-hero">
     <div class="page-hero-inner">
       <span class="label white"><Scramble text="Portfolio" /></span>
-      <!-- Diese Seite soll zeigen, was ich kann — also ist die Ueberschrift selbst interaktiv -->
       <h1 class="sr-only">Meine Projekte</h1>
       <KonturText text="Meine Projekte" label="Meine Projekte" klasse="proj-titel" />
       <p class="page-hero-sub" data-auf="unschaerfe" data-auf-verzug="120">Von C++ Games über Raspberry Pi Hardware bis hin zu Web-Apps.</p>
@@ -88,25 +83,23 @@ import website from '../assets/website.webp';
       </div>
       <div class="proj-grid" id="proj-grid" data-staffel="kippen" data-staffel-schritt="90">
         <article class="proj-card leuchtrahmen" data-cat="cpp">
-          <div class="proj-img-wrap" data-zeiger="bild"><Image src={game} alt="JumpJump" class="proj-img" quality={72} widths={[400, 600, 800]} sizes="(max-width: 900px) 100vw, 33vw" loading="lazy" /><div class="proj-overlay"><a href="https://jumpjump.nicoegerer.de/" target="_blank" rel="noopener" class="btn btn-outline">Spielen</a></div></div>
+          <div class="proj-img-wrap" data-zeiger="bild"><Image src={game} alt="JumpJump" class="proj-img" quality={88} widths={[400, 600, 800]} sizes="(max-width: 900px) 100vw, 33vw" loading="lazy" /><div class="proj-overlay"><a href="https://jumpjump.nicoegerer.de/" target="_blank" rel="noopener" class="btn btn-outline">Spielen</a></div></div>
           <div class="proj-info"><div class="proj-tags"><span class="tag">C++</span><span class="tag">WASM</span><span class="tag">Shell</span></div><h3 class="proj-title">JumpJump</h3><p class="proj-text">Selbstentwickelter Platformer in C++, kompiliert mit Emscripten zu WebAssembly und direkt im Browser spielbar.</p><a href="https://jumpjump.nicoegerer.de/" target="_blank" rel="noopener" class="proj-link">Jetzt spielen →</a></div>
         </article>
         <article class="proj-card leuchtrahmen" data-cat="python hardware">
-          <div class="proj-img-wrap" data-zeiger="bild"><Image src={ampel} alt="Raspberry Pi" class="proj-img" quality={72} widths={[400, 600, 800]} sizes="(max-width: 900px) 100vw, 33vw" loading="lazy" /><div class="proj-overlay"><a href="https://github.com/nicoegerer" target="_blank" rel="noopener" class="btn btn-outline">GitHub</a></div></div>
+          <div class="proj-img-wrap" data-zeiger="bild"><Image src={ampel} alt="Raspberry Pi" class="proj-img" quality={88} widths={[400, 600, 800]} sizes="(max-width: 900px) 100vw, 33vw" loading="lazy" /><div class="proj-overlay"><a href="https://github.com/nicoegerer" target="_blank" rel="noopener" class="btn btn-outline">GitHub</a></div></div>
           <div class="proj-info"><div class="proj-tags"><span class="tag">Python</span><span class="tag">MQTT</span><span class="tag">Node-RED</span><span class="tag">RPi</span></div><h3 class="proj-title">Raspberry Pi Projekte</h3><p class="proj-text">Kreuzungssimulation mit Ampelsteuerung, Luftfeuchtigkeits- und Temperaturmesser mit Node-RED Dashboard.</p><a href="https://github.com/nicoegerer" target="_blank" rel="noopener" class="proj-link">GitHub →</a></div>
         </article>
         <article class="proj-card leuchtrahmen" data-cat="web">
-          <div class="proj-img-wrap" data-zeiger="bild"><Image src={website} alt="Website" class="proj-img" quality={72} widths={[400, 600, 800]} sizes="(max-width: 900px) 100vw, 33vw" loading="lazy" /><div class="proj-overlay"><a href="/" class="btn btn-outline">Ansehen</a></div></div>
-          <div class="proj-info"><div class="proj-tags"><span class="tag">HTML/CSS</span><span class="tag">JavaScript</span><span class="tag">Figma</span></div><h3 class="proj-title">Persönliche Website</h3><p class="proj-text">Diese Website — von Design in Figma bis Deployment. Vollständig responsiv, ohne Framework, mit eigenem Design-System.</p><a href="/" class="proj-link">Live ansehen →</a></div>
+          <div class="proj-img-wrap" data-zeiger="bild"><Image src={website} alt="Website" class="proj-img" quality={88} widths={[400, 600, 800]} sizes="(max-width: 900px) 100vw, 33vw" loading="lazy" /><div class="proj-overlay"><a href="/" class="btn btn-outline">Ansehen</a></div></div>
+          <div class="proj-info"><div class="proj-tags"><span class="tag">HTML/CSS</span><span class="tag">JavaScript</span><span class="tag">Figma</span></div><h3 class="proj-title">Persönliche Website</h3><p class="proj-text">Diese Website: von Design in Figma bis Deployment. Vollständig responsiv, ohne Framework, mit eigenem Design-System.</p><a href="/" class="proj-link">Live ansehen →</a></div>
         </article>
         <article class="proj-card leuchtrahmen" data-cat="web">
           <div class="proj-img-wrap" data-zeiger="bild">
-            <div class="proj-img proj-placeholder" aria-hidden="true">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="6.5"/><path d="M12 10v3l2 1.5"/><path d="M9 6.5 9.5 3h5l.5 3.5M9 19.5l.5 3.5h5l.5-3.5"/></svg>
-            </div>
+            <Image src={garmintool} alt="Dashboard vom GarminTool" class="proj-img" quality={88} widths={[400, 600, 900]} sizes="(max-width: 900px) 100vw, 33vw" loading="lazy" />
             <div class="proj-overlay"><a href="https://garmintool.nicoegerer.de/" target="_blank" rel="noopener" class="btn btn-outline">Öffnen</a></div>
           </div>
-          <div class="proj-info"><div class="proj-tags"><span class="tag">Web</span><span class="tag">Garmin</span></div><h3 class="proj-title">Garmin Tool</h3><p class="proj-text">Eigenes Werkzeug rund um meine Garmin-Trainingsdaten — läuft unter einer eigenen Subdomain.</p><a href="https://garmintool.nicoegerer.de/" target="_blank" rel="noopener" class="proj-link">Tool öffnen →</a></div>
+          <div class="proj-info"><div class="proj-tags"><span class="tag">Web</span><span class="tag">Garmin</span></div><h3 class="proj-title">Garmin Tool</h3><p class="proj-text">Eigenes Werkzeug rund um meine Garmin-Trainingsdaten, läuft unter einer eigenen Subdomain.</p><a href="https://garmintool.nicoegerer.de/" target="_blank" rel="noopener" class="proj-link">Tool öffnen →</a></div>
         </article>
         <article class="proj-card leuchtrahmen" data-cat="cpp">
           <div class="proj-img-wrap" data-zeiger="bild">
@@ -132,19 +125,18 @@ import website from '../assets/website.webp';
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v16M4 12h16"/></svg>
             </div>
           </div>
-          <div class="proj-info"><div class="proj-tags"><span class="tag">C++</span><span class="tag">Unreal</span><span class="tag">Co-op</span></div><h3 class="proj-title">Nächstes Projekt — TBA</h3><p class="proj-text">Komplexeres Spiel mit Unreal Engine. Co-op-Modus geplant. In aktiver Entwicklung.</p><span class="proj-badge">In Arbeit</span></div>
+          <div class="proj-info"><div class="proj-tags"><span class="tag">C++</span><span class="tag">Unreal</span><span class="tag">Co-op</span></div><h3 class="proj-title">Nächstes Projekt: TBA</h3><p class="proj-text">Komplexeres Spiel mit Unreal Engine. Co-op-Modus geplant. In aktiver Entwicklung.</p><span class="proj-badge">In Arbeit</span></div>
         </article>
       </div>
     </div>
   </section>
 
-  <!-- Abschluss mit interaktivem Zeichenfeld -->
   <section class="proj-cta">
     <CodeFeld client:visible={{ rootMargin: '300px' }} />
     <div class="proj-cta-inner reveal">
       <span class="label white"><Scramble text="Mehr auf GitHub" /></span>
       <h2 class="section-heading white" data-buchstaben>Alle Repositories ansehen</h2>
-      <p>Öffentliche Projekte, Snippets und Experimente — Commit für Commit nachvollziehbar.</p>
+      <p>Öffentliche Projekte, Snippets und Experimente, Commit für Commit nachvollziehbar.</p>
       <div class="cta-reihe">
         <a href="https://github.com/nicoegerer" target="_blank" rel="noopener" class="btn btn-outline">GitHub öffnen</a>
         <a href="https://jumpjump.nicoegerer.de/" target="_blank" rel="noopener" class="btn btn-light">JumpJump spielen</a>

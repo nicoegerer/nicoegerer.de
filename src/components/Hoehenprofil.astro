@@ -1,8 +1,7 @@
 ---
-/* Hoehenprofil einer Mitteldistanz — die Strecke zeichnet sich beim Scrollen selbst */
 
 const marken = [
-  { bei: 0.14, titel: 'Schwimmen', wert: '1,9', einheit: 'km', text: 'Kalt, eng, kein Rhythmus — die ersten Minuten sind reine Kopfsache.' },
+  { bei: 0.14, titel: 'Schwimmen', wert: '1,9', einheit: 'km', text: 'Kalt, eng, kein Rhythmus, die ersten Minuten sind reine Kopfsache.' },
   { bei: 0.55, titel: 'Rennrad',   wert: '90',  einheit: 'km', text: 'Der lange Teil. Gleichmäßig treten und nicht zu früh zu viel wollen.' },
   { bei: 0.88, titel: 'Laufen',    wert: '21',  einheit: 'km', text: 'Hier entscheidet sich alles. Die Beine sind leer, der Kopf muss tragen.' },
 ];
@@ -14,7 +13,7 @@ const marken = [
       <span class="label" data-auf="seite">Eine Mitteldistanz</span>
       <h2 class="section-heading dark" id="hp-titel" data-buchstaben>Das Profil</h2>
       <p class="hp-sub" data-auf="unschaerfe" data-auf-verzug="140">
-        112,9 Kilometer in drei Disziplinen. Scroll die Strecke ab —
+        112,9 Kilometer in drei Disziplinen. Scroll die Strecke ab:
         die Linie läuft mit.
       </p>
     </div>
@@ -33,16 +32,13 @@ const marken = [
           </linearGradient>
         </defs>
 
-        <!-- Hintergrundberge, langsamer als der Rest (Parallaxe) -->
         <path class="hp-berg hp-berg-fern"
               d="M0 300 L120 196 L210 236 L330 150 L450 214 L560 168 L700 224 L820 158 L920 206 L1000 176 L1000 300 Z" />
         <path class="hp-berg hp-berg-nah"
               d="M0 300 L90 244 L200 268 L320 216 L430 258 L540 226 L680 262 L800 220 L900 254 L1000 232 L1000 300 Z" />
 
-        <!-- Flaeche unter der Strecke -->
         <path class="hp-flaeche" id="hp-flaeche"
               d="M40 262 L180 258 L250 250 L340 176 L430 208 L520 120 L610 152 L700 96 L760 150 L820 128 L900 186 L960 178 L960 300 L40 300 Z" />
-        <!-- Die Strecke selbst -->
         <path class="hp-linie" id="hp-linie"
               d="M40 262 L180 258 L250 250 L340 176 L430 208 L520 120 L610 152 L700 96 L760 150 L820 128 L900 186 L960 178" />
       </svg>
@@ -82,7 +78,6 @@ const marken = [
   .hp-flaeche { fill: url(#hp-fuellung); opacity: 0; transition: opacity 0.9s ease; }
   .hp-buehne.laeuft .hp-flaeche { opacity: 1; }
 
-  /* Die Linie wird ueber den Versatz gezeichnet */
   .hp-linie {
     fill: none;
     stroke: url(#hp-verlauf);
@@ -114,7 +109,6 @@ const marken = [
     transition: transform 0.42s cubic-bezier(0.34, 1.45, 0.64, 1);
   }
   .hp-marke.erreicht .hp-punkt { transform: scale(1); }
-  /* Ein einzelner Puls im Moment des Erreichens — nicht dauerhaft. */
   .hp-marke.erreicht .hp-punkt::after {
     content: '';
     position: absolute; inset: -3px;
@@ -155,9 +149,7 @@ const marken = [
   }
   .hp-fuss-zahl { color: var(--akzent); }
 
-  /* aspect-ratio nimmt die Verzerrung heraus; leichte Ueberhoehung bleibt */
   @media (max-width: 820px) {
-    /* Telefon: senkrechte Abfolge statt Marken auf der Kurve Am Rechner sitzt jede Marke */
     .hp-svg { height: auto; aspect-ratio: 1000 / 340; }
 
     .hp-marken {
@@ -170,7 +162,6 @@ const marken = [
       padding-left: 1.1rem;
     }
     .hp-marke {
-      /* relative statt static, damit der Punkt links daran haengen kann */
       position: relative;
       left: auto;
       top: auto;
@@ -181,7 +172,6 @@ const marken = [
     }
     .hp-marke.erreicht { opacity: 1; }
 
-    /* Der Punkt sitzt jetzt auf der senkrechten Linie links. */
     .hp-punkt {
       display: block;
       position: absolute;
@@ -194,7 +184,6 @@ const marken = [
     }
     .hp-marke.erreicht .hp-punkt { transform: translate(-50%, -50%) scale(1); }
 
-    /* Die Karte darf beim Erreichen NICHT verschoben werden */
     .hp-marke.erreicht .hp-karte { transform: none; }
 
     .hp-karte {
@@ -211,7 +200,6 @@ const marken = [
       align-items: baseline;
       gap: 0 0.6rem;
     }
-    /* Zahl und Disziplin in einer Zeile, Text darunter */
     .hp-zahl  { font-size: 1.2rem; grid-column: 1; }
     .hp-titel { font-size: 0.74rem; margin: 0; grid-column: 2; letter-spacing: 0.06em; }
     .hp-text  { grid-column: 1 / -1; margin-top: 0.25rem; font-size: 0.86rem; }
@@ -229,7 +217,6 @@ const marken = [
 </style>
 
 <script>
-  // Aus derselben Scroll-Schicht wie der Rest der Seite
   import { zaehlerStarten } from '../scripts/scrollen';
 
   (() => {
@@ -240,16 +227,13 @@ const marken = [
     const marken = [...buehne.querySelectorAll<HTMLElement>('.hp-marke')];
     const sanft = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-    // Pfadlaenge messen, damit der Strich bei Pfadaenderungen passt
     const laenge = linie.getTotalLength();
     buehne.style.setProperty('--laenge', String(laenge));
 
-    // Die Marken sitzen auf dem Pfad, nicht auf geschaetzten Koordinaten.
     const kasten = linie.getBBox();
     for (const m of marken) {
       const bei = parseFloat(m.dataset.bei || '0');
       const p = linie.getPointAtLength(laenge * bei);
-      // Der Pfad ist in Nutzerkoordinaten (viewBox 1000x300), die Buehne in Prozent —
       m.style.setProperty('--x', (p.x / 1000 * 100).toFixed(2) + '%');
       m.style.setProperty('--y', (p.y / 300 * 100).toFixed(2) + '%');
     }
@@ -264,7 +248,6 @@ const marken = [
     const zeichne = () => {
       const r = buehne.getBoundingClientRect();
       const h = window.innerHeight;
-      // 0, wenn die Buehne gerade von unten hereinkommt; 1, wenn sie die obere Haelfte
       const start = h * 0.85;
       const ende  = h * 0.3;
       const roh = (start - r.top) / (start - ende);
@@ -275,7 +258,6 @@ const marken = [
       for (const m of marken) {
         const erreicht = t >= parseFloat(m.dataset.bei || '0');
         m.classList.toggle('erreicht', erreicht);
-        // Die Zahl laeuft los, wenn die Linie die Marke passiert — nicht schon beim Aufdecken
         if (erreicht) zaehlerStarten(m);
       }
     };

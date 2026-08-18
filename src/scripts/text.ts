@@ -1,11 +1,6 @@
-// Ueberschriften in Buchstaben oder Woerter zerlegen, damit sie unter
-// dem Zeiger eine Welle bilden. Original bleibt als aria-label stehen,
-// die Einzelteile sind aria-hidden.
 
 import { zeigerEffekteAn, klemmen } from './basis';
 
-// nur Textknoten ersetzen, verschachtelte Elemente bleiben erhalten —
-// sonst verliert z.B. "Meine <span class=akzent>Erfahrung</span>" den Akzent
 function zerlegen(el: HTMLElement, art: 'zeichen' | 'wort') {
   const text = el.textContent ?? '';
   if (!text.trim()) return [];
@@ -32,7 +27,6 @@ function zerlegen(el: HTMLElement, art: 'zeichen' | 'wort') {
         kind.parentNode?.replaceChild(bruch, kind);
       } else if (kind.nodeType === Node.ELEMENT_NODE) {
         const e = kind as HTMLElement;
-        // Komponenten mit eigener Animation auslassen
         if (e.matches('.scramble, .zp, .kontur') || /^(svg|img|br)$/i.test(e.tagName)) continue;
         durchlaufen(e);
       }
@@ -51,7 +45,6 @@ const UEBERSCHRIFTEN = [
   '.value-card h3', '.hobby-card h4', '.kn-block h3',
 ].join(',');
 
-// alle Ueberschriften automatisch, einzeln abwaehlbar per data-buchstaben="aus"
 function automatischErfassen() {
   document.querySelectorAll<HTMLElement>(UEBERSCHRIFTEN).forEach(el => {
     if (el.dataset.buchstaben !== undefined || el.dataset.woerter !== undefined) return;
@@ -59,7 +52,6 @@ function automatischErfassen() {
     if (el.querySelector('.kontur, .zp, .scramble')) return;
     const text = (el.textContent ?? '').trim();
     if (!text) return;
-    // lange Zeilen wortweise, sonst wird die Welle unruhig
     if (text.length > 34) el.dataset.woerter = '';
     else el.dataset.buchstaben = '';
   });
@@ -79,7 +71,6 @@ export function textEffekteStarten() {
     const stuecke = zerlegen(el, art);
     if (!stuecke.length || !zeigerEffekteAn()) continue;
 
-    // ein Listener je Ueberschrift; Positionen einmal beim Betreten messen
     let kasten: { x: number; b: number }[] = [];
     const messen = () => {
       kasten = stuecke.map(s => {

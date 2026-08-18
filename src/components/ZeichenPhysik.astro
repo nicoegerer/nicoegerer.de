@@ -1,8 +1,6 @@
 ---
-// Text, dessen Buchstaben vor dem Zeiger ausweichen und danach zurueckfedern
 interface Props {
   text: string;
-  /** Semantisches Element — Ueberschriften brauchen h1/h2 statt p. */
   als?: 'p' | 'h1' | 'h2' | 'h3';
   klasse?: string;
 }
@@ -17,13 +15,11 @@ const Tag = als;
 <style>
   .zp {
     position: relative;
-    /* Der Text ist nach dem Aufspalten keine Textauswahl mehr — ein I-Beam-Cursor wuerde */
     cursor: default;
     user-select: none;
   }
   .zp-text { display: inline; }
 
-  /* Nach dem Aufspalten: Woerter halten den Umbruch, Zeichen werden frei gesetzt. */
   .zp.aufgeteilt .zp-wort { display: inline-block; white-space: nowrap; }
   .zp.aufgeteilt .zp-zeichen {
     display: inline-block;
@@ -46,7 +42,6 @@ const Tag = als;
     const grob  = window.matchMedia('(pointer: coarse)').matches;
 
     document.querySelectorAll<HTMLElement>('[data-zp]').forEach(feld => {
-      // Auf Touch und bei reduzierter Bewegung bleibt der Text schlicht Text.
       if (sanft || grob) return;
 
       const quelle = feld.querySelector<HTMLElement>('.zp-text');
@@ -65,7 +60,6 @@ const Tag = als;
       let zeiger: { x: number; y: number } | null = null;
       let laeuft = false;
 
-      // Woerter behalten den Umbruch, innerhalb der Woerter je ein Span pro Zeichen.
       const aufteilen = () => {
         feld.classList.remove('aufgeteilt');
         quelle.innerHTML = '';
@@ -86,7 +80,6 @@ const Tag = als;
           quelle.appendChild(w);
         }
 
-        // Erst messen (im normalen Fluss), dann auf Transform umstellen.
         const rahmen = feld.getBoundingClientRect();
         zeichen = spans.map(el => {
           const r = el.getBoundingClientRect();
@@ -126,7 +119,6 @@ const Tag = als;
           z.el.style.transform = `translate(${z.x.toFixed(2)}px, ${z.y.toFixed(2)}px)`;
         }
 
-        // Anhalten, sobald nichts mehr in Bewegung ist und der Zeiger weg ist.
         laeuft = bewegt || zeiger !== null;
         if (laeuft) requestAnimationFrame(schritt);
       };
@@ -143,12 +135,10 @@ const Tag = als;
       });
       feld.addEventListener('pointerleave', () => { zeiger = null; anstossen(); });
 
-      // Schriften aendern die Zeichenbreiten — erst danach messen.
       const start = () => { aufteilen(); };
       if (document.fonts?.ready) document.fonts.ready.then(start).catch(start);
       else start();
 
-      // Umbruch aendert sich bei Breitenwechsel; Hoehe allein reicht nicht.
       let breite = feld.getBoundingClientRect().width;
       new ResizeObserver(() => {
         const neu = feld.getBoundingClientRect().width;

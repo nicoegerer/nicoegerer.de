@@ -3,7 +3,7 @@ import MainLayout from '../layouts/MainLayout.astro';
 import Terminal from '../components/Terminal.astro';
 import ScrollAufdecken from '../components/ScrollAufdecken.astro';
 import { Image } from 'astro:assets';
-import selfie from '../assets/selfie.webp';
+import passbild from '../assets/passbild.webp';
 import ampel from '../assets/ampel.webp';
 import game from '../assets/game.webp';
 import website from '../assets/website.webp';
@@ -16,17 +16,14 @@ const introText =
   'Wenn er nicht gerade coded, ist er meistens beim Sport, in den Bergen oder am Klavier.';
 ---
 
-<MainLayout title="Nico Egerer" description="Nico Egerer — angehender Softwareentwickler aus Wolfratshausen.">
+<MainLayout title="Nico Egerer" description="Nico Egerer, angehender Softwareentwickler aus Wolfratshausen.">
   <style>
-    /* Hero: .hero ist die Scroll-Strecke, .hero-stage bleibt sticky */
-    /* 240vh Gesamthoehe = 140vh reine Scrollstrecke fuer 72 Bilder */
     .hero { --hero-scroll: 240vh; position: relative; height: var(--hero-scroll); background: var(--blau); }
     .hero-stage {
       position: sticky; top: 0; height: 100vh; overflow: hidden;
       background: linear-gradient(47deg, var(--blau) 55%, var(--weiss));
       --lx: 50%; --ly: 40%;
     }
-    /* Lichtschein, der dem Zeiger folgt (--lx/--ly aus Interaktionen.astro), plus zwei sehr */
     .hero-stage::before {
       content: '';
       position: absolute; inset: -20%;
@@ -42,7 +39,6 @@ const introText =
       to   { transform: translate3d(2%, 2%, 0) scale(1.07); }
     }
 
-    /* Feine Körnung — nimmt dem Verlauf das Digitale. */
     .hero-stage::after {
       content: '';
       position: absolute; inset: 0;
@@ -52,7 +48,6 @@ const introText =
       mix-blend-mode: multiply;
       pointer-events: none;
     }
-    /* Die Figur nimmt genau den Platz unter dem Schriftzug ein: Hoehe = Viewport - */
     .hero-figure {
       --text-top: clamp(90px, 18vh, 180px);
       --name-size: clamp(2.4rem, 7vw, 5.8rem);
@@ -65,7 +60,6 @@ const introText =
       height: auto;
       aspect-ratio: 460 / 648;
       z-index: 1; pointer-events: none;
-      /* Die Vorlage endet je Frame auf unterschiedlicher Hoehe mit einer harten Kante (Hals */
       -webkit-mask-image: linear-gradient(to bottom, #000 93%, transparent 100%);
               mask-image: linear-gradient(to bottom, #000 93%, transparent 100%);
     }
@@ -73,17 +67,12 @@ const introText =
     .hero-greeting { font-family: var(--font-base); font-size: clamp(1.8rem, 5vw, 4.2rem); font-weight: 400; color: var(--weiss); }
     .hero-name { font-family: var(--font-script); font-size: clamp(2.4rem, 7vw, 5.8rem); font-weight: 500; color: var(--weiss); line-height: 1; padding-left: 15px; }
 
-    /* INTRO */
     .intro { min-height: 100vh; background: var(--hg); display: flex; align-items: center; justify-content: center; padding: var(--gap-xl) var(--gap-m); }
-    /* Die Typografie des Intro-Absatzes liegt in der Komponente selbst */
     .intro-inner { width: 80%; text-align: center; }
 
-    /* ÜBER MICH */
     .about { min-height: 100vh; background: linear-gradient(0, var(--grau) 0%, var(--hg) 100%); display: flex; align-items: center; padding: var(--gap-xl) var(--gap-m); }
-    /* Die rechte Spalte richtet sich nach dem Terminal (auto) statt nach einem festen Anteil */
     .about-inner {
       display: grid;
-      /* minmax statt auto: die Spalte darf wachsen, muss aber nachgeben */
       grid-template-columns: minmax(15rem, 1fr) minmax(0, var(--term-b));
       gap: var(--gap-l);
       align-items: center;
@@ -98,17 +87,13 @@ const introText =
     .about-text { font-size: 1rem; line-height: 1.8; color: var(--txt); margin-bottom: 1rem; }
     .about-buttons { display: flex; align-items: center; gap: 1.4rem; margin-top: var(--gap-m); }
 
-    /* ERFAHRUNG BANNER */
     .experience-banner { background: var(--grau); padding: var(--gap-l) var(--gap-m); }
     .exp-inner { margin: 0 auto; text-align: center; }
     .banner-text { color: var(--weiss); font-size: 1.1rem; line-height: 1.7; margin-bottom: var(--gap-s); }
 
-    /* TIMELINE */
-        /* Grau nach Dunkel — das ist der Farbuebergang der Startseite und bleibt im Hellmodus */
     .tl-section {
       background: linear-gradient(180deg, var(--grau) 0%, var(--hg-betont) 100%);
       padding: var(--gap-xl) 0;
-      /* Karten fahren beim Aufdecken seitlich ein, clip faengt das ab */
       overflow-x: clip;
     }
     .tl-wrap { display: grid; grid-template-columns: 60px 1fr; gap: 0; max-width: 800px; margin: 0 auto; padding: 0 var(--gap-m); align-items: start; }
@@ -127,24 +112,28 @@ const introText =
     .tl-more { color: rgba(255,255,255,0.5); font-size: 0.88rem; transition: color 0.2s, padding-left 0.2s; }
     .tl-more:hover { color: var(--weiss); padding-left: 4px; }
 
-    /* MEIN ZIEL */
     .goal { background: var(--hg-betont); padding: var(--gap-xl) var(--gap-m); }
     .goal-inner { display: grid; grid-template-columns: auto 1fr; gap: var(--gap-l); align-items: center; max-width: 1000px; margin: 0 auto; }
-    /* py kommt aus der Parallaxe, --bz vom Hover */
-    .goal-image { width: clamp(180px, 18vw, 260px); height: clamp(180px, 18vw, 260px); border-radius: 50%; object-fit: cover; box-shadow: 0 12px 40px rgba(0,0,0,0.4); transform: translate3d(0, var(--py, 0px), 0) scale(var(--bz, 1)); transition: box-shadow 0.4s ease; }
-    .goal-image:hover { --bz: 1.05; }
-    /* ScrollAufdecken erbt die Farbe vom Umfeld — hier die Tonwerte setzen. */
+    .goal-image-wrap {
+      width: clamp(180px, 18vw, 260px);
+      line-height: 0;
+      border-radius: var(--r);
+      overflow: hidden;
+      /* Weichzeichnung nicht groesser als der Versatz, sonst laeuft der
+         Schatten oben ueber die Rundung hinaus */
+      filter: drop-shadow(0 2px 3px rgba(0,0,0,0.30))
+              drop-shadow(0 12px 14px rgba(0,0,0,0.32));
+    }
+    .goal-image { display: block; width: 100%; height: auto; }
     .goal-hell { color: rgba(255,255,255,0.78); }
     .about-dunkel { color: var(--txt); }
 
-    /* PROJEKTE */
     .projects { background: var(--hg-betont); padding: var(--gap-xl) var(--gap-m); }
     .projects-inner { max-width: 1100px; margin: 0 auto; }
     .projects-header { margin-bottom: var(--gap-l); }
     .projects-subline { color: rgba(255,255,255,0.55); font-size: 0.95rem; margin-top: 0.4rem; }
     .projects-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.8rem; }
     .project-card { background: #0f0f0f; border: 1px solid rgba(255,255,255,0.08); border-radius: var(--r); overflow: hidden; transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease; }
-    /* Kein Schatten hier */
     .project-card { border-color: rgba(255,255,255, calc(0.08 + var(--naehe, 0) * 0.18)); }
     .project-img { width: 100%; height: 200px; object-fit: cover; transition: transform 0.4s ease; }
     .project-card:hover .project-img { transform: scale(1.04); }
@@ -154,14 +143,12 @@ const introText =
     .project-tags { display: flex; flex-wrap: wrap; gap: 0.45rem; }
     .projects-footer { margin-top: var(--gap-l); display: flex; justify-content: center; }
 
-    /* ZUKUNFT */
     .future { background: #0a0a0a; padding: var(--gap-xl) var(--gap-m); }
     .future-inner { max-width: 700px; margin: 0 auto; text-align: center; }
     .future-text { color: rgba(255,255,255,0.7); font-size: 1.1rem; line-height: 1.8; margin: var(--gap-s) 0 var(--gap-m); }
     .future { position: relative; overflow: hidden; }
     .future-inner { position: relative; z-index: 2; }
 
-    /* Treibende Schlagworte im Randbereich */
     .future-feld { position: absolute; inset: 0; z-index: 1; pointer-events: none; }
     .treiber {
       position: absolute;
@@ -184,11 +171,9 @@ const introText =
       from { margin-top: -10px; }
       to   { margin-top: 10px; }
     }
-    /* Auf schmalen Schirmen ist kein Platz — dort wuerden sie den Text stoeren. */
     @media (max-width: 900px) { .future-feld { display: none; } }
     @media (prefers-reduced-motion: reduce) { .treiber { animation: none; transition: none; } }
 
-    /* KONTAKT */
     .contact { background: var(--hg-betont); padding: var(--gap-xl) var(--gap-m); }
     .contact-inner { display: grid; grid-template-columns: 1.1fr 1fr; gap: var(--gap-l); align-items: center; max-width: 1000px; margin: 0 auto; }
     .contact-subline { color: rgba(255,255,255,0.55); font-size: 0.95rem; margin-bottom: 1.8rem; }
@@ -200,31 +185,28 @@ const introText =
     .cf-textarea { height: 150px; resize: vertical; }
     .cf-submit { margin-top: 1rem; }
     .contact-img-col { display: flex; flex-direction: column; align-items: center; gap: 1.4rem; }
-    .contact-img { width: 100%; max-width: 360px; border-radius: var(--r); object-fit: cover; transition: transform 0.35s ease; }
+    /* height:auto muss sein, sonst gewinnt das height-Attribut aus dem Bild */
+    .contact-img { width: 100%; max-width: 360px; height: auto; border-radius: var(--r); transition: transform 0.35s ease; }
     .contact-img:hover { transform: scale(1.02); }
 
-    /* RESPONSIVE */
     @media (max-width: 900px) {
       .about-inner { grid-template-columns: 1fr; text-align: center; }
       .about-center { order: -1; }
       .about-photo { width: clamp(160px, 45vw, 240px); }
       .about-buttons { justify-content: center; }
       .goal-inner { grid-template-columns: 1fr; text-align: center; }
-      .goal-image { margin: 0 auto; }
+      .goal-image-wrap { margin: 0 auto; }
       .projects-grid { grid-template-columns: repeat(2, 1fr); }
       .contact-inner { grid-template-columns: 1fr; }
       .contact-img-col { order: -1; }
       .contact-img { max-width: 280px; }
     }
-    /* Telefon: Massstab statt nur Umbruch min-height: 100vh war fuer den Rechner */
     @media (max-width: 900px) {
-      /* Diese beiden Bloecke sind am Rechner bewusst mittig gesetzt */
       .exp-inner, .future-inner { text-align: left; }
 
       .intro, .about { min-height: auto; }
       .intro-inner { width: 100%; }
       .about-inner { gap: var(--gap-m); }
-      /* Ohne Terminal traegt die Spalte nur noch das Foto. */
       .about-center { display: none; }
       .about-left { text-align: left; }
       .about-buttons { justify-content: flex-start; }
@@ -234,32 +216,27 @@ const introText =
     }
 
     @media (max-width: 600px) {
-      /* Kuerzere Bahn als am Rechner */
       .hero { --hero-scroll: 140vh; }
       .hero-figure { --text-top: 82px; }
       .hero-text { top: 82px; flex-wrap: wrap; justify-content: center; white-space: normal; text-align: center; width: 90%; gap: 0.2em; }
       .intro-text { font-size: 1.1rem; }
       .about-photo { width: 55vw; max-width: 200px; }
-      /* overflow-x: clip faengt die Einfahrbewegung der Karten ab */
       .tl-wrap { grid-template-columns: 40px 1fr; padding: 0 1rem; }
       .tl-card { padding: 1.1rem 1.2rem; }
       .tl-year { font-size: 1.5rem; }
       .tl-entries { padding-left: 1.2rem; }
       .projects-grid { grid-template-columns: 1fr; }
-      /* Fester Ausschnitt statt fester Hoehe */
       .project-img { height: auto; aspect-ratio: 2 / 1; }
 
-      /* Das Kontaktbild stand mit order:-1 VOR dem Formular */
       .contact-img-col { order: 1; }
       .contact-img { max-width: 170px; }
-      .goal-image { width: 42vw; height: 42vw; max-width: 170px; max-height: 170px; }
+      .goal-image-wrap { width: 42vw; max-width: 170px; }
     }
     @media (prefers-reduced-motion: reduce) {
       .hero { --hero-scroll: 100vh; }
     }
   </style>
 
-  <!-- HERO -->
   <section class="hero" id="hero">
     <div class="hero-stage">
       <canvas
@@ -270,14 +247,12 @@ const introText =
         role="img"
         aria-label="Illustration von Nico"
       ></canvas>
-      <!-- Der Schriftzug ist die Hauptueberschrift der Startseite -->
       <h1 class="hero-text">
         <span class="hero-greeting">Hi ich bin</span><span class="hero-name">Nico</span>
       </h1>
     </div>
   </section>
 
-  <!-- Intro: Text hellt beim Scrollen Wort fuer Wort auf -->
   <section class="intro">
     <div class="intro-inner intro-magic">
       <ScrollAufdecken text={introText}
@@ -285,7 +260,6 @@ const introText =
     </div>
   </section>
 
-  <!-- ÜBER MICH -->
   <section class="about">
     <div class="about-inner">
       <div class="about-left">
@@ -306,13 +280,11 @@ const introText =
         </div>
       </div>
       <div class="about-center">
-        <!-- Der Text daneben erzaehlt, wie jemand eine Konsole oeffnet und alles wieder laeuft -->
         <Terminal />
       </div>
     </div>
   </section>
 
-  <!-- ERFAHRUNG BANNER -->
   <section class="experience-banner">
     <div class="exp-inner">
       <span class="label white" data-auf="seite">Arbeit</span>
@@ -322,7 +294,6 @@ const introText =
     </div>
   </section>
 
-  <!-- TIMELINE -->
   <section class="tl-section" id="tl-section">
     <div class="tl-wrap">
       <div class="tl-line-col">
@@ -360,11 +331,11 @@ const introText =
     </div>
   </section>
 
-  <!-- MEIN ZIEL -->
   <section class="goal">
     <div class="goal-inner">
-      <div class="goal-image-wrap" data-auf="maske" data-zeiger="bild">
-        <Image src={selfie} alt="Nico in den Bergen" class="goal-image" quality={72} widths={[260, 520]} sizes="260px" data-parallax="0.09" />
+      <!-- data-parallax an der Huelle, damit Bild und Schatten zusammen wandern -->
+      <div class="goal-image-wrap" data-auf="skalieren" data-zeiger="bild" data-parallax="0.09">
+        <Image src={passbild} alt="Porträt von mir" class="goal-image" quality={88} widths={[260, 472]} sizes="260px" />
       </div>
       <div class="goal-content goal-hell">
         <span class="label white" data-auf="seite">Vision</span>
@@ -380,7 +351,6 @@ const introText =
     </div>
   </section>
 
-  <!-- PROJEKTE -->
   <section class="projects">
     <div class="projects-inner">
       <div class="projects-header">
@@ -390,7 +360,7 @@ const introText =
       </div>
       <div class="projects-grid" data-staffel="kippen" data-staffel-schritt="130">
         <div class="project-card leuchtrahmen">
-          <Image src={ampel} alt="Raspberry Pi Kreuzung" class="project-img" quality={72} widths={[400, 600, 800]} sizes="(max-width: 900px) 100vw, 33vw" />
+          <Image src={ampel} alt="Raspberry Pi Kreuzung" class="project-img" quality={88} widths={[400, 600, 800]} sizes="(max-width: 900px) 100vw, 33vw" />
           <div class="project-info">
             <h3 class="project-title">Projekte mit dem Raspberry&nbsp;Pi</h3>
             <p class="project-text">Projekte wie eine Kreuzung oder Luftfeuchtigkeits und Temperatursensor</p>
@@ -400,7 +370,7 @@ const introText =
           </div>
         </div>
         <div class="project-card leuchtrahmen">
-          <Image src={game} alt="JumpJump Spiel" class="project-img" quality={72} widths={[400, 600, 800]} sizes="(max-width: 900px) 100vw, 33vw" />
+          <Image src={game} alt="JumpJump Spiel" class="project-img" quality={88} widths={[400, 600, 800]} sizes="(max-width: 900px) 100vw, 33vw" />
           <div class="project-info">
             <h3 class="project-title">JumpJump</h3>
             <p class="project-text">Platformer-Spiel JumpJump in C++ mit der game library Raylib, kompiliert mit WebAssembly.</p>
@@ -410,7 +380,7 @@ const introText =
           </div>
         </div>
         <div class="project-card leuchtrahmen">
-          <Image src={website} alt="Meine Website" class="project-img" quality={72} widths={[400, 600, 800]} sizes="(max-width: 900px) 100vw, 33vw" />
+          <Image src={website} alt="Meine Website" class="project-img" quality={88} widths={[400, 600, 800]} sizes="(max-width: 900px) 100vw, 33vw" />
           <div class="project-info">
             <h3 class="project-title">Diese Website</h3>
             <p class="project-text">Strukturiert wie ein echtes Kundenprojekt von der Skizze auf Papier über Figma bis zu Webflow.</p>
@@ -426,9 +396,7 @@ const introText =
     </div>
   </section>
 
-  <!-- ZUKUNFT -->
   <section class="future" id="future">
-    <!-- Der Platz links und rechts trug bisher nichts -->
     <div class="future-feld" aria-hidden="true">
       <span class="treiber" style="--tx: 8%;  --ty: 22%; --dauer: 19s;">Unreal Engine</span>
       <span class="treiber" style="--tx: 14%; --ty: 68%; --dauer: 24s;">C++</span>
@@ -447,7 +415,6 @@ const introText =
     </div>
   </section>
 
-  <!-- KONTAKT -->
   <section class="contact">
     <div class="contact-inner">
       <div class="contact-form-col">
@@ -467,7 +434,7 @@ const introText =
         <div class="cf-error" id="cf-error"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg> Fehler beim Senden. Bitte versuche es erneut oder kontaktiere mich anders.</div>
       </div>
       <div class="contact-img-col">
-        <Image src={kontakt} alt="Kontaktbild" class="contact-img" quality={72} widths={[280, 360, 720]} sizes="(max-width: 900px) 280px, 360px" />
+        <Image src={kontakt} alt="Ich vor der Skyline von New York" class="contact-img" quality={88} widths={[360, 560, 720, 1080]} sizes="(max-width: 900px) 280px, 360px" />
         <a href="/contact" class="btn btn-outline contact-details-btn">Meine Kontaktdaten</a>
       </div>
     </div>
@@ -475,7 +442,6 @@ const introText =
 
   <script>
     document.addEventListener('DOMContentLoaded', () => {
-      // HERO: freigestellte Frame-Sequenz, der Frame-Index haengt am Scroll-Fortschritt
       const hero   = document.getElementById('hero');
       const canvas = document.getElementById('hero-canvas') as HTMLCanvasElement | null;
 
@@ -487,7 +453,6 @@ const introText =
         let current  = -1;
         let queued   = false;
 
-        // Bis ein Frame geladen ist, das naechstgelegene vorhandene zeigen
         const nearestReady = (i: number) => {
           if (ready[i]) return i;
           for (let d = 1; d < FRAMES; d++) {
@@ -510,7 +475,6 @@ const introText =
           current = i;
         };
 
-        // Zielbild aus der Scrollposition — bewusst als Kommazahl, damit die Anzeige gleich
         const zielFrame = () => {
           const scrollable = hero.offsetHeight - window.innerHeight;
           if (scrollable <= 0) return 0;
@@ -518,7 +482,6 @@ const introText =
           return p * (FRAMES - 1);
         };
 
-        // Eine Mausrad-Raste springt rund 100px weit
         let zeige = 0;
         let laeuft = false;
 
@@ -531,7 +494,6 @@ const introText =
           if (laeuft) requestAnimationFrame(schritt);
         };
 
-        // Sicherheitsnetz: springt requestAnimationFrame nicht an (Hintergrundtab, gedrosselte
         let seit = 0;
         const onScroll = () => {
           const jetzt = performance.now();
@@ -544,7 +506,6 @@ const introText =
           requestAnimationFrame(schritt);
         };
 
-        // Nur AVIF: ein Format, rund ein Drittel leichter als WebP
         const urlFor = (i: number) => `/hero/avif/f_${String(i + 1).padStart(2, '0')}.avif`;
 
         const fetchFrame = (i: number) => new Promise<void>(resolve => {
@@ -553,21 +514,17 @@ const introText =
           img.onload = () => {
             imgs[i] = img;
             ready[i] = true;
-            // erstes Bild direkt zeichnen: in Hintergrundtabs laeuft kein rAF
             if (current === -1) { zeige = zielFrame(); draw(Math.round(zeige)); } else onScroll();
             resolve();
-            // Vorab-Dekodieren glaettet den ersten Durchlauf, blockiert aber nie
             img.decode?.().catch(() => {});
           };
           img.onerror = () => resolve();
           img.src = urlFor(i);
         });
 
-        // In Wellen laden: erst jedes 8. Bild, dann verdichten
         (async () => {
           await fetchFrame(0);
           if (!ready[0]) {
-            // Kein AVIF im Browser: einmalig das Standbild zeichnen und die Scroll-Animation
             const poster = new Image();
             poster.onload = () => {
               if (!ctx) return;

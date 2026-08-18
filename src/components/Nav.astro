@@ -3,7 +3,6 @@ import ModusUmschalter from './ModusUmschalter.astro';
 
 const pathname = Astro.url.pathname.replace(/\/$/, '') || '/';
 
-/* Seitennavigation, nach Zugehoerigkeit gruppiert */
 const menue = [
   { label: 'Startseite', href: '/' },
   { label: 'Über Mich',  href: '/about', unter: [
@@ -21,7 +20,6 @@ const menue = [
   { label: 'Blog',       href: '/blog' },
 ];
 
-/** Externe Ziele und PDFs oeffnen in einem neuen Tab. */
 const neuerTab = (href: string) => href.startsWith('http') || href.endsWith('.pdf');
 ---
 
@@ -79,7 +77,6 @@ const neuerTab = (href: string) => href.startsWith('http') || href.endsWith('.pd
     })}
   </div>
 
-  <!-- Der Ring am Mauszeiger ist Geschmackssache -->
   <button type="button" class="sidebar-schalter" id="zeigerring-schalter"
           role="switch" aria-checked="false" hidden>
     <span class="sidebar-schalter-text">Ring am Mauszeiger</span>
@@ -104,7 +101,6 @@ const neuerTab = (href: string) => href.startsWith('http') || href.endsWith('.pd
     document.addEventListener('keydown', e => { if (e.key === 'Escape') close(); });
     document.querySelectorAll('.sidebar-link-main, .sidebar-link-sub').forEach(l => l.addEventListener('click', close));
 
-    // Auf der Startseite bleibt die Leiste transparent, solange der Hero laeuft, und faerbt
     const hero = document.getElementById('hero');
     const upd = () => {
       const eingefaerbt = hero
@@ -120,7 +116,6 @@ const neuerTab = (href: string) => href.startsWith('http') || href.endsWith('.pd
     zeigerringSchalter();
   }
 
-  /* Schalter fuer den Ring am Mauszeiger */
   async function zeigerringSchalter() {
     const s = document.getElementById('zeigerring-schalter');
     if (!s) return;
@@ -135,7 +130,6 @@ const neuerTab = (href: string) => href.startsWith('http') || href.endsWith('.pd
     s.addEventListener('click', () => { ringUmschalten(); zeichnen(); });
   }
 
-  /* Gleitender Anzeiger im Menue */
   function gleitenderAnzeiger() {
     const liste = document.getElementById('sidebar-links');
     const balken = document.getElementById('sidebar-anzeiger');
@@ -158,7 +152,6 @@ const neuerTab = (href: string) => href.startsWith('http') || href.endsWith('.pd
     }
     liste.addEventListener('pointerleave', () => setzen(aktiv));
 
-    // Beim Oeffnen sitzt der Balken schon am aktiven Eintrag
     const sidebar = document.getElementById('sidebar');
     sidebar?.addEventListener('transitionend', ev => {
       if (ev.target !== sidebar) return;
