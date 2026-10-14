@@ -1,10 +1,10 @@
 ---
 import MainLayout from '../layouts/MainLayout.astro';
 import { Image } from 'astro:assets';
-import kontakt from '../assets/kontakt.webp';
+import kontakt from '../assets/portrait.webp';
 ---
 
-<MainLayout title="Kontakt | Nico Egerer" description="Nimm Kontakt mit Nico Egerer auf, per Formular, E-Mail oder LinkedIn.">
+<MainLayout title="Kontakt | Nico Egerer" description="Mein Kontakt">
   <style>
     .contact-section { background: var(--hg); padding: var(--gap-xl) var(--gap-m); }
     .contact-section-inner { max-width: var(--max-w); margin: 0 auto; display: grid; grid-template-columns: 1.3fr 1fr; gap: var(--gap-l); align-items: start; }
@@ -39,8 +39,6 @@ import kontakt from '../assets/kontakt.webp';
       width: clamp(190px, 20vw, 260px);
       border-radius: var(--r);
       overflow: hidden;
-      /* Weichzeichnung nicht groesser als der Versatz, sonst laeuft der
-         Schatten oben ueber die Rundung hinaus */
       filter: drop-shadow(0 1px 2px rgba(40,34,26,0.12))
               drop-shadow(0 14px 14px rgba(40,34,26,0.18));
     }
@@ -93,7 +91,7 @@ import kontakt from '../assets/kontakt.webp';
         <p class="page-hero-sub" data-auf="unschaerfe" data-auf-verzug="120">Ich antworte schnell, egal ob Projekt, Frage oder einfach Hallo.</p>
       </div>
       <div class="kontakt-portrait" data-auf="skalieren" data-auf-verzug="220" data-zeiger="bild">
-        <Image src={kontakt} alt="Ich vor der Skyline von New York" quality={88} widths={[260, 520, 780]} sizes="260px" />
+        <Image src={kontakt} alt="kontakt" quality={88} widths={[260, 520, 780]} sizes="260px" />
       </div>
     </div>
   </section>
@@ -133,9 +131,9 @@ import kontakt from '../assets/kontakt.webp';
         <div class="contact-channels" data-staffel="seite" data-staffel-schritt="90">
           <a href="mailto:nico@nicoegerer.de" class="contact-channel">
             <span class="channel-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="#25221e" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m2 7 10 6 10-6"/></svg></span>
-            <div class="channel-text"><span class="channel-label">E-Mail</span><span class="channel-value">nico@nicoegerer.de</span></div>
+            <div class="channel-text"><span class="channel-label">E-Mail</span><span class="channel-value">web@nicoegerer.de</span></div>
           </a>
-          <button type="button" class="kopieren" data-kopieren="nico@nicoegerer.de" data-fertig="false">
+          <button type="button" class="kopieren" data-kopieren="web@nicoegerer.de" data-fertig="false">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
             <span class="kopieren-text">Kopieren</span>
           </button>
@@ -159,7 +157,7 @@ import kontakt from '../assets/kontakt.webp';
   <section class="profiles-section" id="plattformen">
     <div class="profiles-inner">
       <div class="profiles-header reveal">
-        <span class="label">Online-Präsenz</span>
+        <span class="label">Online</span>
         <h2 class="section-heading dark" data-buchstaben>Plattformen &amp; Netzwerke</h2>
         <p class="profiles-sub">Hier findest du meinen Code, mein Netzwerk und mein Portfolio.</p>
       </div>

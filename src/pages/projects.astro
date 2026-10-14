@@ -8,9 +8,11 @@ import ampel from '../assets/ampel.webp';
 import game from '../assets/game.webp';
 import website from '../assets/website.webp';
 import garmintool from '../assets/garmintool.webp';
+import imageconverter from "../assets/imageconverter.webp";
+import webuiworkbench from "../assets/openwebui.webp";
 ---
 
-<MainLayout title="Projekte | Nico Egerer" description="Alle Projekte von Nico Egerer: C++, Python, Web, Raspberry Pi und mehr.">
+<MainLayout title="Projekte | Nico Egerer" description="Alle Projekte von mir">
   <style>
     .projects-section { background: var(--hg); padding: var(--gap-xl) var(--gap-m); }
     .projects-section-inner { max-width: var(--max-w); margin: 0 auto; }
@@ -94,39 +96,46 @@ import garmintool from '../assets/garmintool.webp';
           <div class="proj-img-wrap" data-zeiger="bild"><Image src={website} alt="Website" class="proj-img" quality={88} widths={[400, 600, 800]} sizes="(max-width: 900px) 100vw, 33vw" loading="lazy" /><div class="proj-overlay"><a href="/" class="btn btn-outline">Ansehen</a></div></div>
           <div class="proj-info"><div class="proj-tags"><span class="tag">HTML/CSS</span><span class="tag">JavaScript</span><span class="tag">Figma</span></div><h3 class="proj-title">Persönliche Website</h3><p class="proj-text">Diese Website: von Design in Figma bis Deployment. Vollständig responsiv, ohne Framework, mit eigenem Design-System.</p><a href="/" class="proj-link">Live ansehen →</a></div>
         </article>
-        <article class="proj-card leuchtrahmen" data-cat="web">
+        <article class="proj-card leuchtrahmen" data-cat="csharp desktop">
           <div class="proj-img-wrap" data-zeiger="bild">
-            <Image src={garmintool} alt="Dashboard vom GarminTool" class="proj-img" quality={88} widths={[400, 600, 900]} sizes="(max-width: 900px) 100vw, 33vw" loading="lazy" />
-            <div class="proj-overlay"><a href="https://garmintool.nicoegerer.de/" target="_blank" rel="noopener" class="btn btn-outline">Öffnen</a></div>
-          </div>
-          <div class="proj-info"><div class="proj-tags"><span class="tag">Web</span><span class="tag">Garmin</span></div><h3 class="proj-title">Garmin Tool</h3><p class="proj-text">Eigenes Werkzeug rund um meine Garmin-Trainingsdaten, läuft unter einer eigenen Subdomain.</p><a href="https://garmintool.nicoegerer.de/" target="_blank" rel="noopener" class="proj-link">Tool öffnen →</a></div>
-        </article>
-        <article class="proj-card leuchtrahmen" data-cat="cpp">
-          <div class="proj-img-wrap" data-zeiger="bild">
-            <div class="proj-img proj-placeholder" aria-hidden="true">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="m8 8-4 4 4 4M16 8l4 4-4 4M13.5 5l-3 14"/></svg>
-            </div>
+            <Image src={imageconverter} alt="Nico Image Converter" class="proj-img" quality={88} widths={[400, 600, 900]} sizes="(max-width: 900px) 100vw, 33vw" loading="lazy" />
             <div class="proj-overlay"><a href="https://github.com/nicoegerer" target="_blank" rel="noopener" class="btn btn-outline">GitHub</a></div>
           </div>
-          <div class="proj-info"><div class="proj-tags"><span class="tag">C++</span><span class="tag">CMake</span><span class="tag">SDL2</span></div><h3 class="proj-title">C++ Gameloop Engine</h3><p class="proj-text">Experimentelle 2D-Spieleengine mit eigenem Entity-System und Renderer. Basis für JumpJump.</p><a href="https://github.com/nicoegerer" target="_blank" rel="noopener" class="proj-link">Code ansehen →</a></div>
-        </article>
-        <article class="proj-card leuchtrahmen" data-cat="python">
-          <div class="proj-img-wrap" data-zeiger="bild">
-            <div class="proj-img proj-placeholder" aria-hidden="true">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="m7 9 3 3-3 3M13 15h4"/></svg>
-            </div>
-            <div class="proj-overlay"><a href="https://github.com/nicoegerer" target="_blank" rel="noopener" class="btn btn-outline">GitHub</a></div>
+          <div class="proj-info">
+            <div class="proj-tags"><span class="tag">C#</span><span class="tag">.NET</span><span class="tag">Desktop</span></div>
+            <h3 class="proj-title">Image Converter</h3>
+            <p class="proj-text">Desktop-Anwendung zum lokalen Bearbeiten, Umbenennen und Exportieren von Bildern mit Fokus auf einen schnellen Workflow.</p>
+            <a href="https://github.com/nicoegerer" target="_blank" rel="noopener" class="proj-link">Code ansehen →</a>
           </div>
-          <div class="proj-info"><div class="proj-tags"><span class="tag">Python</span><span class="tag">Automation</span><span class="tag">CLI</span></div><h3 class="proj-title">Python Automatisierungen</h3><p class="proj-text">Sammlung nützlicher Skripte für Automatisierungen, Dateimanagement und kleine CLI-Tools.</p><a href="https://github.com/nicoegerer" target="_blank" rel="noopener" class="proj-link">GitHub →</a></div>
         </article>
-        <article class="proj-card leuchtrahmen proj-coming reveal" data-cat="cpp">
+  
+        <article class="proj-card leuchtrahmen" data-cat="web desktop">
+          <div class="proj-img-wrap" data-zeiger="bild">
+            <Image src={webuiworkbench} alt="Open WebUI Workbench" class="proj-img" quality={88} widths={[400, 600, 900]} sizes="(max-width: 900px) 100vw, 33vw" loading="lazy" />
+            <div class="proj-overlay"><a href="https://github.com/nicoegerer/webui-workbench" target="_blank" rel="noopener" class="btn btn-outline">GitHub</a></div>
+          </div>
+          <div class="proj-info">
+            <div class="proj-tags"><span class="tag">Electron</span><span class="tag">JavaScript</span><span class="tag">Open Source</span></div>
+            <h3 class="proj-title">Open WebUI Workbench</h3>
+            <p class="proj-text">Erweiterter Fork von Open WebUI Desktop mit zusätzlichen Integrationen, GitHub-Workspaces und lokaler Website-Vorschau.</p>
+            <a href="https://github.com/nicoegerer/webui-workbench" target="_blank" rel="noopener" class="proj-link">Code ansehen →</a>
+          </div>
+        </article>
+  
+        <article class="proj-card leuchtrahmen proj-coming reveal" data-cat="cpp desktop">
           <div class="proj-img-wrap" data-zeiger="bild">
             <div class="proj-img proj-placeholder coming" aria-hidden="true">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v16M4 12h16"/></svg>
             </div>
           </div>
-          <div class="proj-info"><div class="proj-tags"><span class="tag">C++</span><span class="tag">Unreal</span><span class="tag">Co-op</span></div><h3 class="proj-title">Nächstes Projekt: TBA</h3><p class="proj-text">Komplexeres Spiel mit Unreal Engine. Co-op-Modus geplant. In aktiver Entwicklung.</p><span class="proj-badge">In Arbeit</span></div>
+          <div class="proj-info">
+            <div class="proj-tags"><span class="tag">C++</span><span class="tag">Qt Quick</span><span class="tag">OpenStreetMap</span></div>
+            <h3 class="proj-title">ChargeRoute</h3>
+            <p class="proj-text">Desktop-Routenplaner für Elektrofahrzeuge mit Reichweitenberechnung, interaktiver Karte und automatischer Planung von Ladestopps.</p>
+            <span class="proj-badge">In Arbeit</span>
+          </div>
         </article>
+  
       </div>
     </div>
   </section>

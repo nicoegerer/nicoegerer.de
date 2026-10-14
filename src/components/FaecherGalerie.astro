@@ -2,7 +2,6 @@
 import { getImage } from 'astro:assets';
 import SocialCards from './ui/card-fan-carousel';
 
-// Ring innerhalb der Blaetter-Pfeile: auf false setzen, um ihn abzuschalten
 const RING_UM_PFEILE = true;
 
 const dateien = import.meta.glob<{ default: ImageMetadata }>(
@@ -45,9 +44,9 @@ const cards = await Promise.all(
 
 <section class="faecher" aria-labelledby="faecher-titel">
   <div class="faecher-kopf">
-    <span class="label">In Bildern</span>
-    <h2 class="section-heading dark" id="faecher-titel">Unterwegs</h2>
-    <p class="faecher-sub">Berge, Wasser, Schnee und ein paar Städte. Fahr mit der Maus über die Karten oder blättere durch.</p>
+    <span class="label">Ein paar Einblicke</span>
+    <h2 class="section-heading dark" id="faecher-titel">Galerie</h2>
+    <p class="faecher-sub">Ein paar Bilder von meinen Reisen, beim Sport und von Unternehmungen mit Freunden. Klick dich einfach durch.</p>
   </div>
 
   <SocialCards cards={cards} ring={RING_UM_PFEILE} autoMs={3000} client:visible={{ rootMargin: '600px' }} />

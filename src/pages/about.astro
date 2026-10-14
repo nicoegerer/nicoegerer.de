@@ -10,15 +10,14 @@ import { Image } from 'astro:assets';
 import gipfel from '../assets/gipfel.webp';
 ---
 
-<MainLayout title="Über Mich | Nico Egerer" description="Lerne Nico Egerer kennen, angehender Softwareentwickler, Technikbegeisterter und Sportler aus Wolfratshausen.">
+<MainLayout title="Über Mich | Nico Egerer" description="Über Mich">
   <style>
     .about-split { background: var(--hg); padding: var(--gap-xl) var(--gap-m); }
     .about-split-inner { max-width: var(--max-w); margin: 0 auto; display: grid; grid-template-columns: 1fr 1.1fr; gap: var(--gap-l); align-items: center; }
     .about-bild {
       border-radius: var(--r);
       overflow: hidden;
-      /* Weichzeichnung nicht groesser als der Versatz, sonst laeuft der
-         Schatten oben ueber die Rundung hinaus */
+
       filter: drop-shadow(0 1px 2px rgba(40,34,26,0.10))
               drop-shadow(0 14px 14px rgba(40,34,26,0.16));
     }
@@ -121,8 +120,8 @@ import gipfel from '../assets/gipfel.webp';
     <BergSzene client:media="(min-width: 860px)" />
     <div class="page-hero-inner">
       <span class="label white">Abseits vom Schreibtisch</span>
-      <h1 class="page-hero-title">Berge, Wasser, <span class="page-hero-accent">Kilometer</span></h1>
-      <p class="page-hero-sub" data-auf="unschaerfe" data-auf-verzug="120">Triathlon, Klettern und die Alpen. Was ich mache, wenn der Rechner aus ist, und warum das mit dem Programmieren mehr zu tun hat, als man denkt.</p>
+      <h1 class="page-hero-title">Bergsteigen, Klettern, <span class="page-hero-accent">Triathlon</span></h1>
+      <p class="page-hero-sub" data-auf="unschaerfe" data-auf-verzug="120">Triathlon, Klettern und die Alpen. Was ich mache, wenn der Rechner aus ist.</p>
     </div>
   </section>
 
@@ -142,13 +141,13 @@ import gipfel from '../assets/gipfel.webp';
 
       <div class="about-split-text">
         <span class="label">Warum ich das mache</span>
-        <ZeichenPhysik als="h2" klasse="section-heading dark" text="Ausdauer ist eine Haltung" />
+        <ZeichenPhysik als="h2" klasse="section-heading dark" text="Über Mich" />
         <div class="about-fliess">
           <ScrollAufdecken
           absaetze={[
-              'Ich bin 19 und komme aus Wolfratshausen, zwischen Isar und Voralpen aufgewachsen. Die Berge waren vor dem Rechner da, und sie sind bis heute der Ort, an dem ich am klarsten denke.',
-              'Triathlon hat mir beigebracht, was ich vorher nicht wusste: Es geht nicht um den einen guten Tag. Es geht um die vielen unspektakulären davor. Schwimmen, wenn niemand zuschaut. Radfahren, wenn es regnet. Laufen, wenn der Kopf schon aufgeben will.',
-              'Genau das ist der Punkt, an dem Sport und Programmieren dasselbe verlangen. Ein Bug um 22 Uhr fühlt sich an wie der letzte Anstieg: man weiß, dass es weh tut, und man macht trotzdem weiter. Disziplin lernt man nicht am Schreibtisch. Man bringt sie mit.',
+              'Ich bin 19 Jahre alt und komme aus Wolfratshausen, südlich von München. Neben dem Programmieren spielt Sport eine große Rolle in meiner Freizeit.',
+              'Am liebsten bin ich draußen unterwegs. Egal ob mit dem Rennrad, beim Laufen, Schwimmen oder Wakeboarden. Besonders Triathlon finde ich interessant, weil er gleich drei Sportarten miteinander verbindet und am meisten Disziplin benötigt. ',
+              'Durch die Nähe zu den Alpen bin ich auch gerne in den Bergen unterwegs. Sport ist für mich vor allem ein guter Ausgleich zum Alltag am Rechner. Ich probiere gerne neue Dinge aus und finde es cool, wenn ich merke, dass ich mich irgendwo verbessere.',
             ]}
           />
         </div>
@@ -165,26 +164,70 @@ import gipfel from '../assets/gipfel.webp';
   <section class="values-section" id="disziplinen">
     <div class="values-inner">
       <div class="values-header reveal">
-        <span class="label white" data-auf="seite">Was ich trainiere</span>
-        <h2 class="section-heading white" data-buchstaben>Disziplinen</h2>
+        <span class="label white" data-auf="seite">Neben dem Triathlon</span>
+        <h2 class="section-heading white" data-buchstaben>Weitere Sportarten</h2>
       </div>
       <div class="values-grid" data-staffel="kippen" data-staffel-schritt="110">
+
+
         <div class="value-card">
-          <div class="value-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r="0.6" fill="currentColor"/></svg></div>
-          <h3>Schwimmen</h3><p>Die Disziplin, die am meisten Technik verlangt und am wenigsten verzeiht. Wer hier schludert, merkt es nach 200 Metern.</p>
-        </div>
+          <div class="value-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none"
+                 stroke="currentColor" stroke-width="1.5"
+                 stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="13" cy="4.5" r="1.7"/>
+              <path d="M12.5 7 11 12l-3 4m3-4 4 4M12 9l-5-2-3 2m9-1 4 3"/>
+              <path d="M4 18c4 1 12 1 16-1"/>
+              <path d="M2 21c2-1 4-1 6 0s4 1 6 0 4-1 8 0"/>
+            </svg>
+          </div>
+          <h3>Wakeboarden &amp; Snowboarden</h3>
+          <p>Im Sommer bin ich gerne am Wakeboardlift unterwegs und probiere neue Tricks aus. Im Winter geht esstattdessen mit dem Snowboard auf die Piste. </p>
+        </div>        
+        
         <div class="value-card">
-          <div class="value-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 5.5A1.5 1.5 0 0 1 4.5 4H9a3 3 0 0 1 3 3v13a2.5 2.5 0 0 0-2.5-2.5H3z"/><path d="M21 5.5A1.5 1.5 0 0 0 19.5 4H15a3 3 0 0 0-3 3v13a2.5 2.5 0 0 1 2.5-2.5H21z"/></svg></div>
-          <h3>Rennrad</h3><p>Stundenlang gleichmäßig treten, Höhenmeter sammeln, den Kopf leerfahren. Meine liebste Art, einen Sonntag zu verlieren.</p>
+          <div class="value-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 2l-3 5 2 5-3 5 2 5"/>
+              <circle cx="9" cy="6" r="2"/>
+              <path d="m10 9 2 5-1 3"/>
+              <path d="m11 10 4-4 3 1"/>
+              <path d="m11 11-4 3-3-1"/>
+              <path d="m11 17-4 4"/>
+              <path d="m11 17 5 2 2-2"/>
+            </svg>            
+          </div>
+          <h3>Klettern</h3>
+          <p>Beim Klettern geht es für mich vor allem darum, neue Routen auszuprobieren und auch schwierigere Stellen irgendwann zu schaffen.</p>
         </div>
+        
         <div class="value-card">
-          <div class="value-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3"/><path d="M3 20a6 6 0 0 1 12 0"/><path d="M16 5.5a3 3 0 0 1 0 5"/><path d="M18 14.5a6 6 0 0 1 3 5.5"/></svg></div>
-          <h3>Laufen</h3><p>Die ehrlichste Disziplin. Keine Ausrüstung, keine Ausreden, nur Schuhe, Strecke und der eigene Kopf.</p>
+          <div class="value-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="m2 20 8-14 4 7 3-5 5 12H2Z"/>
+              <path d="m7 11 3 3 2-2m3 1 2 3 2-2"/>
+              <path d="M10 6V2m0 0 3 1m-3-1L7 3"/>
+            </svg>
+          </div>
+          <h3>Bergsteigen</h3>
+          <p>In den Bergen interessieren mich vor allem Hochtouren und anspruchsvolle Aufstiege. Besonders gerne bin ich dabei in den Alpen unterwegs.</p>
         </div>
-        <div class="value-card">
-          <div class="value-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 19h20L14.5 6 11 12l-2.2-3.2z"/><path d="M11.6 11 9 15"/></svg></div>
-          <h3>Berge</h3><p>Klettern, Klettersteig, Hochtour. Am Gipfel ist das Problem gelöst, und der Weg dorthin war der eigentliche Punkt.</p>
+        
+      <div class="value-card">
+        <div class="value-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="1.5"
+              stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 10V8a3 3 0 0 1 3-3h12a3 3 0 0 1 3 3v2"/>
+            <path d="M3 10v3a5 5 0 0 0 5 5h2l2-3 2 3h2a5 5 0 0 0 5-5v-3"/>
+            <path d="M3 10h18"/>
+            <path d="M12 15v-5"/>
+          </svg>
         </div>
+        <h3>Tauchen</h3>
+        <p>Ich habe meinen Open Water Diver gemacht und gehe gerne tauchen, wenn sich die Gelegenheit ergibt.</p>
+      </div>
+
       </div>
     </div>
   </section>
@@ -192,9 +235,9 @@ import gipfel from '../assets/gipfel.webp';
   <section class="crosslink-section">
     <div class="crosslink-inner reveal">
       <div class="crosslink-text">
-        <span class="label">Die andere Hälfte</span>
+        <span class="label">Neben dem Sport</span>
         <h2 class="section-heading dark">Und beruflich?</h2>
-        <p class="crosslink-sub">Diese Seite gehört dem Sport. Was ich entwickle, womit ich arbeite und was ich bisher gebaut habe, steht drüben: Startseite, Projekte und Erfahrung.</p>
+        <p class="crosslink-sub">Was ich entwickle, womit ich arbeite und was ich bisher gebaut habe, steht auf den anderen Seiten: Startseite, Projekte und Erfahrung.</p>
       </div>
       <div class="crosslink-actions">
         <a href="/" class="btn btn-dark-outline">Zur Startseite</a>
@@ -204,26 +247,59 @@ import gipfel from '../assets/gipfel.webp';
   </section>
 
   <section class="hobbies-section">
+
     <div class="hobbies-inner">
       <div class="hobbies-header reveal">
-        <span class="label" data-auf="seite">Und sonst</span>
-        <h2 class="section-heading dark" data-buchstaben>Wenn die Beine schwer sind</h2>
+        <span class="label" data-auf="seite">Abseites vom Sport</span>
+        <h2 class="section-heading dark" data-buchstaben>
+          Andere Interessen
+        </h2>
       </div>
+    
       <div class="hobbies-cards" data-staffel="skalieren" data-staffel-schritt="110">
         <div class="hobby-card">
-          <div class="hobby-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h3.5l2-5 3 10 2.5-6 1.5 3H21"/></svg></div>
-          <h4>Snow &amp; Wake</h4><p>Im Winter aufs Board, im Sommer hinters Seil. Beides gute Gründe, das Training kurz zu vergessen.</p>
+          <div class="hobby-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="9"/>
+              <path d="M3 12h18M12 3a15 15 0 0 1 0 18M12 3a15 15 0 0 0 0 18"/>
+            </svg>
+          </div>
+          <h4>Reisen</h4>
+          <p>Ich reise gerne und entdecke neue Länder und Städte. Besonders mag ich Roadtrips, bei denen man unterwegs viele verschiedene Orte kennenlernt.</p>
         </div>
+    
         <div class="hobby-card">
-          <div class="hobby-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 19h20L14.5 6 11 12l-2.2-3.2z"/><path d="M11.6 11 9 15"/></svg></div>
-          <h4>Reisen</h4><p>Irland, England, New York, Malta. Am liebsten dorthin, wo man danach etwas erzählen kann.</p>
+          <div class="hobby-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="2" y="5" width="20" height="14" rx="2"/>
+              <path d="M6 5v9M10 5v9M14 5v9M18 5v9M2 14h20"/>
+              <path d="M8 5v7M12 5v7M16 5v7"/>
+            </svg>
+          </div>
+          <h4>Klavierspielen</h4>
+          <p>Ich habe einige Jahre Klavierunterricht genommen und spiele auch heute noch gelegentlich Klavier. Musik gehört weiterhin zu meinen Interessen.</p>
         </div>
+    
+
         <div class="hobby-card">
-          <div class="hobby-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M7 5v9M11 5v9M15 5v9M19 5v9"/></svg></div>
-          <h4>Klavier</h4><p>Das Einzige, wobei ich stillsitze. Gegengewicht zu allem anderen hier.</p>
+          <div class="hobby-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none"
+                 stroke="currentColor" stroke-width="1.5"
+                 stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 14h18l-3 5H6l-3-5Z"/>
+              <path d="M8 14V8h8v6"/>
+              <path d="M12 8V4"/>
+              <path d="M8 4h8"/>
+              <path d="M2 21c2-1 4-1 6 0s4 1 6 0 4-1 8 0 4-1 8 0"/>
+            </svg>
+          </div>
+          <h4>Motorbootfahren</h4>
+          <p> Ich habe meinen Sportbootführerschein gemacht Auch wenn ich nur selten selbst auf dem Wasser unterwegs bin, macht mir das Bootfahren viel Spaß. </p>
         </div>
+        
       </div>
     </div>
+    
   </section>
 
   <div class="galerie-huelle">
@@ -235,7 +311,7 @@ import gipfel from '../assets/gipfel.webp';
     <div class="about-cta-inner reveal">
       <span class="label white">Noch Fragen?</span>
       <h2 class="section-heading white">Lass uns reden</h2>
-      <p>Ich freue mich über neue Kontakte, spannende Projekte oder einfach ein gutes Gespräch.</p>
+      <p>Ich freue mich über neue Kontakte oder spannende Projekte</p>
       <div class="cta-btns">
         <a href="/contact" class="btn btn-outline">Kontakt aufnehmen</a>
         <a href="/lebenslauf-nico-egerer.pdf" target="_blank" rel="noopener" class="btn btn-light">Lebenslauf (PDF)</a>
