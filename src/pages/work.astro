@@ -2,10 +2,8 @@
 import MainLayout from '../layouts/MainLayout.astro';
 import ScrollAufdecken from '../components/ScrollAufdecken.astro';
 import { Image } from 'astro:assets';
-import hubschrauber from '../assets/h145.webp';
 import simulator from '../assets/reiser.webp';
 
-// Angaben stammen aus dem Lebenslauf-Export
 const stationen = [
   {
     zeit: 'seit 09/2024',
@@ -17,15 +15,6 @@ const stationen = [
     stichworte: ['C++', 'Git', 'Jira', 'Bitbucket', 'Bamboo'],
   },
   {
-    zeit: '2022, 2024',
-    rolle: 'Nebenjob',
-    ort: 'Med. dent. J. Runge-Palermo · München',
-    art: 'Nebentätigkeit',
-    laufend: false,
-    text: 'Über zwei Jahre parallel zur Schule, Zuverlässigkeit und Selbstorganisation im Alltag.',
-    stichworte: [],
-  },
-  {
     zeit: '3 Wochen',
     rolle: 'Schulpraktikum Fachinformatik Anwendungsentwicklung',
     ort: 'Evia',
@@ -35,21 +24,20 @@ const stationen = [
     stichworte: [],
   },
   {
-    zeit: '3 Wochen',
-    rolle: 'Schülerpraktikum',
-    ort: 'Bosch Markus Möbelei',
-    art: 'Praktikum',
-    laufend: false,
-    text: 'Handwerkliches Praktikum, sauberes, genaues Arbeiten am Werkstück.',
-    stichworte: [],
-  },
+  zeit: '2013 – 2024',
+  rolle: 'Schulbildung',
+  ort: 'Schule',
+  art: 'Schulbildung',
+  laufend: false,
+  text: 'Schulische Ausbildung mit Erwerb grundlegender Kenntnisse und Kompetenzen als Basis für meinen weiteren beruflichen Werdegang.',
+  stichworte: [],
+},
 ];
 
 const koennen = [
-  { feld: 'Programmierung', punkte: ['C++', 'PowerShell (Grundlagen)', 'Java (Grundlagen)', 'Linux Bash (Grundlagen)', 'HTML / CSS (Grundlagen)'] },
+  { feld: 'Programmierung', punkte: ['C++ (Grundlagen)', 'PowerShell (Grundlagen)', 'Java (Grundlagen)', 'Linux Bash (Grundlagen)', 'HTML / CSS (Grundlagen)'] },
   { feld: 'Container & DevOps', punkte: ['Docker (Grundlagen)', 'Git / GitHub', 'Grundverständnis CI/CD'] },
   { feld: 'Projektmanagement', punkte: ['Agile Softwareentwicklung', 'Atlassian (Jira, Bitbucket, Bamboo)'] },
-  { feld: 'Betriebssysteme', punkte: ['Windows 10 / 11', 'Linux'] },
   { feld: 'IT-Sicherheit', punkte: ['Sicherheitskonzepte nach BDSG und DSGVO', 'Vermeidung von Cyberangriffen', 'Malware-Arten'] },
 ];
 
@@ -72,7 +60,7 @@ const ausland = [
 
 <MainLayout
   title="Erfahrung | Nico Egerer"
-  description="Beruflicher Werdegang, Fähigkeiten und Nachweise von Nico Egerer, Auszubildender Fachinformatiker für Anwendungsentwicklung."
+  description="Beruflicher Werdegang"
 >
   <style>
     .fakten { background: var(--hg-2); border-bottom: 1px solid var(--linie); padding: var(--gap-m); }
@@ -193,13 +181,10 @@ const ausland = [
       ))}
 
       <div class="wg-bilder" data-staffel="schieben" data-staffel-schritt="110">
+
         <figure class="wg-bild">
-          <Image src={hubschrauber} alt="Ich vor einem Airbus H145 in der Messehalle" class="wg-foto" quality={88} widths={[400, 600, 880]} sizes="(max-width: 700px) 100vw, 44vw" loading="lazy" />
-          <figcaption class="wg-bildtext">Der H145 in der Halle, die Maschinen hinter dem Simulationsumfeld.</figcaption>
-        </figure>
-        <figure class="wg-bild">
-          <Image src={simulator} alt="Ein Simulator von Reiser im Einsatz" class="wg-foto" quality={88} widths={[400, 600, 880]} sizes="(max-width: 700px) 100vw, 44vw" loading="lazy" />
-          <figcaption class="wg-bildtext">Ein Simulator von Reiser im Einsatz, Simulation zum Anfassen.</figcaption>
+          <Image src={simulator} alt="reiser" class="wg-foto" quality={88} widths={[400, 600, 880]} sizes="(max-width: 700px) 100vw, 44vw" loading="lazy" />
+          <figcaption class="wg-bildtext">2024 Tag der offenen Tür bei Reiser. <br> Eurofighter Simulaor</figcaption>
         </figure>
       </div>
     </div>
@@ -227,16 +212,15 @@ const ausland = [
   <section class="weise">
     <div class="weise-inner">
       <div class="reveal">
-        <span class="label white">Haltung</span>
+        <span class="label white">Arbeitsweise</span>
         <h2 class="section-heading white" data-buchstaben>Wie ich arbeite</h2>
       </div>
       <ScrollAufdecken
           absaetze={[
-          'Ich fange lieber klein an und baue aus, statt mich an einem großen Entwurf festzuhalten. Bei JumpJump war der erste Schritt eine Figur, die springt, der Rest kam Stück für Stück dazu.',
-          'Was ich nicht verstehe, will ich nachbauen. Aus Kursen sind deshalb eigene Projekte geworden: erst der Gameloop, dann das Kompilieren nach WebAssembly, dann die Seite drumherum.',
-          'Im Betrieb arbeite ich agil mit Jira, Bitbucket und Bamboo. Strukturiertes Arbeiten und Verantwortung übernehmen liegen mir.',
+          'Bei neuen Projekten verschaffe ich mir zuerst einen Überblick über die Anforderungen und überlege, wie ich sie am besten umsetzen kann. Größere Aufgaben teile ich in kleinere Schritte auf, um strukturiert und effizient voranzukommen.',
+          'Beim Programmieren ist mir wichtig, nicht nur eine funktionierende Lösung zu finden, sondern auch zu verstehen, wie und warum sie funktioniert. Wenn ich auf Probleme stoße, versuche ich zunächst selbst eine Lösung zu finden und arbeite mich bei Bedarf in neue Themen ein.',
+          'Durch meine Ausbildung habe ich Erfahrung in der Zusammenarbeit an größeren Softwareprojekten gesammelt. Dabei arbeite ich unter anderem mit Git, Jira und Bitbucket. Besonders gefällt mir die Abwechslung zwischen eigenständigem Arbeiten und dem Austausch im Team.',
         ]}
-        zitat="Am Ende zählt, dass es läuft."
       />
     </div>
   </section>

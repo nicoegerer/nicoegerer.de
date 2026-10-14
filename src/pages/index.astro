@@ -3,11 +3,12 @@ import MainLayout from '../layouts/MainLayout.astro';
 import Terminal from '../components/Terminal.astro';
 import ScrollAufdecken from '../components/ScrollAufdecken.astro';
 import { Image } from 'astro:assets';
-import passbild from '../assets/passbild.webp';
+import portrait from '../assets/portrait.webp';
 import ampel from '../assets/ampel.webp';
 import game from '../assets/game.webp';
 import website from '../assets/website.webp';
-import kontakt from '../assets/kontakt.webp';
+import garmintool from '../assets/garmintool.webp';
+import newyork from '../assets/newyork.webp';
 
 const introText =
   'Nico ist ein angehender Softwareentwickler aus Wolfratshausen. ' +
@@ -132,7 +133,7 @@ const introText =
     .projects-inner { max-width: 1100px; margin: 0 auto; }
     .projects-header { margin-bottom: var(--gap-l); }
     .projects-subline { color: rgba(255,255,255,0.55); font-size: 0.95rem; margin-top: 0.4rem; }
-    .projects-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.8rem; }
+    .projects-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.8rem; }
     .project-card { background: #0f0f0f; border: 1px solid rgba(255,255,255,0.08); border-radius: var(--r); overflow: hidden; transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease; }
     .project-card { border-color: rgba(255,255,255, calc(0.08 + var(--naehe, 0) * 0.18)); }
     .project-img { width: 100%; height: 200px; object-fit: cover; transition: transform 0.4s ease; }
@@ -333,9 +334,8 @@ const introText =
 
   <section class="goal">
     <div class="goal-inner">
-      <!-- data-parallax an der Huelle, damit Bild und Schatten zusammen wandern -->
       <div class="goal-image-wrap" data-auf="skalieren" data-zeiger="bild" data-parallax="0.09">
-        <Image src={passbild} alt="Porträt von mir" class="goal-image" quality={88} widths={[260, 472]} sizes="260px" />
+        <Image src={newyork} alt="newyork" class="goal-image" quality={88} widths={[260, 472]} sizes="260px" />
       </div>
       <div class="goal-content goal-hell">
         <span class="label white" data-auf="seite">Vision</span>
@@ -344,7 +344,6 @@ const introText =
           absaetze={[
             'Mein Ziel ist es, mich Schritt für Schritt zu einem sehr guten Softwareentwickler zu entwickeln und dabei nicht nur meine technischen Fähigkeiten, sondern auch meine organisatorischen und kommunikativen Kompetenzen weiter auszubauen.',
             'Schon früh habe ich gemerkt, dass mir strukturiertes Arbeiten, Verantwortung und das Koordinieren von Aufgaben liegen. Deshalb kann ich mir langfristig gut vorstellen, Projekte zu leiten oder eine Führungsposition zu übernehmen.',
-            'Langfristig ist es mein Ziel, entweder eine Abteilung im IT-Bereich zu leiten oder ein eigenes IT-Unternehmen zu gründen und innovative Softwarelösungen zu entwickeln.',
           ]}
         />
       </div>
@@ -389,6 +388,17 @@ const introText =
             </div>
           </div>
         </div>
+
+        <div class="project-card leuchtrahmen">
+          <Image src={garmintool} alt="Garmin Tool Dashboard" class="project-img" quality={88} widths={[400, 600, 800]} sizes="(max-width: 900px) 100vw, 50vw" />
+          <div class="project-info">
+            <h3 class="project-title">Garmin Tool</h3>
+            <p class="project-text">Eigenentwickeltes Webtool zur Auswertung und Verwaltung meiner Garmin-Trainingsdaten.</p>
+            <div class="project-tags">
+              <span class="tag">Web</span><span class="tag">Garmin</span>
+            </div>
+          </div>
+        </div>
       </div>
       <div class="projects-footer">
         <a href="/projects" class="btn btn-outline">Alle ansehen</a>
@@ -410,7 +420,7 @@ const introText =
     <div class="future-inner">
       <span class="label white">Zukunft</span>
       <h2 class="section-heading white">Zukünftige Projekte</h2>
-      <p class="future-text">Komplexere Spiele mit C++ und Unreal Engine auch mit Co-op-Modus, um meine Programmierkenntnisse zu verbessern. Außerdem plane ich mich in künstliche Intelligenz und maschinelles Lernen zu vertiefen. Neue Technologien interessieren mich.</p>
+      <p class="future-text">Komplexere Spiele mit C++ und Unreal Engine auch mit Co-op-Modus, um meine Programmierkenntnisse zu verbessern. Außerdem plane ich mich in künstliche Intelligenz und maschinelles Lernen zu vertiefen.</p>
       <a href="/projects" class="btn btn-light">Meine Projekte</a>
     </div>
   </section>
@@ -434,7 +444,7 @@ const introText =
         <div class="cf-error" id="cf-error"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg> Fehler beim Senden. Bitte versuche es erneut oder kontaktiere mich anders.</div>
       </div>
       <div class="contact-img-col">
-        <Image src={kontakt} alt="Ich vor der Skyline von New York" class="contact-img" quality={88} widths={[360, 560, 720, 1080]} sizes="(max-width: 900px) 280px, 360px" />
+        <Image src={portrait} alt="Ich vor der Skyline von New York" class="contact-img" quality={88} widths={[360, 560, 720, 1080]} sizes="(max-width: 900px) 280px, 360px" />
         <a href="/contact" class="btn btn-outline contact-details-btn">Meine Kontaktdaten</a>
       </div>
     </div>
